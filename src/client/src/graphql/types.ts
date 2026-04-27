@@ -916,8 +916,8 @@ export type OfferReadinessResult = {
   btc_channels: ChannelSummary;
   has_pending_order: Scalars['Boolean']['output'];
   is_peer_connected: Scalars['Boolean']['output'];
-  onchain_balance_sats: Scalars['String']['output'];
   onchain_asset_balance: Scalars['String']['output'];
+  onchain_balance_sats: Scalars['String']['output'];
 };
 
 export type OnChainBalance = {
@@ -1276,6 +1276,7 @@ export type SetupTradeCapacityInput = {
   assetAmount: Scalars['String']['input'];
   assetRate: Scalars['String']['input'];
   magmaOfferId: Scalars['String']['input'];
+  openOutboundAssetChannel?: InputMaybe<Scalars['Boolean']['input']>;
   satsAmount?: InputMaybe<Scalars['String']['input']>;
   swapNodePubkey: Scalars['String']['input'];
   swapNodeSockets?: InputMaybe<Array<Scalars['String']['input']>>;
