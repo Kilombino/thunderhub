@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.16.3](https://github.com/apotdevin/thunderhub/compare/v0.16.2...v0.16.3) (2026-04-29)
+
+
+### Improvements
+
+* default to buy side order form ([3b110fc](https://github.com/apotdevin/thunderhub/commit/3b110fc77ec7b60ea0bfa6714c2d7c6e8147e3bb))
+* trading partner change ([fa1de4d](https://github.com/apotdevin/thunderhub/commit/fa1de4dd7fe44702f634c9534440e1aefe8d59bc))
+
 ## [0.16.2](https://github.com/apotdevin/thunderhub/compare/v0.16.1...v0.16.2) (2026-04-29)
 
 
