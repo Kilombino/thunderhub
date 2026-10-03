@@ -5,20 +5,21 @@ import { useGetAmbossLoginTokenLazyQuery } from '../../../../graphql/queries/__g
 import { useAmbossUser } from '../../../../hooks/UseAmbossUser';
 import { appendBasePath } from '../../../../utils/basePath';
 import { QuickCard, QuickTitle } from '../QuickActions';
+import { t } from '@/i18n';
 
 export const AmbossCard = () => {
   const { user } = useAmbossUser();
 
   const [login, { loading }] = useLoginAmbossMutation({
-    onCompleted: () => toast.success('Logged in'),
-    onError: () => toast.error('Error logging in'),
+    onCompleted: () => toast.success(t('home.amboss.loggedIn')),
+    onError: () => toast.error(t('home.amboss.loginError')),
     refetchQueries: ['GetAmbossUser', 'GetChannels'],
   });
 
   const [getToken, { data, loading: tokenLoading }] =
     useGetAmbossLoginTokenLazyQuery({
       fetchPolicy: 'network-only',
-      onError: () => toast.error('Error getting auth token'),
+      onError: () => toast.error(t('home.buyChannel.authTokenError')),
     });
 
   useEffect(() => {
@@ -32,7 +33,11 @@ export const AmbossCard = () => {
   }, [data, tokenLoading]);
 
   const isLoading = user ? tokenLoading : loading;
-  const label = isLoading ? 'Loading...' : user ? 'Go To' : 'Login';
+  const label = isLoading
+    ? t('common.loading')
+    : user
+      ? t('home.amboss.goTo')
+      : t('home.amboss.login');
 
   const handleClick = () => {
     if (user) {

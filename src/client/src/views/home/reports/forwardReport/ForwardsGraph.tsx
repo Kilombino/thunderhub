@@ -4,6 +4,7 @@ import { LoadingCard } from '../../../../components/loading/LoadingCard';
 import { useGetForwardsQuery } from '../../../../graphql/queries/__generated__/getForwards.generated';
 import { useChartColors } from '../../../../lib/chart-colors';
 import { getByTime } from '../../../../views/dashboard/widgets/helpers';
+import { t } from '@/i18n';
 
 type DayOptionProps = {
   label: string;
@@ -41,7 +42,7 @@ export const ForwardsGraph: FC<ForwardGraphProps> = ({ days, type }) => {
     return (
       <div className="w-full h-80">
         <div className="w-full h-full flex justify-center items-center">
-          No forwards for this period.
+          {t('home.forwards.noForwards')}
         </div>
       </div>
     );

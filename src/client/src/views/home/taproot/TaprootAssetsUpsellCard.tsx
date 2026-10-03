@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ExternalLink, Gem, X } from 'lucide-react';
 import { useGetNodeCapabilitiesQuery } from '../../../graphql/queries/__generated__/getNodeCapabilities.generated';
 import { LITD_SETUP_DOCS_URL } from '../../../utils/externalLinks';
+import { t } from '@/i18n';
 
 const DISMISSED_KEY = 'ta_setup_banner_dismissed';
 
@@ -25,7 +26,7 @@ export const TaprootAssetsUpsellCard = () => {
     <div className="flex items-center gap-3 rounded-md border border-border bg-muted/30 px-3 py-2">
       <Gem size={14} className="shrink-0 text-primary" />
       <span className="flex-1 text-xs text-muted-foreground">
-        Enable{' '}
+        {t('home.taproot.enable')}{' '}
         <a
           href={LITD_SETUP_DOCS_URL}
           target="_blank"
@@ -35,11 +36,11 @@ export const TaprootAssetsUpsellCard = () => {
           Taproot Assets
           <ExternalLink size={10} className="ml-0.5 inline-block" />
         </a>{' '}
-        to trade and manage assets on Lightning.
+        {t('home.taproot.description')}
       </span>
       <button
         type="button"
-        aria-label="Dismiss"
+        aria-label={t('home.taproot.dismiss')}
         onClick={handleDismiss}
         className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
       >

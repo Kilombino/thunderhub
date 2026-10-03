@@ -6,6 +6,7 @@ import { useGetInvoicesQuery } from '../../../../graphql/queries/__generated__/g
 import { differenceInDays } from 'date-fns';
 import { useGetPaymentsQuery } from '../../../../graphql/queries/__generated__/getPayments.generated';
 import { BarChart } from '../../../../components/chart/BarChart';
+import { t } from '@/i18n';
 
 type TransactionsGraphProps = {
   showPay: boolean;
@@ -21,22 +22,26 @@ export const TransactionsGraph: FC<TransactionsGraphProps> = ({
   const { data: paymentsData, loading: paymentsLoading } =
     useGetPaymentsQuery();
 
+  const seriesName = showPay
+    ? t('home.flow.payments')
+    : t('home.flow.invoices');
+
   const labels = useMemo(() => {
     switch (type) {
       case 'amount':
         return {
-          yAxisLabel: `Amount of ${showPay ? 'Payments' : 'Invoices'}`,
-          title: `Amount of ${showPay ? 'Payments' : 'Invoices'}`,
+          yAxisLabel: t('home.flow.amountOf', { name: seriesName }),
+          title: t('home.flow.amountOf', { name: seriesName }),
         };
       case 'tokens':
         return {
-          yAxisLabel: `${showPay ? 'Payments' : 'Invoices'} Volume (sats)`,
-          title: `${showPay ? 'Payments' : 'Invoices'} Volume (sats)`,
+          yAxisLabel: t('home.flow.volumeOf', { name: seriesName }),
+          title: t('home.flow.volumeOf', { name: seriesName }),
         };
       default:
         return {};
     }
-  }, [type, showPay]);
+  }, [type, seriesName]);
 
   const invoicesByDate = useMemo(() => {
     const invoices = invoiceData?.getInvoices.invoices || [];
@@ -95,7 +100,7 @@ export const TransactionsGraph: FC<TransactionsGraphProps> = ({
     return (
       <div className="w-full h-75">
         <div className="flex h-full w-full items-center justify-center">
-          No {showPay ? 'payments' : 'invoices'} for this period.
+          {showPay ? t('home.flow.noPayments') : t('home.flow.noInvoices')}
         </div>
       </div>
     );
@@ -113,13 +118,13 @@ export const TransactionsGraph: FC<TransactionsGraphProps> = ({
         <BarChart
           data={finalArray.map(f => {
             return {
-              [showPay ? 'Payments' : 'Invoices']: f?.[type] || 0,
+              [seriesName]: f?.[type] || 0,
               date: f.date,
             };
           })}
           colorRange={finalColor}
           title={labels.title || ''}
-          dataKey={showPay ? 'Payments' : 'Invoices'}
+          dataKey={seriesName}
         />
       </div>
     </div>

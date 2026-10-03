@@ -7,6 +7,7 @@ import { formatDistanceToNowStrict, format } from 'date-fns';
 import { shorten } from '../../../../components/generic/helpers';
 import { config } from '../../../../config/thunderhubConfig';
 import { decode, Section } from 'light-bolt11-decoder';
+import { t } from '@/i18n';
 
 interface DecodedProps {
   request: string;
@@ -37,7 +38,7 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
     try {
       return decode(request);
     } catch {
-      toast.error('Error decoding invoice');
+      toast.error(t('home.decode.error'));
       setShow(false);
       return null;
     }
@@ -69,7 +70,7 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard');
+    toast.success(t('home.decode.copied'));
   };
 
   return (
@@ -89,7 +90,7 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
           </Row>
         )}
         {destination && (
-          <Row label="Destination">
+          <Row label={t('home.decode.destination')}>
             {!config.disableLinks ? (
               <a
                 href={`https://amboss.space/node/${destination}`}
@@ -111,9 +112,11 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
             </button>
           </Row>
         )}
-        {description && <Row label="Description">{description}</Row>}
+        {description && (
+          <Row label={t('home.decode.description')}>{description}</Row>
+        )}
         {descriptionHash && (
-          <Row label="Description Hash">
+          <Row label={t('home.decode.descriptionHash')}>
             <span className="font-mono text-[11px]">
               {shorten(String(descriptionHash))}
             </span>
@@ -121,7 +124,7 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
         )}
         {cltvDelta && <Row label="CLTV Delta">{cltvDelta}</Row>}
         {expiresAt && (
-          <Row label="Expires">
+          <Row label={t('home.decode.expires')}>
             {formatDistanceToNowStrict(expiresAt)}
             <span className="ml-1 text-muted-foreground">
               ({format(expiresAt, 'MMM d, yyyy H:mm')})
@@ -129,7 +132,7 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
           </Row>
         )}
         {tokens !== null && (
-          <Row label="Amount">
+          <Row label={t('home.decode.amount')}>
             <Price amount={tokens} />
           </Row>
         )}
@@ -142,7 +145,7 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
         onClick={() => setShow(false)}
       >
         <ArrowLeft size={14} />
-        Decode Another
+        {t('home.decode.another')}
       </Button>
     </div>
   );

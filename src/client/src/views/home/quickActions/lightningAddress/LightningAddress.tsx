@@ -11,6 +11,7 @@ import Modal from '../../../../components/modal/ReactModal';
 import { useGetLightningAddressInfoLazyQuery } from '../../../../graphql/queries/__generated__/getLightningAddressInfo.generated';
 import { useLocalStorage } from '../../../../hooks/UseLocalStorage';
 import { LnPay } from '../lnurl/LnPay';
+import { t } from '@/i18n';
 
 export const LightningAddressCard = () => {
   const [address, setAddress] = useState('');
@@ -42,7 +43,7 @@ export const LightningAddressCard = () => {
         {savedAddresses.length > 0 && (
           <NativeSelect value="" onChange={e => setAddress(e.target.value)}>
             <NativeSelectOption value="" disabled>
-              Recent
+              {t('home.lightningAddress.recent')}
             </NativeSelectOption>
             {savedAddresses.map(a => (
               <NativeSelectOption key={a} value={a}>
@@ -69,7 +70,7 @@ export const LightningAddressCard = () => {
             <Loader2 className="animate-spin" size={16} />
           ) : (
             <>
-              Pay <ChevronRight size={18} />
+              {t('wallet.pay.pay')} <ChevronRight size={18} />
             </>
           )}
         </Button>

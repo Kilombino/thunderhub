@@ -1,6 +1,7 @@
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent } from '@/components/ui/card';
 import { useConfigState, useConfigDispatch } from '../../context/ConfigContext';
+import { t } from '@/i18n';
 
 export const PrivacySettings = () => {
   const { fetchFees, fetchPrices, displayValues } = useConfigState();
@@ -13,17 +14,17 @@ export const PrivacySettings = () => {
 
   const items = [
     {
-      label: 'Fetch Bitcoin Fees',
+      label: t('settings.privacy.fetchFees'),
       property: 'fetchFees',
       value: fetchFees,
     },
     {
-      label: 'Fetch Fiat Prices',
+      label: t('settings.privacy.fetchPrices'),
       property: 'fetchPrices',
       value: fetchPrices,
     },
     {
-      label: 'Display Values',
+      label: t('settings.privacy.displayValues'),
       property: 'displayValues',
       value: displayValues,
     },
@@ -31,7 +32,7 @@ export const PrivacySettings = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Privacy</h2>
+      <h2 className="text-lg font-semibold">{t('settings.privacy.title')}</h2>
       <Card>
         <CardContent className="space-y-4">
           {items.map(item => (

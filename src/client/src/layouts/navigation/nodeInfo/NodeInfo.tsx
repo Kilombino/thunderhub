@@ -7,6 +7,7 @@ import Big from 'big.js';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
+import { t } from '@/i18n';
 
 interface NodeInfoProps {
   isOpen?: boolean;
@@ -52,11 +53,11 @@ export const NodeInfo = ({ isBurger }: NodeInfoProps) => {
             )}
           >
             {syncedToChain ? (
-              'Synced'
+              t('nav.node.synced')
             ) : (
               <>
                 <Spinner className="size-3" />
-                {syncPercentage ? `${syncPercentage}%` : 'Syncing'}
+                {syncPercentage ? `${syncPercentage}%` : t('nav.node.syncing')}
               </>
             )}
           </Badge>

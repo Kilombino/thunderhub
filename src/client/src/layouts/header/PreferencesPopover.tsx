@@ -16,6 +16,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { useConfigState, useConfigDispatch } from '../../context/ConfigContext';
 import { usePriceState } from '../../context/PriceContext';
 import { LogoutButton } from '../../components/logoutButton';
+import { t } from '@/i18n';
 export const PreferencesPopover = () => {
   const { theme, currency, sidebar, rightSidebar } = useConfigState();
   const dispatch = useConfigDispatch();
@@ -37,7 +38,7 @@ export const PreferencesPopover = () => {
           {/* Currency */}
           <div className="space-y-1.5">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-              Currency
+              {t('nav.preferences.currency')}
             </div>
             <ToggleGroup
               type="single"
@@ -69,7 +70,7 @@ export const PreferencesPopover = () => {
           {/* Theme */}
           <div className="space-y-1.5">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-              Theme
+              {t('nav.preferences.theme')}
             </div>
             <ToggleGroup
               type="single"
@@ -83,15 +84,15 @@ export const PreferencesPopover = () => {
             >
               <ToggleGroupItem value="light" className="flex-1 gap-1">
                 <Sun size={12} />
-                Light
+                {t('nav.preferences.light')}
               </ToggleGroupItem>
               <ToggleGroupItem value="dark" className="flex-1 gap-1">
                 <Moon size={12} />
-                Dark
+                {t('nav.preferences.dark')}
               </ToggleGroupItem>
               <ToggleGroupItem value="system" className="flex-1 gap-1">
                 <Monitor size={12} />
-                Auto
+                {t('nav.preferences.auto')}
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
@@ -99,7 +100,7 @@ export const PreferencesPopover = () => {
           {/* Layout */}
           <div className="space-y-1.5">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-              Layout
+              {t('nav.preferences.layout')}
             </div>
             <div className="flex gap-1">
               <Button
@@ -109,7 +110,7 @@ export const PreferencesPopover = () => {
                 className="flex-1 gap-1 text-xs h-7"
               >
                 <PanelLeft size={12} />
-                Left
+                {t('nav.preferences.left')}
               </Button>
               <Button
                 onClick={() =>
@@ -123,7 +124,7 @@ export const PreferencesPopover = () => {
                 className="hidden lg:inline-flex flex-1 gap-1 text-xs h-7"
               >
                 <PanelRight size={12} />
-                Right
+                {t('nav.preferences.right')}
               </Button>
             </div>
           </div>
@@ -133,7 +134,7 @@ export const PreferencesPopover = () => {
               variant="ghost"
               size="sm"
               className="w-full justify-start gap-2 text-xs h-7 text-muted-foreground hover:text-foreground"
-              label="Log out"
+              label={t('nav.logout')}
             />
           </div>
         </div>

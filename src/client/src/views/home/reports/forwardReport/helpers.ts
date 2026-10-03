@@ -1,10 +1,11 @@
 import { GetClosedChannelsQuery } from '../../../../graphql/queries/__generated__/getClosedChannels.generated';
+import { t } from '@/i18n';
 
 export const getAliasFromClosedChannels = (
   channelId: string,
   channels: GetClosedChannelsQuery['getClosedChannels']
 ): { alias: string; closed: boolean } => {
-  if (!channels) return { alias: 'Unknown', closed: false };
+  if (!channels) return { alias: t('home.forwards.unknown'), closed: false };
 
   const channel = channels.find(c => c?.id === channelId);
 
@@ -12,5 +13,5 @@ export const getAliasFromClosedChannels = (
     return { alias: channel.partner_node_info.node.alias, closed: true };
   }
 
-  return { alias: 'Unknown', closed: false };
+  return { alias: t('home.forwards.unknown'), closed: false };
 };

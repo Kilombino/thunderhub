@@ -11,6 +11,7 @@ import { useGetMagmaOrderInvoiceLazyQuery } from '../../../graphql/queries/__gen
 import { useCancelMagmaOrderMutation } from '../../../graphql/mutations/__generated__/cancelMagmaOrder.generated';
 import { OrderCancellationReason } from '../../../graphql/types';
 import { getErrorContent } from '../../../utils/error';
+import { t } from '@/i18n';
 import { Price } from '../../../components/price/Price';
 import { Button } from '../../../components/ui/button';
 import {
@@ -44,21 +45,29 @@ type MagmaOrder = NonNullable<
 >;
 
 export const STATUS_LABELS: Record<string, string> = {
-  WAITING_FOR_SELLER_APPROVAL: 'Awaiting seller approval',
-  WAITING_FOR_BUYER_PAYMENT: 'Payment required',
-  WAITING_FOR_CHANNEL_OPEN: 'Awaiting channel open',
-  SELLER_SENT_TRANSACTION: 'Transaction broadcast',
-  WAITING_FOR_ON_CHAIN_CONFIRMATION: 'Awaiting confirmation',
-  VALID_CHANNEL_OPENING: 'Channel opened',
-  SELLER_OPENED_CHANNEL: 'Channel confirmed',
-  CHANNEL_MONITORING_FINISHED: 'Complete',
-  SELLER_REJECTED: 'Seller rejected',
-  BUYER_REJECTED: 'Buyer cancelled',
-  SELLER_FAILED_TO_REACT: 'Seller timed out',
-  BUYER_FAILED_TO_PAY: 'Payment timed out',
-  SELLER_FAILED_TO_OPEN_CHANNEL: 'Channel open failed',
-  INVALID_CHANNEL_OPENING: 'Invalid channel',
-  ADMIN_CLOSED: 'Closed by admin',
+  WAITING_FOR_SELLER_APPROVAL: t(
+    'channels.magma.status.waitingForSellerApproval'
+  ),
+  WAITING_FOR_BUYER_PAYMENT: t('channels.magma.status.waitingForBuyerPayment'),
+  WAITING_FOR_CHANNEL_OPEN: t('channels.magma.status.waitingForChannelOpen'),
+  SELLER_SENT_TRANSACTION: t('channels.magma.status.sellerSentTransaction'),
+  WAITING_FOR_ON_CHAIN_CONFIRMATION: t(
+    'channels.magma.status.waitingForOnChainConfirmation'
+  ),
+  VALID_CHANNEL_OPENING: t('channels.magma.status.validChannelOpening'),
+  SELLER_OPENED_CHANNEL: t('channels.magma.status.sellerOpenedChannel'),
+  CHANNEL_MONITORING_FINISHED: t(
+    'channels.magma.status.channelMonitoringFinished'
+  ),
+  SELLER_REJECTED: t('channels.magma.status.sellerRejected'),
+  BUYER_REJECTED: t('channels.magma.status.buyerRejected'),
+  SELLER_FAILED_TO_REACT: t('channels.magma.status.sellerFailedToReact'),
+  BUYER_FAILED_TO_PAY: t('channels.magma.status.buyerFailedToPay'),
+  SELLER_FAILED_TO_OPEN_CHANNEL: t(
+    'channels.magma.status.sellerFailedToOpenChannel'
+  ),
+  INVALID_CHANNEL_OPENING: t('channels.magma.status.invalidChannelOpening'),
+  ADMIN_CLOSED: t('channels.magma.status.adminClosed'),
 };
 
 type StatusColor = 'blue' | 'yellow' | 'green' | 'red' | 'gray';
@@ -90,10 +99,15 @@ const COLOR_CLASSES: Record<StatusColor, string> = {
 };
 
 const CANCELLATION_REASON_LABELS: Record<OrderCancellationReason, string> = {
-  [OrderCancellationReason.UnableToConnectToNode]: 'Unable to connect to node',
-  [OrderCancellationReason.UnableToPay]: 'Unable to pay',
-  [OrderCancellationReason.ChannelSizeOutOfBounds]:
-    'Channel size out of bounds',
+  [OrderCancellationReason.UnableToConnectToNode]: t(
+    'channels.magma.reasons.unableToConnect'
+  ),
+  [OrderCancellationReason.UnableToPay]: t(
+    'channels.magma.reasons.unableToPay'
+  ),
+  [OrderCancellationReason.ChannelSizeOutOfBounds]: t(
+    'channels.magma.reasons.sizeOutOfBounds'
+  ),
 };
 
 const BUYER_CANCELLABLE = new Set([
@@ -113,9 +127,10 @@ function statusColor(status: string): StatusColor {
 function peerName(
   party: { pubkey?: string | null; alias?: string | null } | null | undefined
 ): string {
-  if (!party) return 'Unknown';
+  if (!party) return t('channels.unknown');
   return (
-    party.alias || (party.pubkey ? party.pubkey.slice(0, 16) + '…' : 'Unknown')
+    party.alias ||
+    (party.pubkey ? party.pubkey.slice(0, 16) + '…' : t('channels.unknown'))
   );
 }
 
@@ -135,7 +150,9 @@ function OrderTable({
   if (!orders.length) {
     return (
       <p className="text-sm text-muted-foreground py-4 text-center">
-        No {role === 'buyer' ? 'purchases' : 'sales'}
+        {role === 'buyer'
+          ? t('channels.magma.noPurchases')
+          : t('channels.magma.noSales')}
       </p>
     );
   }
@@ -146,12 +163,14 @@ function OrderTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Peer</TableHead>
-          <TableHead>Amount</TableHead>
-          <TableHead>Fee</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead className="text-right">Action</TableHead>
+          <TableHead>{t('channels.columns.peer')}</TableHead>
+          <TableHead>{t('common.amount')}</TableHead>
+          <TableHead>{t('common.fee')}</TableHead>
+          <TableHead>{t('channels.columns.status')}</TableHead>
+          <TableHead>{t('channels.magma.created')}</TableHead>
+          <TableHead className="text-right">
+            {t('channels.magma.action')}
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -196,7 +215,7 @@ function OrderTable({
                       onClick={() => onCancelRequest(order.id)}
                     >
                       <X className="mr-1 size-3.5" />
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                   )}
                   {order.status === 'WAITING_FOR_BUYER_PAYMENT' &&
@@ -207,7 +226,7 @@ function OrderTable({
                         onClick={() => onPayRequest(order.id)}
                       >
                         <Zap className="mr-1 size-3.5" />
-                        Pay
+                        {t('channels.magma.pay')}
                       </Button>
                     )}
                   <Button variant="ghost" size="sm" asChild>
@@ -217,7 +236,7 @@ function OrderTable({
                       rel="noopener noreferrer"
                     >
                       <ExternalLink className="mr-1 size-3.5" />
-                      View on Amboss
+                      {t('channels.magma.viewOnAmboss')}
                     </a>
                   </Button>
                 </div>
@@ -317,9 +336,9 @@ export const MagmaOrders = ({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Cancel Order</DialogTitle>
+            <DialogTitle>{t('channels.magma.cancelOrder')}</DialogTitle>
             <DialogDescription>
-              Select a reason for cancelling this order.
+              {t('channels.magma.cancelReasonDescription')}
             </DialogDescription>
           </DialogHeader>
           <Select
@@ -327,7 +346,7 @@ export const MagmaOrders = ({
             onValueChange={v => setCancelReason(v as OrderCancellationReason)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select reason" />
+              <SelectValue placeholder={t('channels.magma.selectReason')} />
             </SelectTrigger>
             <SelectContent>
               {Object.entries(CANCELLATION_REASON_LABELS).map(
@@ -345,14 +364,14 @@ export const MagmaOrders = ({
               onClick={handleDismiss}
               disabled={cancelling}
             >
-              Back
+              {t('common.back')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleConfirm}
               disabled={cancelling || !cancelReason}
             >
-              Cancel Order
+              {t('channels.magma.cancelOrder')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -369,9 +388,9 @@ export const MagmaOrders = ({
       >
         <DialogContent className="sm:max-w-xl">
           <DialogHeader>
-            <DialogTitle>Pay Invoice</DialogTitle>
+            <DialogTitle>{t('channels.magma.payInvoice')}</DialogTitle>
             <DialogDescription>
-              Scan the QR code, copy the invoice, or pay directly.
+              {t('channels.magma.payInvoiceDescription')}
             </DialogDescription>
           </DialogHeader>
 
@@ -383,7 +402,7 @@ export const MagmaOrders = ({
 
           {!invoiceLoading && !payingInvoice && (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No invoice available for this order.
+              {t('channels.magma.noInvoice')}
             </p>
           )}
 
@@ -405,12 +424,12 @@ export const MagmaOrders = ({
                   onClick={() =>
                     navigator.clipboard
                       .writeText(payingInvoice)
-                      .then(() => toast.success('Copied to clipboard'))
-                      .catch(() => toast.error('Failed to copy to clipboard'))
+                      .then(() => toast.success(t('channels.magma.copied')))
+                      .catch(() => toast.error(t('channels.magma.copyFailed')))
                   }
                 >
                   <Copy size={14} className="mr-1" />
-                  Copy Invoice
+                  {t('channels.magma.copyInvoice')}
                 </Button>
               </div>
 

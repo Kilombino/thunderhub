@@ -2,6 +2,7 @@ import { FC, useMemo } from 'react';
 import { differenceInDays } from 'date-fns';
 import { Price } from '../../../../components/price/Price';
 import { useGetForwardsListQuery } from '../../../../graphql/queries/__generated__/getForwards.generated';
+import { t } from '@/i18n';
 
 type ArrayType = { fee: number; fee_mtokens: string; tokens: number };
 
@@ -83,10 +84,10 @@ export const ForwardResume: FC<ForwardResumeProps> = ({ type }) => {
   };
 
   const items = [
-    { label: 'Day', value: values.day },
-    { label: 'Week', value: values.week },
-    { label: 'Month', value: values.month },
-    { label: 'Year', value: values.year },
+    { label: t('home.forwards.day'), value: values.day },
+    { label: t('home.forwards.week'), value: values.week },
+    { label: t('home.forwards.month'), value: values.month },
+    { label: t('home.forwards.year'), value: values.year },
   ];
 
   return (

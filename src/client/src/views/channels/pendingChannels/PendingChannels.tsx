@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { useGetPendingChannelsQuery } from '../../../graphql/queries/__generated__/getPendingChannels.generated';
 import { getErrorContent } from '../../../utils/error';
+import { t } from '@/i18n';
 import { LoadingCard } from '../../../components/loading/LoadingCard';
 import {
   getNodeLink,
@@ -104,9 +105,9 @@ export const PendingChannels = ({
       return {
         ...c,
         ...assetFields,
-        alias: c.partner_node_info.node?.alias || 'Unknown',
+        alias: c.partner_node_info.node?.alias || t('channels.unknown'),
         capacity: (c.local_balance || 0) + (c.remote_balance || 0),
-        force_closed: c.is_timelocked ? 'Yes' : '-',
+        force_closed: c.is_timelocked ? t('common.yes') : '-',
       };
     });
   }, [data, assetOnly, uniqueAssets]);
@@ -114,17 +115,19 @@ export const PendingChannels = ({
   const columns = useMemo<ColumnDef<PendingChannel, any>[]>(
     () => [
       {
-        header: 'Status',
+        header: t('channels.columns.status'),
         accessorKey: 'is_opening',
         enableSorting: true,
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap">
-            {row.original.is_opening ? 'Opening' : 'Closing'}
+            {row.original.is_opening
+              ? t('channels.pending.opening')
+              : t('channels.pending.closing')}
           </div>
         ),
       },
       {
-        header: 'Peer',
+        header: t('channels.columns.peer'),
         accessorKey: 'alias',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -134,7 +137,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Local Balance',
+        header: t('channels.columns.localBalance'),
         accessorKey: 'local_balance',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -144,7 +147,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Remote Balance',
+        header: t('channels.columns.remoteBalance'),
         accessorKey: 'remote_balance',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -154,7 +157,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Balance',
+        header: t('channels.columns.balance'),
         accessorKey: 'capacity',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -164,7 +167,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Sent',
+        header: t('channels.columns.sent'),
         accessorKey: 'send',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -174,7 +177,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Received',
+        header: t('channels.columns.received'),
         accessorKey: 'received',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -184,7 +187,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Force Closed',
+        header: t('channels.columns.forceClosed'),
         accessorKey: 'force_closed',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -192,31 +195,35 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Timelock Expiration',
+        header: t('channels.columns.timelockExpiration'),
         accessorKey: 'timelock_expiration',
         enableSorting: true,
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap">
             {row.original.timelock_expiration
-              ? `${row.original.timelock_expiration} blocks`
+              ? t('channels.pending.blocks', {
+                  blocks: row.original.timelock_expiration,
+                })
               : '-'}
           </div>
         ),
       },
       {
-        header: 'Timelock Blocks',
+        header: t('channels.columns.timelockBlocks'),
         accessorKey: 'timelock_blocks',
         enableSorting: true,
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap">
             {row.original.timelock_blocks
-              ? `${row.original.timelock_blocks} blocks`
+              ? t('channels.pending.blocks', {
+                  blocks: row.original.timelock_blocks,
+                })
               : '-'}
           </div>
         ),
       },
       {
-        header: 'Transaction Fee',
+        header: t('channels.columns.transactionFee'),
         accessorKey: 'transaction_fee',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -226,7 +233,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Transaction',
+        header: t('channels.columns.transaction'),
         accessorKey: 'transaction_id',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -236,7 +243,7 @@ export const PendingChannels = ({
         ),
       },
       {
-        header: 'Close Transaction',
+        header: t('channels.columns.closeTransaction'),
         accessorKey: 'close_transaction_id',
         enableSorting: true,
         cell: ({ row }: any) => (
@@ -251,10 +258,10 @@ export const PendingChannels = ({
 
         return {
           id: prefix,
-          header: `Asset (${name})`,
+          header: t('channels.groups.asset', { name }),
           columns: [
             {
-              header: 'Capacity',
+              header: t('channels.columns.capacity'),
               accessorKey: `${prefix}_capacity`,
               cell: ({ cell }: any) => {
                 const val = cell.getValue();
@@ -266,7 +273,7 @@ export const PendingChannels = ({
               },
             },
             {
-              header: 'Local',
+              header: t('channels.columns.local'),
               accessorKey: `${prefix}_local`,
               cell: ({ cell }: any) => {
                 const val = cell.getValue();
@@ -278,7 +285,7 @@ export const PendingChannels = ({
               },
             },
             {
-              header: 'Remote',
+              header: t('channels.columns.remote'),
               accessorKey: `${prefix}_remote`,
               cell: ({ cell }: any) => {
                 const val = cell.getValue();
@@ -290,7 +297,7 @@ export const PendingChannels = ({
               },
             },
             {
-              header: 'Balance',
+              header: t('channels.columns.balance'),
               accessorKey: `${prefix}_balanceBar`,
               cell: ({ cell }: any) =>
                 cell.renderValue() || (
@@ -311,7 +318,7 @@ export const PendingChannels = ({
   if (!data || !tableData.length) {
     return (
       <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
-        No pending channels found
+        {t('channels.pending.empty')}
       </div>
     );
   }
@@ -322,7 +329,7 @@ export const PendingChannels = ({
       data={tableData}
       withGlobalSort={true}
       withSorting={true}
-      filterPlaceholder="channels"
+      filterPlaceholder={t('channels.table.filterPlaceholder')}
     />
   );
 };

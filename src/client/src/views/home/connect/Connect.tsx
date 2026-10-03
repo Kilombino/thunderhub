@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { useGetNodeInfoQuery } from '../../../graphql/queries/__generated__/getNodeInfo.generated';
 import { getErrorContent } from '../../../utils/error';
 import { LoadingCard } from '../../../components/loading/LoadingCard';
+import { t } from '@/i18n';
 
 export const ConnectCard = () => {
   const [open, openSet] = useState(false);
@@ -16,7 +17,7 @@ export const ConnectCard = () => {
   });
 
   if (!data || loading) {
-    return <LoadingCard title={'Connect'} />;
+    return <LoadingCard title={t('home.connect.title')} />;
   }
 
   const { public_key, uris } = data.getNodeInfo || {};
@@ -40,7 +41,7 @@ export const ConnectCard = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Radio size={16} className="text-primary" />
-            <CardTitle>Connect</CardTitle>
+            <CardTitle>{t('home.connect.title')}</CardTitle>
           </div>
           <div className="flex gap-2">
             {onionAddress && (
@@ -50,7 +51,7 @@ export const ConnectCard = () => {
                 onClick={() =>
                   navigator.clipboard
                     .writeText(onionAddress)
-                    .then(() => toast.success('Onion Address Copied'))
+                    .then(() => toast.success(t('home.connect.onionCopied')))
                 }
               >
                 <Copy size={14} />
@@ -64,7 +65,7 @@ export const ConnectCard = () => {
                 onClick={() =>
                   navigator.clipboard
                     .writeText(normalAddress)
-                    .then(() => toast.success('Public Address Copied'))
+                    .then(() => toast.success(t('home.connect.publicCopied')))
                 }
               >
                 <Copy size={14} />
@@ -93,7 +94,7 @@ export const ConnectCard = () => {
             <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-0.5">
                 <span className="text-xs text-muted-foreground">
-                  Public Key
+                  {t('home.connect.publicKey')}
                 </span>
                 <span className="break-all text-sm font-mono">
                   {public_key}

@@ -9,6 +9,7 @@ import { Price } from '../../../../components/price/Price';
 import { usePayMutation } from '../../../../graphql/mutations/__generated__/pay.generated';
 import { Separator } from '@/components/ui/separator';
 import { decode } from 'light-bolt11-decoder';
+import { t } from '@/i18n';
 
 interface PayProps {
   predefinedRequest?: string;
@@ -54,13 +55,17 @@ const DecodeInvoice: FC<{ invoice: string | undefined | null }> = ({
     <div className="divide-y divide-border rounded border border-border text-xs">
       {description && (
         <div className="flex items-center justify-between px-3 py-2">
-          <span className="text-muted-foreground">Description</span>
+          <span className="text-muted-foreground">
+            {t('wallet.pay.description')}
+          </span>
           <span className="font-medium">{description}</span>
         </div>
       )}
       {tokens !== null && (
         <div className="flex items-center justify-between px-3 py-2">
-          <span className="text-muted-foreground">Amount</span>
+          <span className="text-muted-foreground">
+            {t('wallet.pay.amount')}
+          </span>
           <span className="font-medium">
             <Price amount={tokens} />
           </span>
@@ -85,7 +90,7 @@ export const Pay: FC<PayProps> = ({
   const [pay, { loading }] = usePayMutation({
     onCompleted: () => {
       if (payCallback) payCallback();
-      toast.success('Payment Sent');
+      toast.success(t('wallet.pay.paymentSent'));
       setRequest('');
       setConfirming(false);
     },
@@ -110,7 +115,7 @@ export const Pay: FC<PayProps> = ({
       {!predefinedRequest && (
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Invoice
+            {t('wallet.pay.invoice')}
           </label>
           <Input
             value={request}
@@ -130,7 +135,7 @@ export const Pay: FC<PayProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Max Fee{' '}
+            {t('wallet.pay.maxFee')}{' '}
             <span className="text-foreground">
               <Price amount={fee} />
             </span>
@@ -145,10 +150,10 @@ export const Pay: FC<PayProps> = ({
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Max Paths
+            {t('wallet.pay.maxPaths')}
           </label>
           <Input
-            placeholder="paths"
+            placeholder={t('wallet.pay.pathsPlaceholder')}
             type="number"
             value={paths && paths > 0 ? paths : ''}
             onChange={e => setPaths(Math.max(1, Number(e.target.value)))}
@@ -157,7 +162,7 @@ export const Pay: FC<PayProps> = ({
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Out Channels
+            {t('wallet.pay.outChannels')}
           </label>
           <ChannelSelect callback={p => setPeers(p.map(peer => peer.id))} />
         </div>
@@ -174,7 +179,7 @@ export const Pay: FC<PayProps> = ({
           onClick={() => setConfirming(true)}
           autoFocus
         >
-          Pay
+          {t('wallet.pay.pay')}
         </Button>
       ) : (
         <div className="flex gap-2">
@@ -183,7 +188,7 @@ export const Pay: FC<PayProps> = ({
             className="flex-1"
             onClick={() => setConfirming(false)}
           >
-            Cancel
+            {t('wallet.pay.cancel')}
           </Button>
           <Button
             className="flex-1"
@@ -193,7 +198,7 @@ export const Pay: FC<PayProps> = ({
             {loading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              'Confirm Pay'
+              t('wallet.pay.confirmPay')
             )}
           </Button>
         </div>

@@ -8,6 +8,7 @@ import { useAuthLnUrlMutation } from '../../../../graphql/mutations/__generated_
 import { getErrorContent } from '../../../../utils/error';
 import { decodeLnUrl } from '../../../../utils/url';
 import { LnUrlModal } from './lnUrlModal';
+import { t } from '@/i18n';
 
 export const LnUrlCard = () => {
   const [lnurl, setLnUrl] = useState('');
@@ -35,7 +36,7 @@ export const LnUrlCard = () => {
 
   const handleDecode = () => {
     if (!lnurl) {
-      toast.error('Please input a LNURL');
+      toast.error(t('home.lnurl.inputRequired'));
       return;
     }
     try {
@@ -54,7 +55,7 @@ export const LnUrlCard = () => {
         auth({ variables: { url: urlString } });
       }
     } catch {
-      toast.error('Problem decoding LNURL');
+      toast.error(t('home.lnurl.decodeError'));
     }
   };
 
@@ -77,7 +78,7 @@ export const LnUrlCard = () => {
             <Loader2 className="animate-spin" size={16} />
           ) : (
             <>
-              Confirm <ChevronRight size={18} />
+              {t('common.confirm')} <ChevronRight size={18} />
             </>
           )}
         </Button>

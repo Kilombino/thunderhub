@@ -7,6 +7,7 @@ import {
 import { getNodeLink } from '../../../../components/generic/helpers';
 import { Price } from '../../../../components/price/Price';
 import { numberWithCommas } from '../../../../utils/number';
+import { t } from '@/i18n';
 
 export type RouteType = {
   route: string;
@@ -36,7 +37,7 @@ type ChannelTableProps = {
 export const RouteTable: FC<RouteTableProps> = ({ forwardArray }) => {
   const columns = [
     {
-      header: 'In',
+      header: t('home.forwards.in'),
       accessorKey: 'incoming_alias',
       cell: ({ row }: any) => (
         <div style={{ whiteSpace: 'nowrap' }}>
@@ -48,7 +49,7 @@ export const RouteTable: FC<RouteTableProps> = ({ forwardArray }) => {
       ),
     },
     {
-      header: 'Out',
+      header: t('home.forwards.out'),
       accessorKey: 'outgoing_alias',
       cell: ({ row }: any) => (
         <div style={{ whiteSpace: 'nowrap' }}>
@@ -60,17 +61,17 @@ export const RouteTable: FC<RouteTableProps> = ({ forwardArray }) => {
       ),
     },
     {
-      header: 'Count',
+      header: t('home.forwards.count'),
       accessorKey: 'count',
       cell: ({ row }: any) => numberWithCommas(row.original.count),
     },
     {
-      header: 'Fee (sats)',
+      header: t('home.forwards.feeSats'),
       accessorKey: 'fee',
       cell: ({ row }: any) => <Price amount={row.original.fee} />,
     },
     {
-      header: 'Amount (sats)',
+      header: t('home.forwards.amountSats'),
       accessorKey: 'tokens',
       cell: ({ row }: any) => <Price amount={row.original.tokens} />,
     },
@@ -82,7 +83,7 @@ export const RouteTable: FC<RouteTableProps> = ({ forwardArray }) => {
 export const ChannelTable: FC<ChannelTableProps> = ({ forwardArray }) => {
   const columns = [
     {
-      header: 'Alias',
+      header: t('home.forwards.alias'),
       accessorKey: 'alias',
       cell: ({ row }: any) => (
         <div style={{ whiteSpace: 'nowrap' }}>
@@ -99,17 +100,17 @@ export const ChannelTable: FC<ChannelTableProps> = ({ forwardArray }) => {
       cell: ({ row }: any) => row.original.channel,
     },
     {
-      header: 'Count',
+      header: t('home.forwards.count'),
       accessorKey: 'count',
       cell: ({ row }: any) => numberWithCommas(row.original.count),
     },
     {
-      header: 'Fee (sats)',
+      header: t('home.forwards.feeSats'),
       accessorKey: 'fee',
       cell: ({ row }: any) => <Price amount={row.original.fee} />,
     },
     {
-      header: 'Amount (sats)',
+      header: t('home.forwards.amountSats'),
       accessorKey: 'tokens',
       cell: ({ row }: any) => <Price amount={row.original.tokens} />,
     },

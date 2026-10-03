@@ -15,6 +15,7 @@ import { Link } from '../../../../components/link/Link';
 import { getErrorContent } from '../../../../utils/error';
 import toast from 'react-hot-toast';
 import { Timer } from '../../account/createInvoice/Timer';
+import { t } from '@/i18n';
 
 type LnWithdrawProps = {
   request: WithdrawRequest;
@@ -57,9 +58,7 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
 
   if (!callback) {
     return (
-      <div className="w-full text-center">
-        Missing information from LN Service
-      </div>
+      <div className="w-full text-center">{t('home.lnurl.missingInfo')}</div>
     );
   }
 
@@ -70,10 +69,10 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
       return (
         <div className="m-4 flex justify-center items-center">
           <p className="text-sm text-muted-foreground">
-            Failed to check status of the withdrawal. Please check the status in
-            the
-            <Link to={'/transactions'}> Transactions </Link>
-            view
+            {t('home.lnurl.withdrawStatusError')}{' '}
+            <Link to={'/transactions'}>
+              {t('wallet.createInvoice.transactions')}
+            </Link>
           </p>
         </div>
       );
@@ -82,7 +81,7 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
       return (
         <div className="m-4 flex justify-center items-center">
           <CheckCircle stroke={chartColors.green} size={32} />
-          <Title>Paid</Title>
+          <Title>{t('home.lnurl.paid')}</Title>
         </div>
       );
     }
@@ -91,9 +90,11 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
       return (
         <div className="m-4 flex justify-center items-center">
           <Title>
-            Check the status of this invoice in the
-            <Link to={'/transactions'}> Transactions </Link>
-            view
+            {t('wallet.createInvoice.checkStatusBefore')}{' '}
+            <Link to={'/transactions'}>
+              {t('wallet.createInvoice.transactions')}
+            </Link>{' '}
+            {t('wallet.createInvoice.checkStatusAfter')}
           </Title>
         </div>
       );
@@ -108,13 +109,13 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
     }
     return (
       <>
-        {isSame && renderLine('Withdraw Amount', max)}
-        {!isSame && renderLine('Max Withdraw Amount', max)}
-        {!isSame && renderLine('Min Withdraw Amount', min)}
+        {isSame && renderLine(t('home.lnurl.withdrawAmount'), max)}
+        {!isSame && renderLine(t('home.lnurl.maxWithdrawAmount'), max)}
+        {!isSame && renderLine(t('home.lnurl.minWithdrawAmount'), min)}
         <Separator />
         <div className="flex items-center w-full my-2 flex-col md:flex-row justify-between">
           <div className="flex text-sm whitespace-nowrap flex-wrap md:my-0 my-2">
-            <span>Description</span>
+            <span>{t('wallet.createInvoice.description')}</span>
           </div>
           <Input
             className="ml-0 md:ml-2"
@@ -126,7 +127,7 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
         {!isSame && (
           <div className="flex items-center w-full my-2 flex-col md:flex-row justify-between">
             <div className="flex text-sm whitespace-nowrap flex-wrap md:my-0 my-2">
-              <span>Amount</span>
+              <span>{t('common.amount')}</span>
               <span className="text-muted-foreground mx-2 ml-4">
                 <Price amount={amount} />
               </span>
@@ -147,9 +148,9 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
           style={{ margin: '16px 0 0' }}
           onClick={() => {
             if (min && amount < min) {
-              toast.error('Amount is below the minimum');
+              toast.error(t('home.lnurl.belowMin'));
             } else if (max && amount > max) {
-              toast.error('Amount is above the maximum');
+              toast.error(t('home.lnurl.aboveMax'));
             } else {
               withdraw({
                 variables: { callback, amount, k1: k1 || '', description },
@@ -160,7 +161,7 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
           {loading || statusLoading ? (
             <Loader2 className="animate-spin" size={16} />
           ) : (
-            <>{`Withdraw (${amount} sats)`}</>
+            <>{t('home.lnurl.withdrawButton', { amount })}</>
           )}
         </Button>
       </>
@@ -169,9 +170,11 @@ export const LnWithdraw: FC<LnWithdrawProps> = ({ request }) => {
 
   return (
     <>
-      <Title>Withdraw</Title>
+      <Title>{t('home.lnurl.withdraw')}</Title>
       <Separator />
-      <div className="w-full text-center">{`Withdraw from ${callbackUrl.host}`}</div>
+      <div className="w-full text-center">
+        {t('home.lnurl.withdrawFrom', { host: callbackUrl.host })}
+      </div>
       <Separator />
       {renderContent()}
     </>

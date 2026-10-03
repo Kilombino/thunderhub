@@ -30,6 +30,7 @@ import { BalancesContent } from '../sidebar/BalancesContent';
 import { NodeSwitcher } from '../../components/nodeManager/NodeSwitcher';
 import { NodeInfoBar } from './NodeInfoBar';
 import { PreferencesPopover } from './PreferencesPopover';
+import { t } from '@/i18n';
 
 const SSO = '/sso';
 const MAIN = '/login';
@@ -112,7 +113,7 @@ export const Header = () => {
           className="text-muted-foreground hover:text-foreground text-xs h-7 px-2"
         >
           <ArrowDownToLine size={12} className="text-green-500" />
-          Receive
+          {t('nav.header.receive')}
         </Button>
         <Button
           onClick={openWithdraw}
@@ -121,7 +122,7 @@ export const Header = () => {
           className="text-muted-foreground hover:text-foreground text-xs h-7 px-2"
         >
           <ArrowUpFromLine size={12} className="text-orange-500" />
-          Send
+          {t('nav.header.send')}
         </Button>
 
         <div className="w-px h-4 bg-border mx-0.5" />

@@ -33,6 +33,7 @@ import { Timer } from '../../account/createInvoice/Timer';
 import { useGetNodeCapabilitiesQuery } from '../../../../graphql/queries/__generated__/getNodeCapabilities.generated';
 import { CURRENCY_PROVIDERS, CurrencyProvider } from './currencyProviders';
 import { TapDepositStep } from './TapDepositStep';
+import { t } from '@/i18n';
 
 type Network = 'lightning' | 'onchain' | 'fiat-provider' | 'taproot-assets';
 
@@ -60,8 +61,10 @@ export const DepositModal = ({
             <ArrowDownToLine size={16} className="text-green-500" />
           </div>
           <div>
-            <DialogTitle>Receive</DialogTitle>
-            <DialogDescription>Receive to your node</DialogDescription>
+            <DialogTitle>{t('wallet.actions.receive')}</DialogTitle>
+            <DialogDescription>
+              {t('wallet.exchange.receiveDescription')}
+            </DialogDescription>
           </div>
         </div>
       </DialogHeader>
@@ -121,7 +124,7 @@ const NetworkSelect = ({
   return (
     <div className="flex flex-col gap-3">
       <span className="text-xs font-medium text-muted-foreground">
-        Select a method
+        {t('wallet.exchange.selectMethod')}
       </span>
       <div className="grid gap-2">
         <button
@@ -135,10 +138,10 @@ const NetworkSelect = ({
             <div className="text-sm font-medium">Lightning</div>
             <div className="flex flex-wrap gap-1.5 mt-0.5">
               <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                Instant
+                {t('wallet.exchange.instant')}
               </span>
               <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                No minimum
+                {t('wallet.exchange.noMinimum')}
               </span>
             </div>
           </div>
@@ -151,10 +154,12 @@ const NetworkSelect = ({
             <LinkIcon size={16} className="text-blue-500" />
           </div>
           <div className="min-w-0">
-            <div className="text-sm font-medium">Onchain</div>
+            <div className="text-sm font-medium">
+              {t('wallet.exchange.onchain')}
+            </div>
             <div className="flex flex-wrap gap-1.5 mt-0.5">
               <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                ~10 minutes
+                {t('wallet.exchange.tenMinutes')}
               </span>
             </div>
           </div>
@@ -171,10 +176,10 @@ const NetworkSelect = ({
               <div className="text-sm font-medium">Taproot Assets</div>
               <div className="flex flex-wrap gap-1.5 mt-0.5">
                 <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                  ~10 minutes
+                  {t('wallet.exchange.tenMinutes')}
                 </span>
                 <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                  Multi-Asset
+                  {t('wallet.exchange.multiAsset')}
                 </span>
               </div>
             </div>
@@ -191,14 +196,17 @@ const NetworkSelect = ({
             </div>
             <div className="min-w-0">
               <div className="text-sm font-medium">
-                {p.currency} via {p.name}
+                {t('wallet.exchange.via', {
+                  currency: p.currency,
+                  name: p.name,
+                })}
               </div>
               <div className="flex flex-wrap gap-1.5 mt-0.5">
                 <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                  Convert {p.currency} to BTC
+                  {t('wallet.exchange.convert', { currency: p.currency })}
                 </span>
                 <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                  Onchain
+                  {t('wallet.exchange.onchain')}
                 </span>
               </div>
             </div>
@@ -217,7 +225,7 @@ const BackButton = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
   >
     <ChevronLeft size={14} />
-    Back
+    {t('common.back')}
   </Button>
 );
 
@@ -247,7 +255,9 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10 text-green-500">
           <Zap size={20} />
         </div>
-        <span className="text-sm font-medium">Invoice Paid</span>
+        <span className="text-sm font-medium">
+          {t('wallet.createInvoice.paid')}
+        </span>
       </div>
     );
   }
@@ -258,7 +268,7 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
         <BackButton onClick={onBack} />
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-muted-foreground">
-            Invoice Created
+            {t('wallet.createInvoice.created')}
           </span>
           <Timer initialMinute={1} initialSeconds={30} />
         </div>
@@ -276,11 +286,11 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
             onClick={() =>
               navigator.clipboard
                 .writeText(request)
-                .then(() => toast.success('Copied to clipboard'))
+                .then(() => toast.success(t('wallet.createInvoice.copied')))
             }
           >
             <Copy size={14} />
-            Copy Invoice
+            {t('wallet.createInvoice.copyInvoice')}
           </Button>
         </div>
       </div>
@@ -299,7 +309,7 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
       <BackButton onClick={onBack} />
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Amount{' '}
+          {t('wallet.createInvoice.amount')}{' '}
           <span className="text-foreground">
             <Price amount={amount} />
           </span>
@@ -314,10 +324,10 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
       </div>
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Description
+          {t('wallet.createInvoice.description')}
         </label>
         <Input
-          placeholder="Optional description"
+          placeholder={t('wallet.createInvoice.descriptionPlaceholder')}
           value={description}
           onChange={e => setDescription(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleCreate()}
@@ -326,7 +336,7 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
       <Separator />
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Expires In{' '}
+          {t('wallet.createInvoice.expiresIn')}{' '}
           {seconds > 0 && (
             <span className="text-foreground/60">
               ({formatSeconds(seconds)})
@@ -334,7 +344,7 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
           )}
         </label>
         <Input
-          placeholder="seconds (0 = default)"
+          placeholder={t('wallet.createInvoice.secondsPlaceholder')}
           type="number"
           value={seconds && seconds > 0 ? seconds : ''}
           onChange={e => setSeconds(Number(e.target.value))}
@@ -343,7 +353,7 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
       </div>
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">
-          Include Private Channels
+          {t('wallet.createInvoice.includePrivate')}
         </span>
         <Switch checked={includePrivate} onCheckedChange={setIncludePrivate} />
       </div>
@@ -357,7 +367,7 @@ const LightningInvoiceStep = ({ onBack }: { onBack: () => void }) => {
         {loading ? (
           <Loader2 className="animate-spin" size={16} />
         ) : (
-          'Create Invoice'
+          t('wallet.createInvoice.create')
         )}
       </Button>
     </div>
@@ -383,7 +393,7 @@ const OnchainAddressStep = ({ onBack }: { onBack: () => void }) => {
           {loading ? (
             <Loader2 className="animate-spin" size={16} />
           ) : (
-            'Generate BTC Address'
+            t('wallet.exchange.generateAddress')
           )}
         </Button>
       ) : (
@@ -400,11 +410,13 @@ const OnchainAddressStep = ({ onBack }: { onBack: () => void }) => {
             onClick={() =>
               navigator.clipboard
                 .writeText(address)
-                .then(() => toast.success('Address Copied'))
+                .then(() =>
+                  toast.success(t('wallet.receiveOnChain.addressCopied'))
+                )
             }
           >
             <Copy size={14} />
-            Copy Address
+            {t('wallet.exchange.copyAddress')}
           </Button>
         </div>
       )}
@@ -431,15 +443,13 @@ const FiatDepositStep = ({
       <BackButton onClick={onBack} />
       <div className="w-full rounded border border-border bg-muted/30 p-3">
         <p className="mb-2 text-xs font-medium">
-          How to deposit with {provider.name}:
+          {t('wallet.exchange.howToDeposit', { name: provider.name })}
         </p>
         <ol className="space-y-1 text-xs text-muted-foreground">
-          <li>1. Generate a BTC address below</li>
-          <li>2. Copy the address</li>
-          <li>
-            3. Open {provider.name} and follow the &quot;Connect&quot; flow
-          </li>
-          <li>4. BTC arrives on your node</li>
+          <li>{t('wallet.exchange.step1')}</li>
+          <li>{t('wallet.exchange.step2')}</li>
+          <li>{t('wallet.exchange.step3', { name: provider.name })}</li>
+          <li>{t('wallet.exchange.step4')}</li>
         </ol>
       </div>
       {!address ? (
@@ -450,7 +460,7 @@ const FiatDepositStep = ({
           {loading ? (
             <Loader2 className="animate-spin" size={16} />
           ) : (
-            'Generate BTC Address'
+            t('wallet.exchange.generateAddress')
           )}
         </Button>
       ) : (
@@ -467,19 +477,21 @@ const FiatDepositStep = ({
             onClick={() =>
               navigator.clipboard
                 .writeText(address)
-                .then(() => toast.success('Address Copied'))
+                .then(() =>
+                  toast.success(t('wallet.receiveOnChain.addressCopied'))
+                )
             }
           >
             <Copy size={14} />
-            Copy Address
+            {t('wallet.exchange.copyAddress')}
           </Button>
         </div>
       )}
       <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-        <span>Don&apos;t have {provider.name}?</span>
+        <span>{t('wallet.exchange.dontHave', { name: provider.name })}</span>
         <Link href={provider.referralUrl} newTab>
           <span className="inline-flex items-center gap-0.5 text-primary hover:underline">
-            Sign up <ExternalLink size={10} />
+            {t('wallet.exchange.signUp')} <ExternalLink size={10} />
           </span>
         </Link>
       </div>

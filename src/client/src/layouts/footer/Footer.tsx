@@ -3,6 +3,7 @@ import { Link } from '../../components/link/Link';
 import { Emoji } from '../../components/emoji/Emoji';
 
 import { useLocation } from 'react-router-dom';
+import { t } from '@/i18n';
 
 export const Footer = () => {
   const { pathname } = useLocation();
@@ -23,7 +24,7 @@ export const Footer = () => {
                   <div className="text-xs ml-2">{config.npmVersion}</div>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  Open-source Lightning Node Manager.
+                  {t('nav.footer.tagline')}
                 </div>
               </div>
               <div className="flex flex-col my-4 justify-center items-center md:my-0 md:justify-start md:items-end">
@@ -42,7 +43,8 @@ export const Footer = () => {
               </div>
             </div>
             <div className="text-sm text-muted-foreground w-full text-center mt-4">
-              Made with <Emoji symbol={'🧡 '} label={'heart'} /> and{' '}
+              {t('nav.footer.madeWith')}{' '}
+              <Emoji symbol={'🧡 '} label={'heart'} /> {t('nav.footer.and')}{' '}
               <Emoji symbol={'⚡'} label={'lightning'} />.
             </div>
           </div>

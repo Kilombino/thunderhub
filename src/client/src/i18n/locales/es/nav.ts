@@ -1,3 +1,85 @@
 import type { PartialMessages } from '../../index';
 
-export const nav: PartialMessages['nav'] = {};
+export const nav: PartialMessages['nav'] = {
+  navigation: 'Navegación',
+  menu: 'Menú',
+  beta: 'Beta',
+  betaTooltip:
+    'Esta función está en beta. Su funcionamiento puede cambiar mientras seguimos probándola y mejorándola.',
+  collapse: 'Contraer',
+  expand: 'Expandir',
+  logout: 'Cerrar sesión',
+  items: {
+    home: 'Inicio',
+    dashboard: 'Panel',
+    peers: 'Pares',
+    channels: 'Canales',
+    transactions: 'Transacciones',
+    forwards: 'Reenvíos',
+    chain: 'On-chain',
+    tools: 'Herramientas',
+    services: 'Servicios',
+    magma: 'Magma',
+    assets: 'Activos',
+    trading: 'Trading',
+    setup: 'Configurar',
+    swap: 'Swap',
+    settings: 'Ajustes',
+  },
+  sections: {
+    amboss: 'Amboss',
+    taprootAssets: 'Taproot Assets',
+    tools: 'Herramientas',
+  },
+  node: {
+    synced: 'Sincronizado',
+    syncing: 'Sincronizando',
+    syncingDots: 'Sincronizando...',
+    syncingPercent: 'Sincronizando {percent}%',
+  },
+  header: {
+    receive: 'Recibir',
+    send: 'Enviar',
+  },
+  bar: {
+    balance: 'Saldo',
+    lightning: 'Lightning',
+    onchain: 'On-chain',
+    pending: 'pendiente',
+    channels: 'Canales',
+    pendingCount: '{count} pendientes',
+    closedCount: '{count} cerrados',
+    peers: 'Pares',
+    block: 'Bloque',
+  },
+  preferences: {
+    currency: 'Moneda',
+    theme: 'Tema',
+    light: 'Claro',
+    dark: 'Oscuro',
+    auto: 'Auto',
+    layout: 'Diseño',
+    left: 'Izquierda',
+    right: 'Derecha',
+  },
+  footer: {
+    tagline: 'Gestor de nodos Lightning de código abierto.',
+    madeWith: 'Hecho con',
+    and: 'y',
+  },
+  balances: {
+    title: 'Saldos',
+    bitcoin: 'Bitcoin',
+    available: 'Disponible',
+    notAvailable: 'No disponible',
+    pending: 'Pendiente',
+    forceClosures: 'Cierres forzados',
+    liquidity: 'Liquidez',
+    openChannel: 'Abrir canal',
+    openChannelDescription:
+      'Abre un nuevo canal de pago con un par de la red Lightning.',
+    buyInbound: 'Comprar liquidez entrante',
+    buyInboundDescription:
+      'Consigue capacidad entrante para empezar a recibir pagos al instante.',
+  },
+};

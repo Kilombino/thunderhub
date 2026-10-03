@@ -9,6 +9,7 @@ import { usePayLnUrlMutation } from '../../../../graphql/mutations/__generated__
 import { Link } from '../../../../components/link/Link';
 import toast from 'react-hot-toast';
 import { getErrorContent } from '../../../../utils/error';
+import { t } from '@/i18n';
 
 type LnPayProps = {
   request: PayRequest;
@@ -40,7 +41,7 @@ export const LnPay: FC<LnPayProps> = ({
   if (!callback) {
     return (
       <div className="py-4 text-center text-sm text-muted-foreground">
-        Missing information from LN Service
+        {t('home.lnurl.missingInfo')}
       </div>
     );
   }
@@ -53,7 +54,9 @@ export const LnPay: FC<LnPayProps> = ({
     return (
       <div className="flex flex-col items-center gap-3 py-2">
         <CheckCircle size={32} className="text-green-500" />
-        <span className="text-sm font-medium">Payment Successful</span>
+        <span className="text-sm font-medium">
+          {t('home.lnurl.paymentSuccessful')}
+        </span>
 
         {tag === 'url' && (
           <>
@@ -81,7 +84,9 @@ export const LnPay: FC<LnPayProps> = ({
             )}
             {ciphertext && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Ciphertext</span>
+                <span className="text-muted-foreground">
+                  {t('home.lnurl.ciphertext')}
+                </span>
                 <span className="break-all font-mono">{ciphertext}</span>
               </div>
             )}
@@ -101,14 +106,14 @@ export const LnPay: FC<LnPayProps> = ({
     <div className="flex flex-col gap-3">
       {!hideTitle && (
         <span className="text-sm text-center uppercase font-semibold">
-          {`Pay to ${callbackUrl.host}`}
+          {t('home.lnurl.payTo', { host: callbackUrl.host })}
         </span>
       )}
 
       {/* Amount info */}
       {isSame ? (
         <div className="flex items-center justify-between rounded border border-border px-3 py-2 text-xs">
-          <span className="text-muted-foreground">Amount</span>
+          <span className="text-muted-foreground">{t('common.amount')}</span>
           <span className="font-mono font-medium">
             {max.toLocaleString()} sats
           </span>
@@ -116,11 +121,11 @@ export const LnPay: FC<LnPayProps> = ({
       ) : (
         <div className="grid grid-cols-2 gap-2">
           <Badge variant="secondary" className="font-normal w-full">
-            Min:{' '}
+            {t('home.lnurl.min')}{' '}
             <span className="font-mono ml-1">{min.toLocaleString()} sats</span>
           </Badge>
           <Badge variant="secondary" className="font-normal w-full">
-            Max:{' '}
+            {t('home.lnurl.max')}{' '}
             <span className="font-mono ml-1">{max.toLocaleString()} sats</span>
           </Badge>
         </div>
@@ -130,7 +135,7 @@ export const LnPay: FC<LnPayProps> = ({
       {!isSame && (
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Amount{' '}
+            {t('common.amount')}{' '}
             <span className="text-foreground">
               <Price amount={amount} />
             </span>
@@ -148,13 +153,13 @@ export const LnPay: FC<LnPayProps> = ({
       {!!commentAllowed && (
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Comment{' '}
+            {t('home.lnurl.comment')}{' '}
             <span className="text-foreground/60">
-              (max {commentAllowed} chars)
+              {t('home.lnurl.maxChars', { count: commentAllowed })}
             </span>
           </label>
           <Input
-            placeholder="Optional message"
+            placeholder={t('home.lnurl.optionalMessage')}
             value={comment}
             onChange={e =>
               setComment(e.target.value.substring(0, commentAllowed))
@@ -171,7 +176,7 @@ export const LnPay: FC<LnPayProps> = ({
             disabled={loading}
             onClick={() => setConfirming(false)}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             variant="default"
@@ -179,9 +184,9 @@ export const LnPay: FC<LnPayProps> = ({
             disabled={loading}
             onClick={() => {
               if (min && amount < min) {
-                toast.error('Amount is below the minimum');
+                toast.error(t('home.lnurl.belowMin'));
               } else if (max && amount > max) {
-                toast.error('Amount is above the maximum');
+                toast.error(t('home.lnurl.aboveMax'));
               } else {
                 payLnUrl({ variables: { callback, amount, comment } });
               }
@@ -190,7 +195,7 @@ export const LnPay: FC<LnPayProps> = ({
             {loading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              `Confirm Pay`
+              t('wallet.pay.confirmPay')
             )}
           </Button>
         </div>
@@ -201,7 +206,8 @@ export const LnPay: FC<LnPayProps> = ({
           className="mt-1 w-full"
           onClick={() => setConfirming(true)}
         >
-          Pay {amount.toLocaleString()} sats <ChevronRight size={18} />
+          {t('home.lnurl.payAmount', { amount: amount.toLocaleString() })}{' '}
+          <ChevronRight size={18} />
         </Button>
       )}
     </div>

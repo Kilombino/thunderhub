@@ -9,6 +9,7 @@ import { getErrorContent } from '../../../../utils/error';
 import { LnChannel } from './LnChannel';
 import { LnPay } from './LnPay';
 import { LnWithdraw } from './LnWithdraw';
+import { t } from '@/i18n';
 
 type lnUrlProps = {
   url: string;
@@ -50,15 +51,18 @@ export const LnUrlModal: FC<lnUrlProps> = ({ url, type }) => {
 
   return (
     <>
-      <Title>Login</Title>
+      <Title>{t('home.lnurl.login')}</Title>
       <Separator />
-      <div className="w-full text-center">{`Login to ${fullUrl.host}`}</div>;
+      <div className="w-full text-center">
+        {t('home.lnurl.loginTo', { host: fullUrl.host })}
+      </div>
+      ;
       <Button
         variant="outline"
         className="w-full"
         style={{ margin: '32px 0 0' }}
       >
-        Confirm
+        {t('common.confirm')}
       </Button>
     </>
   );

@@ -6,6 +6,7 @@ import { ForwardChannelsReport, BreakdownType } from './ForwardChannelReport';
 import { ArrowDown, ArrowUp, GitCommit } from 'lucide-react';
 import { ForwardResume } from './ForwardResume';
 import { ForwardsGraph } from './ForwardsGraph';
+import { t } from '@/i18n';
 
 export const CardContentLayout = ({
   children,
@@ -28,10 +29,26 @@ const dayOptions = [
   { label: '6M', value: 180 },
 ];
 
+// Getters so labels are translated when rendered, not at import time.
 const typeOptions = [
-  { label: 'Count', value: 'count' },
-  { label: 'Amount', value: 'tokens' },
-  { label: 'Fees', value: 'fee' },
+  {
+    get label() {
+      return t('home.forwards.count');
+    },
+    value: 'count',
+  },
+  {
+    get label() {
+      return t('common.amount');
+    },
+    value: 'tokens',
+  },
+  {
+    get label() {
+      return t('home.forwards.fees');
+    },
+    value: 'fee',
+  },
 ];
 
 export { dayOptions as options, typeOptions };
@@ -47,7 +64,7 @@ export const ForwardBox = () => {
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>Forwards</CardTitle>
+            <CardTitle>{t('home.forwards.title')}</CardTitle>
             <div className="flex gap-1.5">
               <ToggleGroup
                 type="single"
@@ -73,7 +90,7 @@ export const ForwardBox = () => {
                 type="single"
                 value={type.value}
                 onValueChange={v => {
-                  const opt = typeOptions.find(t => t.value === v);
+                  const opt = typeOptions.find(o => o.value === v);
                   if (opt) setType(opt);
                 }}
                 variant="outline"
@@ -106,7 +123,7 @@ export const ForwardBox = () => {
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>Forwards Breakdown</CardTitle>
+            <CardTitle>{t('home.forwards.breakdown')}</CardTitle>
             <ToggleGroup
               type="single"
               value={breakdownType}
@@ -118,15 +135,15 @@ export const ForwardBox = () => {
             >
               <ToggleGroupItem value="incoming" className="text-xs px-2">
                 <ArrowDown className="size-3 mr-1" />
-                Incoming
+                {t('home.forwards.incoming')}
               </ToggleGroupItem>
               <ToggleGroupItem value="route" className="text-xs px-2">
                 <GitCommit className="size-3 mr-1" />
-                Routes
+                {t('home.forwards.routes')}
               </ToggleGroupItem>
               <ToggleGroupItem value="outgoing" className="text-xs px-2">
                 <ArrowUp className="size-3 mr-1" />
-                Outgoing
+                {t('home.forwards.outgoing')}
               </ToggleGroupItem>
             </ToggleGroup>
           </div>

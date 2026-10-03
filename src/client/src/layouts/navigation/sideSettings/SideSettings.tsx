@@ -9,6 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '../../../components/ui/tooltip';
+import { t } from '@/i18n';
 
 export const SideSettings = () => {
   const { sidebar } = useConfigState();
@@ -31,7 +32,7 @@ export const SideSettings = () => {
       {sidebar ? (
         <>
           <ChevronLeft size={15} className="shrink-0" />
-          <span>Collapse</span>
+          <span>{t('nav.collapse')}</span>
         </>
       ) : (
         <ChevronRight size={15} className="shrink-0" />
@@ -45,7 +46,7 @@ export const SideSettings = () => {
         <Tooltip>
           <TooltipTrigger asChild>{button}</TooltipTrigger>
           <TooltipContent side="right" className="text-xs">
-            Expand
+            {t('nav.expand')}
           </TooltipContent>
         </Tooltip>
       </div>

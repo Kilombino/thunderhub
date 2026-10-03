@@ -2,23 +2,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronRight } from 'lucide-react';
 import { useNodeSlug } from '@/hooks/useNodeSlug';
+import { t } from '@/i18n';
 
 export const DashboardSettings = () => {
   const { navigateToNode } = useNodeSlug();
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Dashboard</h2>
+      <h2 className="text-lg font-semibold">{t('settings.dashboard.title')}</h2>
       <Card>
         <CardContent>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Widgets</span>
+            <span className="text-sm font-medium">
+              {t('settings.dashboard.widgets')}
+            </span>
             <Button
               variant="outline"
               size="sm"
               onClick={() => navigateToNode('/settings/dashboard')}
             >
-              Customize <ChevronRight size={16} />
+              {t('settings.dashboard.customize')} <ChevronRight size={16} />
             </Button>
           </div>
         </CardContent>

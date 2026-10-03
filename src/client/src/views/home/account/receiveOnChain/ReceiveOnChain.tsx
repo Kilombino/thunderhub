@@ -6,14 +6,16 @@ import { Copy, ChevronRight, Loader2 } from 'lucide-react';
 import { getErrorContent } from '../../../../utils/error';
 import { Button } from '@/components/ui/button';
 import { SmallSelectWithValue } from '../../../../components/select';
+import { t } from '@/i18n';
 
-const options = [
-  { label: 'p2tr (Default)', value: 'p2tr' },
-  { label: 'p2wpkh (Segwit)', value: 'p2wpkh' },
-  { label: 'np2wpkh (Nested Segwit)', value: 'np2wpkh' },
+const getOptions = () => [
+  { label: t('wallet.receiveOnChain.typeP2tr'), value: 'p2tr' },
+  { label: t('wallet.receiveOnChain.typeP2wpkh'), value: 'p2wpkh' },
+  { label: t('wallet.receiveOnChain.typeNp2wpkh'), value: 'np2wpkh' },
 ];
 
 export const ReceiveOnChainCard = () => {
+  const options = getOptions();
   const [type, setType] = useState(options[0]);
   const [received, setReceived] = useState(false);
 
@@ -39,18 +41,22 @@ export const ReceiveOnChainCard = () => {
               onClick={() =>
                 navigator.clipboard
                   .writeText(data.createAddress)
-                  .then(() => toast.success('Address Copied'))
+                  .then(() =>
+                    toast.success(t('wallet.receiveOnChain.addressCopied'))
+                  )
               }
             >
               <Copy size={18} />
-              Copy
+              {t('wallet.receiveOnChain.copy')}
             </Button>
           </div>
         </div>
       ) : (
         <>
           <div className="flex flex-col justify-between items-center w-full md:flex-row">
-            <h4 className="text-sm font-medium my-1">Address Type:</h4>
+            <h4 className="text-sm font-medium my-1">
+              {t('wallet.receiveOnChain.addressType')}
+            </h4>
 
             <div className="flex gap-2 flex-col md:flex-row">
               <SmallSelectWithValue
@@ -71,7 +77,8 @@ export const ReceiveOnChainCard = () => {
                   <Loader2 className="animate-spin" size={16} />
                 ) : (
                   <>
-                    Create Address <ChevronRight size={18} />
+                    {t('wallet.receiveOnChain.createAddress')}{' '}
+                    <ChevronRight size={18} />
                   </>
                 )}
               </Button>

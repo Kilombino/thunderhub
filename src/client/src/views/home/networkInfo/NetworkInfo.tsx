@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { LoadingCard } from '../../../components/loading/LoadingCard';
 import { Price } from '../../../components/price/Price';
+import { t } from '@/i18n';
 
 const StatItem = ({
   label,
@@ -39,7 +40,7 @@ export const NetworkInfo = () => {
   }
 
   if (loading || !data || !data.getNetworkInfo) {
-    return <LoadingCard title={'Network Info'} />;
+    return <LoadingCard title={t('home.networkInfo.title')} />;
   }
 
   const {
@@ -55,21 +56,25 @@ export const NetworkInfo = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Network Info</h2>
+      <h2 className="text-lg font-semibold">{t('home.networkInfo.title')}</h2>
       <Card>
         <CardContent className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center gap-2">
             <SectionTitle
               icon={<Globe size={16} className="text-blue-500" />}
-              label="Global"
+              label={t('home.networkInfo.global')}
             />
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 flex-1">
-              <StatItem label="Capacity">
+              <StatItem label={t('home.networkInfo.capacity')}>
                 <Price amount={totalCapacity} breakNumber={true} />
               </StatItem>
-              <StatItem label="Channels">{channelCount}</StatItem>
-              <StatItem label="Nodes">{nodeCount}</StatItem>
-              <StatItem label="Zombie Nodes">
+              <StatItem label={t('home.networkInfo.channels')}>
+                {channelCount}
+              </StatItem>
+              <StatItem label={t('home.networkInfo.nodes')}>
+                {nodeCount}
+              </StatItem>
+              <StatItem label={t('home.networkInfo.zombieNodes')}>
                 {notRecentlyUpdatedPolicyCount}
               </StatItem>
             </div>
@@ -78,19 +83,19 @@ export const NetworkInfo = () => {
           <div className="flex flex-col md:flex-row md:items-center gap-2">
             <SectionTitle
               icon={<Cpu size={16} className="text-blue-500" />}
-              label="Channel Size"
+              label={t('home.networkInfo.channelSize')}
             />
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 flex-1">
-              <StatItem label="Max">
+              <StatItem label={t('home.networkInfo.max')}>
                 <Price amount={maxChannelSize} breakNumber={true} />
               </StatItem>
-              <StatItem label="Average">
+              <StatItem label={t('home.networkInfo.average')}>
                 <Price amount={averageChannelSize} breakNumber={true} />
               </StatItem>
-              <StatItem label="Median">
+              <StatItem label={t('home.networkInfo.median')}>
                 <Price amount={medianChannelSize} breakNumber={true} />
               </StatItem>
-              <StatItem label="Min">
+              <StatItem label={t('home.networkInfo.min')}>
                 <Price amount={minChannelSize} breakNumber={true} />
               </StatItem>
             </div>

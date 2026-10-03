@@ -22,6 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Login } from './Login';
 import { DbLogin } from './DbLogin';
+import { t } from '@/i18n';
 
 type ServerAccount = GetServerAccountsQuery['public']['get_server_accounts'][0];
 type SessionInfo = GetSessionInfoQuery['public']['get_session_info'];
@@ -33,10 +34,10 @@ const RenderIntro = () => {
       <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="mb-4 text-center">
           <h2 className="text-lg font-semibold text-foreground">
-            Welcome to ThunderHub
+            {t('login.intro.welcome')}
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            To get started, create an account on your server.
+            {t('login.intro.getStarted')}
           </p>
         </div>
 
@@ -46,7 +47,7 @@ const RenderIntro = () => {
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-1.5 text-sm text-primary hover:underline"
         >
-          View setup instructions
+          {t('login.intro.viewInstructions')}
           <ExternalLink size={12} />
         </a>
 
@@ -55,16 +56,13 @@ const RenderIntro = () => {
             className="flex w-full cursor-pointer items-center justify-between bg-transparent p-0 text-xs text-muted-foreground"
             onClick={() => setDetailsOpen(p => !p)}
           >
-            Already created accounts?
+            {t('login.intro.alreadyCreated')}
             {detailsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
           {detailsOpen && (
             <div className="mt-3 flex flex-col gap-2 text-xs text-muted-foreground">
-              <p>
-                Your accounts might be missing required information. Check your
-                server logs for details.
-              </p>
-              <p>On startup, the server logs which accounts are available.</p>
+              <p>{t('login.intro.missingInfo')}</p>
+              <p>{t('login.intro.serverLogs')}</p>
             </div>
           )}
         </div>
@@ -87,10 +85,10 @@ const ContinueCard = ({
   const label =
     session.name ??
     (session.type === 'db'
-      ? 'Account Login'
+      ? t('login.accountLogin')
       : session.type === 'sso'
-        ? 'SSO Account'
-        : 'your account');
+        ? t('login.ssoAccount')
+        : t('login.continue.yourAccount'));
 
   return (
     <div className="mx-auto w-full max-w-md px-4">
@@ -100,10 +98,10 @@ const ContinueCard = ({
             <UserCircle2 size={28} className="text-primary" />
           </div>
           <h2 className="text-lg font-semibold text-foreground">
-            You&apos;re already signed in
+            {t('login.continue.alreadySignedIn')}
           </h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Continue as{' '}
+            {t('login.continue.continueAs')}{' '}
             <span className="font-medium text-foreground">{label}</span>
           </p>
         </div>
@@ -113,7 +111,7 @@ const ContinueCard = ({
             {loading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              'Continue'
+              t('login.continue.continue')
             )}
           </Button>
           <Button
@@ -122,7 +120,7 @@ const ContinueCard = ({
             disabled={loading}
             className="w-full"
           >
-            Log in with another account
+            {t('login.continue.switchAccount')}
           </Button>
         </div>
       </div>
@@ -147,7 +145,7 @@ export const Accounts = () => {
   const [getCanConnect, { data, loading }] = useGetNodeInfoLazyQuery({
     fetchPolicy: 'network-only',
     onError: () => {
-      toast.error('Unable to connect to this node');
+      toast.error(t('login.unableToConnect'));
       logout();
     },
   });
@@ -225,10 +223,10 @@ export const Accounts = () => {
           <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
             <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {hasDbAccount
-                ? 'Server Accounts'
+                ? t('login.serverAccounts')
                 : newAccount
-                  ? 'Other Accounts'
-                  : 'Accounts'}
+                  ? t('login.otherAccounts')
+                  : t('login.accounts')}
             </h3>
 
             <div className="flex flex-col gap-1.5">
@@ -251,7 +249,9 @@ export const Accounts = () => {
                     <div className="flex items-center gap-2">
                       <Lock size={13} className="text-muted-foreground" />
                       <span className="text-sm font-medium text-foreground">
-                        {account.type === 'sso' ? 'SSO Account' : account.name}
+                        {account.type === 'sso'
+                          ? t('login.ssoAccount')
+                          : account.name}
                       </span>
                     </div>
 
@@ -262,7 +262,7 @@ export const Accounts = () => {
                       />
                     ) : (
                       <span className="text-xs text-muted-foreground">
-                        Login
+                        {t('login.login')}
                       </span>
                     )}
                   </button>

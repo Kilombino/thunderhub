@@ -4,10 +4,12 @@ import { X, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { OpenChannel } from '../../home/liquidity/OpenChannel';
+import { useTranslation } from '@/i18n';
 
 type WindowState = 'none' | 'open' | 'details';
 
 export const ChannelManage = () => {
+  const { t } = useTranslation();
   const [openWindow, setOpenWindow] = useState<WindowState>('none');
 
   const toggle = (target: WindowState) =>
@@ -16,13 +18,15 @@ export const ChannelManage = () => {
   return (
     <div className="flex flex-col gap-3 rounded border border-border bg-card p-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">Open Channel</span>
+        <span className="text-sm font-medium">
+          {t('channels.page.openChannel')}
+        </span>
         <Button variant="outline" size="sm" onClick={() => toggle('open')}>
           {openWindow === 'open' ? (
             <X className="size-4" />
           ) : (
             <>
-              Open
+              {t('channels.manage.open')}
               <ChevronRight className="ml-1 size-4" />
             </>
           )}
@@ -40,7 +44,9 @@ export const ChannelManage = () => {
         <>
           <Separator />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Change Channel Details</span>
+            <span className="text-sm font-medium">
+              {t('channels.manage.changeDetails')}
+            </span>
             <Button
               variant="outline"
               size="sm"
@@ -50,7 +56,7 @@ export const ChannelManage = () => {
                 <X className="size-4" />
               ) : (
                 <>
-                  Change
+                  {t('channels.manage.change')}
                   <ChevronRight className="ml-1 size-4" />
                 </>
               )}

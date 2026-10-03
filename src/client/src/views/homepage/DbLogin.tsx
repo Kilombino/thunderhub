@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { config } from '../../config/thunderhubConfig';
 import { hashPassword } from '../../utils/crypto';
+import { useTranslation } from '@/i18n';
 
 export const DbLogin = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -35,22 +37,22 @@ export const DbLogin = () => {
       <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
         <div className="mb-5 text-center">
           <h2 className="text-lg font-semibold text-foreground">
-            Account Login
+            {t('login.accountLogin')}
           </h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Sign in with your account credentials
+            {t('login.dbLogin.subtitle')}
           </p>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-muted-foreground">
-              Email
+              {t('login.dbLogin.email')}
             </label>
             <Input
               autoFocus
               type="email"
-              placeholder="Enter email"
+              placeholder={t('login.dbLogin.emailPlaceholder')}
               value={email}
               onChange={e => setEmail(e.target.value)}
               onKeyDown={e => {
@@ -61,11 +63,11 @@ export const DbLogin = () => {
 
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-muted-foreground">
-              Password
+              {t('login.password')}
             </label>
             <Input
               type="password"
-              placeholder="Enter password"
+              placeholder={t('login.passwordPlaceholder')}
               value={password}
               onChange={e => setPassword(e.target.value)}
               onKeyDown={e => {
@@ -82,7 +84,7 @@ export const DbLogin = () => {
             {loading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              'Sign In'
+              t('login.dbLogin.signIn')
             )}
           </Button>
         </div>

@@ -12,6 +12,7 @@ import { useRemoveTwofaSecretMutation } from '../../graphql/mutations/__generate
 import toast from 'react-hot-toast';
 import { useUpdateTwofaSecretMutation } from '../../graphql/mutations/__generated__/updateTwofaSecret.generated';
 import { config } from '../../config/thunderhubConfig';
+import { t } from '@/i18n';
 
 const Enable: FC<{ callback: () => void }> = ({ callback }) => {
   const [token, setToken] = useState<string>('');
@@ -20,7 +21,7 @@ const Enable: FC<{ callback: () => void }> = ({ callback }) => {
   const [update, { loading: updateLoading }] = useUpdateTwofaSecretMutation({
     onCompleted: () => {
       callback();
-      toast.success('Updated 2FA for account');
+      toast.success(t('settings.security.enabledToast'));
     },
     refetchQueries: ['GetAccount'],
     onError: ({ graphQLErrors }) => {
@@ -46,7 +47,7 @@ const Enable: FC<{ callback: () => void }> = ({ callback }) => {
   if (!data?.getTwofaSecret.url) {
     return (
       <div className="w-full flex flex-col justify-center items-center text-sm text-muted-foreground">
-        Unable to get secret to enable 2FA.
+        {t('settings.security.secretError')}
       </div>
     );
   }
@@ -70,7 +71,7 @@ const Enable: FC<{ callback: () => void }> = ({ callback }) => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Input
           type="number"
-          placeholder="Enter 2FA token"
+          placeholder={t('settings.security.tokenPlaceholder')}
           value={token}
           onChange={e => setToken(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleClick()}
@@ -86,7 +87,7 @@ const Enable: FC<{ callback: () => void }> = ({ callback }) => {
           ) : (
             <>
               <ShieldCheck size={16} />
-              Enable 2FA
+              {t('settings.security.enable2fa')}
             </>
           )}
         </Button>
@@ -100,7 +101,7 @@ const Disable: FC<{ callback: () => void }> = ({ callback }) => {
   const [remove, { loading }] = useRemoveTwofaSecretMutation({
     onCompleted: () => {
       callback();
-      toast.success('Removed 2FA for account');
+      toast.success(t('settings.security.disabledToast'));
     },
     refetchQueries: ['GetAccount'],
     onError: ({ graphQLErrors }) => {
@@ -121,7 +122,7 @@ const Disable: FC<{ callback: () => void }> = ({ callback }) => {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Input
           type="number"
-          placeholder="Enter 2FA token"
+          placeholder={t('settings.security.tokenPlaceholder')}
           value={token}
           onChange={e => setToken(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleClick()}
@@ -138,7 +139,7 @@ const Disable: FC<{ callback: () => void }> = ({ callback }) => {
           ) : (
             <>
               <ShieldOff size={16} />
-              Disable 2FA
+              {t('settings.security.disable2fa')}
             </>
           )}
         </Button>
@@ -157,12 +158,14 @@ export const Security = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Security</h2>
+      <h2 className="text-lg font-semibold">{t('settings.security.title')}</h2>
       <Card>
         <CardContent>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">
-              {user.twofaEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+              {user.twofaEnabled
+                ? t('settings.security.disable2fa')
+                : t('settings.security.enable2fa')}
             </span>
             <Button
               variant="outline"
@@ -170,10 +173,12 @@ export const Security = () => {
               onClick={() => setEnabled(p => !p)}
             >
               {enable ? (
-                'Cancel'
+                t('common.cancel')
               ) : (
                 <>
-                  {user.twofaEnabled ? 'Disable' : 'Enable'}{' '}
+                  {user.twofaEnabled
+                    ? t('settings.security.disable')
+                    : t('settings.security.enable')}{' '}
                   <ChevronRight size={16} />
                 </>
               )}

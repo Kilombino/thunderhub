@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { InvoiceStatus } from './InvoiceStatus';
 import { Timer } from './Timer';
+import { t } from '@/i18n';
 
 export const CreateInvoiceCard = () => {
   const [amount, setAmount] = useState(0);
@@ -40,7 +41,9 @@ export const CreateInvoiceCard = () => {
     return (
       <div className="flex flex-col items-center gap-3 py-4">
         <CheckCircle size={32} className="text-green-500" />
-        <span className="text-sm font-medium">Invoice Paid</span>
+        <span className="text-sm font-medium">
+          {t('wallet.createInvoice.paid')}
+        </span>
       </div>
     );
   }
@@ -49,11 +52,13 @@ export const CreateInvoiceCard = () => {
     return (
       <div className="flex flex-col items-center gap-2 py-4 text-sm text-muted-foreground">
         <span>
-          Check the status of this invoice in the{' '}
+          {t('wallet.createInvoice.checkStatusBefore')}{' '}
           <Link to="/transactions">
-            <span className="text-primary hover:underline">Transactions</span>
+            <span className="text-primary hover:underline">
+              {t('wallet.createInvoice.transactions')}
+            </span>
           </Link>{' '}
-          view.
+          {t('wallet.createInvoice.checkStatusAfter')}
         </span>
       </div>
     );
@@ -71,7 +76,7 @@ export const CreateInvoiceCard = () => {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-muted-foreground">
-            Invoice Created
+            {t('wallet.createInvoice.created')}
           </span>
           <Timer initialMinute={1} initialSeconds={30} />
         </div>
@@ -91,11 +96,11 @@ export const CreateInvoiceCard = () => {
             onClick={() =>
               navigator.clipboard
                 .writeText(request)
-                .then(() => toast.success('Copied to clipboard'))
+                .then(() => toast.success(t('wallet.createInvoice.copied')))
             }
           >
             <Copy size={14} />
-            Copy Invoice
+            {t('wallet.createInvoice.copyInvoice')}
           </Button>
         </div>
       </div>
@@ -107,7 +112,7 @@ export const CreateInvoiceCard = () => {
       {/* Amount */}
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Amount{' '}
+          {t('wallet.createInvoice.amount')}{' '}
           <span className="text-foreground">
             <Price amount={amount} />
           </span>
@@ -124,10 +129,10 @@ export const CreateInvoiceCard = () => {
       {/* Description */}
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Description
+          {t('wallet.createInvoice.description')}
         </label>
         <Input
-          placeholder="Optional description"
+          placeholder={t('wallet.createInvoice.descriptionPlaceholder')}
           value={description}
           onChange={e => setDescription(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleEnter()}
@@ -139,7 +144,7 @@ export const CreateInvoiceCard = () => {
       {/* Expires In */}
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Expires In{' '}
+          {t('wallet.createInvoice.expiresIn')}{' '}
           {seconds > 0 && (
             <span className="text-foreground/60">
               ({formatSeconds(seconds)})
@@ -147,7 +152,7 @@ export const CreateInvoiceCard = () => {
           )}
         </label>
         <Input
-          placeholder="seconds (0 = default)"
+          placeholder={t('wallet.createInvoice.secondsPlaceholder')}
           type="number"
           value={seconds && seconds > 0 ? seconds : ''}
           onChange={e => setSeconds(Number(e.target.value))}
@@ -158,7 +163,7 @@ export const CreateInvoiceCard = () => {
       {/* Include Private */}
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">
-          Include Private Channels
+          {t('wallet.createInvoice.includePrivate')}
         </span>
         <Switch checked={includePrivate} onCheckedChange={setIncludePrivate} />
       </div>
@@ -175,7 +180,7 @@ export const CreateInvoiceCard = () => {
         {loading ? (
           <Loader2 className="animate-spin" size={16} />
         ) : (
-          'Create Invoice'
+          t('wallet.createInvoice.create')
         )}
       </Button>
     </div>

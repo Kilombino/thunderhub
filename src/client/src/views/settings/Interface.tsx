@@ -26,7 +26,7 @@ export const InterfaceSettings = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Interface</h2>
+      <h2 className="text-lg font-semibold">{t('settings.interface.title')}</h2>
       <Card>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between gap-4">
@@ -54,7 +54,9 @@ export const InterfaceSettings = () => {
             </ToggleGroup>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Theme</span>
+            <span className="text-sm font-medium">
+              {t('settings.interface.theme')}
+            </span>
             <ToggleGroup
               type="single"
               variant="outline"
@@ -63,13 +65,21 @@ export const InterfaceSettings = () => {
                 if (v) dispatch({ type: 'themeChange', theme: v });
               }}
             >
-              <ToggleGroupItem value="light">Light</ToggleGroupItem>
-              <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
-              <ToggleGroupItem value="system">System</ToggleGroupItem>
+              <ToggleGroupItem value="light">
+                {t('settings.interface.light')}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="dark">
+                {t('settings.interface.dark')}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="system">
+                {t('settings.interface.system')}
+              </ToggleGroupItem>
             </ToggleGroup>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Currency</span>
+            <span className="text-sm font-medium">
+              {t('settings.interface.currency')}
+            </span>
             <ToggleGroup
               type="single"
               variant="outline"
@@ -87,7 +97,9 @@ export const InterfaceSettings = () => {
           </div>
           {currency === 'fiat' && !dontShow && fiatOptions.length > 0 && (
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Fiat Currency</span>
+              <span className="text-sm font-medium">
+                {t('settings.interface.fiatCurrency')}
+              </span>
               <NativeSelect
                 value={fiat}
                 onChange={e =>

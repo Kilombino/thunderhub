@@ -3,6 +3,7 @@ import { useGetForwardsQuery } from '../../../../graphql/queries/__generated__/g
 import { getErrorContent } from '../../../../utils/error';
 import { LoadingCard } from '../../../../components/loading/LoadingCard';
 import { ChannelTable, RouteTable } from './ForwardReportTables';
+import { t } from '@/i18n';
 
 export type BreakdownType = 'route' | 'incoming' | 'outgoing';
 
@@ -18,13 +19,13 @@ export const ForwardChannelsReport = ({ days, type }: Props) => {
   });
 
   if (loading) {
-    return <LoadingCard noCard={true} title={'Forward Report'} />;
+    return <LoadingCard noCard={true} title={t('home.forwards.report')} />;
   }
 
   if (!data?.getForwards.list.length) {
     return (
       <div className="text-sm text-muted-foreground text-center py-4">
-        No forwards for this period.
+        {t('home.forwards.noForwards')}
       </div>
     );
   }

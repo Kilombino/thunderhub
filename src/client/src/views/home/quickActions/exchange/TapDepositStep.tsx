@@ -21,6 +21,7 @@ import { useGetTapFederationServersQuery } from '../../../../graphql/queries/__g
 import { TapBalanceGroupBy } from '../../../../graphql/types';
 import { getErrorContent } from '../../../../utils/error';
 import { displayToAtomic } from '../../../assets/trade.helpers';
+import { t } from '@/i18n';
 
 type GroupEntry = {
   groupKey: string;
@@ -65,7 +66,7 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
     .map(
       (b): GroupEntry => ({
         groupKey: b.group_key!,
-        name: b.names?.join(', ') || 'Unknown',
+        name: b.names?.join(', ') || t('wallet.taproot.unknown'),
         source: 'owned',
       })
     );
@@ -77,7 +78,7 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
     .map(
       (a): GroupEntry => ({
         groupKey: a.group_key!,
-        name: a.name || 'Unknown',
+        name: a.name || t('wallet.taproot.unknown'),
         source: 'universe',
       })
     );
@@ -110,7 +111,7 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
       const addr = data.taproot_assets?.new_address?.encoded;
       if (addr) {
         setGeneratedAddr(addr);
-        toast.success('Address generated');
+        toast.success(t('wallet.taproot.addressGenerated'));
       }
     },
   });
@@ -121,7 +122,7 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
 
   const handleGenerate = () => {
     if (!resolvedGroupKey || !amount) {
-      toast.error('Group key and amount are required');
+      toast.error(t('wallet.taproot.groupAndAmountRequired'));
       return;
     }
     const atomicAmt = displayToAtomic(amount, selectedPrecision).toString();
@@ -145,10 +146,10 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
           onClick={() => setGeneratedAddr(null)}
         >
           <ChevronLeft size={14} />
-          Back
+          {t('common.back')}
         </Button>
         <span className="text-xs font-medium text-muted-foreground">
-          Taproot Asset Address
+          {t('wallet.taproot.assetAddress')}
         </span>
         <div className="flex flex-col items-center gap-3">
           <div className="rounded-lg bg-white p-3">
@@ -163,11 +164,13 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
             onClick={() =>
               navigator.clipboard
                 .writeText(generatedAddr)
-                .then(() => toast.success('Address Copied'))
+                .then(() =>
+                  toast.success(t('wallet.receiveOnChain.addressCopied'))
+                )
             }
           >
             <Copy size={14} />
-            Copy Address
+            {t('wallet.exchange.copyAddress')}
           </Button>
         </div>
       </div>
@@ -184,13 +187,13 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
           onClick={onBack}
         >
           <ChevronLeft size={14} />
-          Back
+          {t('common.back')}
         </Button>
       )}
 
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Asset Group
+          {t('wallet.taproot.assetGroup')}
         </label>
         <Select
           value={selectedKey}
@@ -200,12 +203,12 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
           }}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select an asset..." />
+            <SelectValue placeholder={t('wallet.taproot.selectAsset')} />
           </SelectTrigger>
           <SelectContent>
             {allGroups.length > 0 && (
               <SelectGroup>
-                <SelectLabel>Available Assets</SelectLabel>
+                <SelectLabel>{t('wallet.taproot.availableAssets')}</SelectLabel>
                 {allGroups.map(g => (
                   <SelectItem key={g.groupKey} value={g.groupKey}>
                     {g.name} ({g.groupKey.slice(0, 16)}...)
@@ -216,7 +219,7 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
             )}
             <SelectSeparator />
             <SelectItem value="__custom">
-              Enter group key manually...
+              {t('wallet.taproot.manualGroupKey')}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -224,7 +227,7 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
           <Input
             value={customGroupKey}
             onChange={e => setCustomGroupKey(e.target.value)}
-            placeholder="Group key (hex)"
+            placeholder={t('wallet.taproot.groupKeyHex')}
             className="font-mono mt-1"
           />
         )}
@@ -233,12 +236,12 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
           <label className="text-xs font-medium text-muted-foreground">
-            Amount
+            {t('common.amount')}
           </label>
           {amount && (
             <span className="text-[11px] text-muted-foreground">
               {displayToAtomic(amount, selectedPrecision).toLocaleString()}{' '}
-              atomic units
+              {t('wallet.taproot.atomicUnits')}
             </span>
           )}
         </div>
@@ -261,12 +264,12 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
           size={14}
           className={showAdvanced ? 'rotate-180 transition' : 'transition'}
         />
-        Advanced
+        {t('common.advanced')}
       </Button>
       {showAdvanced && (
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Proof Courier
+            {t('wallet.taproot.proofCourier')}
           </label>
           <Select
             value={selectedCourier}
@@ -276,13 +279,17 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
             }}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Default" />
+              <SelectValue placeholder={t('wallet.taproot.default')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="__default">Default</SelectItem>
+              <SelectItem value="__default">
+                {t('wallet.taproot.default')}
+              </SelectItem>
               {federationServers.length > 0 && (
                 <SelectGroup>
-                  <SelectLabel>Synced Universes</SelectLabel>
+                  <SelectLabel>
+                    {t('wallet.taproot.syncedUniverses')}
+                  </SelectLabel>
                   {federationServers.map(s => {
                     const uri = toProofCourierAddr(s.host);
                     return (
@@ -294,7 +301,9 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
                 </SelectGroup>
               )}
               <SelectSeparator />
-              <SelectItem value="__custom">Enter custom address...</SelectItem>
+              <SelectItem value="__custom">
+                {t('wallet.taproot.customAddress')}
+              </SelectItem>
             </SelectContent>
           </Select>
           {isCustomCourier && (
@@ -316,7 +325,7 @@ export const TapDepositStep: FC<{ onBack?: () => void }> = ({ onBack }) => {
         {loading ? (
           <Loader2 className="animate-spin" size={16} />
         ) : (
-          'Generate Address'
+          t('wallet.taproot.generateAddress')
         )}
       </Button>
     </div>

@@ -13,6 +13,7 @@ import {
   DialogDescription,
 } from '../../components/ui/dialog';
 import Big from 'big.js';
+import { t } from '@/i18n';
 
 type DialogState = 'none' | 'open' | 'buy';
 
@@ -58,7 +59,7 @@ export const BalancesContent = () => {
               className={`transition-transform ${sidebarBalancesExpanded ? '' : '-rotate-90'}`}
             />
             <Wallet size={13} />
-            Balances
+            {t('nav.balances.title')}
           </div>
           <div className="text-sm font-medium text-foreground">
             <Price amount={totalBalance} />
@@ -80,7 +81,7 @@ export const BalancesContent = () => {
                         : 'text-purple-500 fill-purple-500'
                     }
                   />
-                  <span className="font-medium">Lightning</span>
+                  <span className="font-medium">{t('nav.bar.lightning')}</span>
                 </div>
                 <div className="text-sm font-medium text-foreground">
                   <Price amount={totalLightning} />
@@ -88,15 +89,15 @@ export const BalancesContent = () => {
               </div>
               <div className="flex flex-col gap-0.5 pl-5 mt-1 text-[11px] text-muted-foreground/70">
                 <div className="flex justify-between">
-                  <span>Available</span>
+                  <span>{t('nav.balances.available')}</span>
                   <Price amount={activeLightning} />
                 </div>
                 <div className="flex justify-between">
-                  <span>Not Available</span>
+                  <span>{t('nav.balances.notAvailable')}</span>
                   <Price amount={inactiveLightning} />
                 </div>
                 <div className="flex justify-between">
-                  <span>Pending</span>
+                  <span>{t('nav.balances.pending')}</span>
                   <Price amount={lightning.pending} />
                 </div>
               </div>
@@ -113,7 +114,9 @@ export const BalancesContent = () => {
                       chainPending === 0 ? 'text-yellow-500' : 'text-purple-500'
                     }
                   />
-                  <span className="font-medium">Bitcoin</span>
+                  <span className="font-medium">
+                    {t('nav.balances.bitcoin')}
+                  </span>
                 </div>
                 <div className="text-sm font-medium text-foreground">
                   <Price amount={totalChain} />
@@ -121,15 +124,15 @@ export const BalancesContent = () => {
               </div>
               <div className="flex flex-col gap-0.5 pl-5 mt-1 text-[11px] text-muted-foreground/70">
                 <div className="flex justify-between">
-                  <span>Available</span>
+                  <span>{t('nav.balances.available')}</span>
                   <Price amount={onchain.confirmed} />
                 </div>
                 <div className="flex justify-between">
-                  <span>Pending</span>
+                  <span>{t('nav.balances.pending')}</span>
                   <Price amount={onchain.pending} />
                 </div>
                 <div className="flex justify-between">
-                  <span>Force Closures</span>
+                  <span>{t('nav.balances.forceClosures')}</span>
                   <Price amount={onchain.closing} />
                 </div>
               </div>
@@ -153,7 +156,7 @@ export const BalancesContent = () => {
             className={`transition-transform ${sidebarLiquidityExpanded ? '' : '-rotate-90'}`}
           />
           <Cable size={13} className="text-blue-500" />
-          Liquidity
+          {t('nav.balances.liquidity')}
         </button>
         {sidebarLiquidityExpanded && (
           <div className="flex flex-col pb-2">
@@ -162,14 +165,14 @@ export const BalancesContent = () => {
               onClick={() => setOpenDialog('open')}
             >
               <Cable size={13} className="text-blue-500" />
-              Open Channel
+              {t('nav.balances.openChannel')}
             </button>
             <button
               className="flex items-center gap-2 w-full px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-accent/50"
               onClick={() => setOpenDialog('buy')}
             >
               <Rocket size={13} className="text-orange-500" />
-              Buy Inbound Liquidity
+              {t('nav.balances.buyInbound')}
             </button>
           </div>
         )}
@@ -181,9 +184,9 @@ export const BalancesContent = () => {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Open Channel</DialogTitle>
+            <DialogTitle>{t('nav.balances.openChannel')}</DialogTitle>
             <DialogDescription>
-              Open a new payment channel with a Lightning Network peer.
+              {t('nav.balances.openChannelDescription')}
             </DialogDescription>
           </DialogHeader>
           <OpenChannel closeCbk={() => setOpenDialog('none')} />
@@ -196,10 +199,9 @@ export const BalancesContent = () => {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Buy Inbound Liquidity</DialogTitle>
+            <DialogTitle>{t('nav.balances.buyInbound')}</DialogTitle>
             <DialogDescription>
-              Get inbound capacity so you can start receiving payments
-              instantly.
+              {t('nav.balances.buyInboundDescription')}
             </DialogDescription>
           </DialogHeader>
           <BuyChannel />

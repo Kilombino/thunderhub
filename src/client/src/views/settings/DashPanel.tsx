@@ -16,6 +16,7 @@ import { StoredWidget } from '../dashboard';
 import { widgetList } from '../dashboard/widgets/widgetList';
 import { WidgetRow } from './WidgetRow';
 import { ResponsiveLayouts } from 'react-grid-layout';
+import { t } from '@/i18n';
 
 export type NormalizedWidgets = {
   id: number;
@@ -60,13 +61,13 @@ const DashPanel = () => {
         <Link to="/settings" noStyling>
           <Button variant="outline" size="sm">
             <ArrowLeft size={16} />
-            Settings
+            {t('settings.title')}
           </Button>
         </Link>
         <div className="flex gap-2">
           <Link to="/dashboard" noStyling>
             <Button variant="outline" size="sm">
-              Dashboard <ChevronRight size={16} />
+              {t('settings.dashboard.title')} <ChevronRight size={16} />
             </Button>
           </Link>
           <Button
@@ -78,15 +79,15 @@ const DashPanel = () => {
             }}
           >
             <RotateCcw size={16} />
-            Reset
+            {t('settings.dashboard.reset')}
           </Button>
         </div>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Dashboard Widgets</CardTitle>
+          <CardTitle>{t('settings.dashboard.widgetsTitle')}</CardTitle>
           <CardDescription>
-            Toggle widgets to customize your dashboard
+            {t('settings.dashboard.widgetsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

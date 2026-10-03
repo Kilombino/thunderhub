@@ -12,6 +12,7 @@ import {
 import { useGetLightningAddressInfoLazyQuery } from '../../../../graphql/queries/__generated__/getLightningAddressInfo.generated';
 import { PayRequest } from '../../../../graphql/types';
 import { LnPay } from '../lnurl/LnPay';
+import { t } from '@/i18n';
 
 export const DONATE_ADDRESS = 'tony@bancolibre.com';
 const DEFAULT_DONATE_AMOUNT = 20000;
@@ -57,10 +58,9 @@ export const DonateModal = ({
             <Heart size={16} className="text-pink-500" />
           </div>
           <div>
-            <DialogTitle>Support ThunderHub</DialogTitle>
+            <DialogTitle>{t('home.donate.title')}</DialogTitle>
             <DialogDescription>
-              ThunderHub is free and open-source. Your donation helps keep it
-              that way.
+              {t('home.donate.description')}
             </DialogDescription>
           </div>
         </div>
@@ -85,10 +85,7 @@ export const SupportBar = () => {
       <div className="flex items-center gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-2 rounded border border-pink-500/20 bg-pink-500/5 px-3 py-2 text-xs text-muted-foreground">
           <Heart size={14} className="shrink-0 text-pink-500" />
-          <span>
-            ThunderHub is free and open-source. Consider sending a few sats to
-            support development.
-          </span>
+          <span>{t('home.donate.bar')}</span>
         </div>
         <Button
           variant="outline"
@@ -101,7 +98,7 @@ export const SupportBar = () => {
           ) : (
             <>
               <Heart size={14} className="text-pink-500" />
-              Donate
+              {t('home.donate.donate')}
             </>
           )}
         </Button>

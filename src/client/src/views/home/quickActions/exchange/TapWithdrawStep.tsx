@@ -10,6 +10,7 @@ import { useGetTapSupportedAssetsQuery } from '../../../../graphql/queries/__gen
 import { TapBalanceGroupBy } from '../../../../graphql/types';
 import { getErrorContent } from '../../../../utils/error';
 import { atomicToDisplay } from '../../../assets/trade.helpers';
+import { t } from '@/i18n';
 
 export const TapWithdrawStep: FC<{
   onBack?: () => void;
@@ -33,7 +34,7 @@ export const TapWithdrawStep: FC<{
       .filter(b => b.asset_id || b.group_key)
       .flatMap(b => {
         const entries: [string, string][] = [];
-        const label = b.names?.join(', ') || 'Unknown';
+        const label = b.names?.join(', ') || t('wallet.taproot.unknown');
         if (b.asset_id) entries.push([b.asset_id, label]);
         if (b.group_key) entries.push([b.group_key, label]);
         return entries;
@@ -50,7 +51,7 @@ export const TapWithdrawStep: FC<{
   const [sendAsset, { loading }] = useSendTapAssetMutation({
     onError: error => toast.error(getErrorContent(error)),
     onCompleted: () => {
-      toast.success('Asset sent successfully');
+      toast.success(t('wallet.taproot.sent'));
       if (onClose) {
         onClose();
       } else {
@@ -77,7 +78,7 @@ export const TapWithdrawStep: FC<{
 
   const handleSend = () => {
     if (!address) {
-      toast.error('Address is required');
+      toast.error(t('wallet.taproot.addressRequired'));
       return;
     }
     sendAsset({ variables: { tap_addrs: [address] } });
@@ -115,13 +116,13 @@ export const TapWithdrawStep: FC<{
           onClick={onBack}
         >
           <ChevronLeft size={14} />
-          Back
+          {t('common.back')}
         </Button>
       )}
 
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Taproot Asset Address
+          {t('wallet.taproot.assetAddress')}
         </label>
         <textarea
           value={address}
@@ -138,14 +139,14 @@ export const TapWithdrawStep: FC<{
       {decoding && (
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Loader2 className="h-3 w-3 animate-spin" />
-          Decoding address...
+          {t('wallet.taproot.decoding')}
         </div>
       )}
 
       {decodeError && address.length > 20 && (
         <div className="flex items-center gap-2 text-xs text-destructive">
           <Info size={12} />
-          Invalid address
+          {t('wallet.taproot.invalidAddress')}
         </div>
       )}
 
@@ -187,7 +188,7 @@ export const TapWithdrawStep: FC<{
           className="w-full"
           onClick={() => setConfirming(true)}
         >
-          Send
+          {t('wallet.sendOnChain.send')}
         </Button>
       ) : (
         <div className="flex gap-2">
@@ -196,7 +197,7 @@ export const TapWithdrawStep: FC<{
             className="flex-1"
             onClick={() => setConfirming(false)}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             className="flex-1"
@@ -206,7 +207,7 @@ export const TapWithdrawStep: FC<{
             {loading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              'Confirm Send'
+              t('wallet.sendOnChain.confirmSend')
             )}
           </Button>
         </div>

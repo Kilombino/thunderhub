@@ -11,6 +11,7 @@ import { Loader2 } from 'lucide-react';
 import { useChannelLnUrlMutation } from '../../../../graphql/mutations/__generated__/lnUrl.generated';
 import toast from 'react-hot-toast';
 import { getErrorContent } from '../../../../utils/error';
+import { t } from '@/i18n';
 
 type LnChannelProps = {
   request: ChannelRequest;
@@ -28,9 +29,7 @@ export const LnChannel: FC<LnChannelProps> = ({ request }) => {
 
   if (!callback || !k1 || !uri) {
     return (
-      <div className="w-full text-center">
-        Missing information from LN Service
-      </div>
+      <div className="w-full text-center">{t('home.lnurl.missingInfo')}</div>
     );
   }
 
@@ -38,11 +37,13 @@ export const LnChannel: FC<LnChannelProps> = ({ request }) => {
 
   return (
     <>
-      <Title>Channel</Title>
+      <Title>{t('home.lnurl.channel')}</Title>
       <Separator />
-      <div className="w-full text-center">{`Request from ${callbackUrl.host}`}</div>
+      <div className="w-full text-center">
+        {t('home.lnurl.requestFrom', { host: callbackUrl.host })}
+      </div>
       <Separator />
-      {split?.[0] && renderLine('Peer', getNodeLink(split[0]))}
+      {split?.[0] && renderLine(t('home.lnurl.peer'), getNodeLink(split[0]))}
       <Separator />
       <Button
         variant="outline"
@@ -56,7 +57,7 @@ export const LnChannel: FC<LnChannelProps> = ({ request }) => {
         {loading ? (
           <Loader2 className="animate-spin" size={16} />
         ) : (
-          <>{`Initiate Channel Request`}</>
+          <>{t('home.lnurl.initiateChannel')}</>
         )}
       </Button>
     </>

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Decoded } from './Decoded';
+import { t } from '@/i18n';
 
 export const DecodeCard = () => {
   const [request, setRequest] = useState('');
@@ -14,7 +15,7 @@ export const DecodeCard = () => {
         <div className="flex gap-2">
           <Input
             className="flex-1"
-            placeholder="Lightning Invoice"
+            placeholder={t('home.decode.placeholder')}
             value={request}
             onChange={e => setRequest(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && request && setShow(true)}
@@ -24,7 +25,7 @@ export const DecodeCard = () => {
             disabled={request === ''}
             onClick={() => setShow(true)}
           >
-            Decode <ChevronRight size={18} />
+            {t('home.quickActions.decode')} <ChevronRight size={18} />
           </Button>
         </div>
       )}

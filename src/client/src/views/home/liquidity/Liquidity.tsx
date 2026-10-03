@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { t } from '@/i18n';
 
 type DialogState = 'none' | 'open' | 'buy';
 
@@ -20,7 +21,7 @@ export const Liquidity = () => {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Liquidity</CardTitle>
+          <CardTitle>{t('home.liquidity.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-2">
@@ -30,7 +31,7 @@ export const Liquidity = () => {
             >
               <Cable size={20} />
               <span className="text-sm text-muted-foreground">
-                Open a Channel
+                {t('home.liquidity.openChannel')}
               </span>
             </button>
             <button
@@ -39,7 +40,7 @@ export const Liquidity = () => {
             >
               <Rocket size={20} />
               <span className="text-sm text-muted-foreground">
-                Buy Inbound Liquidity
+                {t('home.liquidity.buyInbound')}
               </span>
             </button>
           </div>
@@ -52,9 +53,9 @@ export const Liquidity = () => {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Open Channel</DialogTitle>
+            <DialogTitle>{t('home.liquidity.openChannelTitle')}</DialogTitle>
             <DialogDescription>
-              Open a new payment channel with a Lightning Network peer.
+              {t('home.liquidity.openChannelDescription')}
             </DialogDescription>
           </DialogHeader>
           <OpenChannel closeCbk={() => setOpenDialog('none')} />
@@ -67,10 +68,9 @@ export const Liquidity = () => {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Buy Inbound Liquidity</DialogTitle>
+            <DialogTitle>{t('home.liquidity.buyInbound')}</DialogTitle>
             <DialogDescription>
-              Get inbound capacity so you can start receiving payments
-              instantly.
+              {t('home.liquidity.buyInboundDescription')}
             </DialogDescription>
           </DialogHeader>
           <BuyChannel />

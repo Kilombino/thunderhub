@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { TransactionsGraph } from './TransactionGraph';
+import { t } from '@/i18n';
 
 export interface PeriodProps {
   period: number;
@@ -35,10 +36,10 @@ export const FlowBox = ({
             size="sm"
           >
             <ToggleGroupItem value="invoices" className="text-xs px-2">
-              Invoices
+              {t('home.flow.invoices')}
             </ToggleGroupItem>
             <ToggleGroupItem value="payments" className="text-xs px-2">
-              Payments
+              {t('home.flow.payments')}
             </ToggleGroupItem>
           </ToggleGroup>
           <ToggleGroup
@@ -49,10 +50,10 @@ export const FlowBox = ({
             size="sm"
           >
             <ToggleGroupItem value="count" className="text-xs px-2">
-              Count
+              {t('home.flow.count')}
             </ToggleGroupItem>
             <ToggleGroupItem value="tokens" className="text-xs px-2">
-              Volume
+              {t('home.flow.volume')}
             </ToggleGroupItem>
           </ToggleGroup>
         </div>

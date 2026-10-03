@@ -8,6 +8,7 @@ import { useToggleConfigMutation } from '../../graphql/mutations/__generated__/t
 import { ConfigFields } from '../../graphql/types';
 import { FC } from 'react';
 import { LoadingCard } from '../../components/loading/LoadingCard';
+import { t } from '@/i18n';
 
 const ConfigFieldToggle: FC<{
   title: string;
@@ -64,27 +65,27 @@ export const AmbossSettings = () => {
           <ConfigFieldToggle
             field={ConfigFields.Backups}
             enabled={backup_state}
-            title="Auto Backups"
+            title={t('settings.amboss.autoBackups')}
           />
           <ConfigFieldToggle
             field={ConfigFields.Healthchecks}
             enabled={healthcheck_ping_state}
-            title="Healthcheck Pings"
+            title={t('settings.amboss.healthcheckPings')}
           />
           <ConfigFieldToggle
             field={ConfigFields.OnchainPush}
             enabled={onchain_push_enabled}
-            title="Onchain Push"
+            title={t('settings.amboss.onchainPush')}
           />
           <ConfigFieldToggle
             field={ConfigFields.ChannelsPush}
             enabled={channels_push_enabled}
-            title="Channels Push"
+            title={t('settings.amboss.channelsPush')}
           />
           <ConfigFieldToggle
             field={ConfigFields.PrivateChannelsPush}
             enabled={private_channels_push_enabled}
-            title="Private Channel Push"
+            title={t('settings.amboss.privateChannelsPush')}
           />
         </CardContent>
       </Card>

@@ -19,13 +19,14 @@ import {
 import { OpenChannel } from '../views/home/liquidity/OpenChannel';
 import { DetailsChange } from '../components/details/detailsChange';
 import { useNodeSlug, useNodePath } from '../hooks/useNodeSlug';
+import { TranslationKey, useTranslation } from '@/i18n';
 
 type ChannelTab = 'open' | 'pending' | 'closed';
 
 const tabs: { value: ChannelTab; label: string }[] = [
-  { value: 'open', label: 'Open' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'closed', label: 'Closed' },
+  { value: 'open', label: 'channels.page.tabs.open' },
+  { value: 'pending', label: 'channels.page.tabs.pending' },
+  { value: 'closed', label: 'channels.page.tabs.closed' },
 ];
 
 const tabRoutes: Record<ChannelTab, string> = {
@@ -41,6 +42,7 @@ const routeToTab = (path: string): ChannelTab => {
 };
 
 const ChannelView = () => {
+  const { t } = useTranslation();
   const { navigateToNode } = useNodeSlug();
   const nodePath = useNodePath();
   const activeTab = routeToTab(nodePath);
@@ -74,7 +76,7 @@ const ChannelView = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-semibold">Channels</h2>
+        <h2 className="text-lg font-semibold">{t('channels.page.title')}</h2>
 
         <div className="flex items-center gap-2">
           <ToggleGroup
@@ -88,7 +90,7 @@ const ChannelView = () => {
           >
             {tabs.map(tab => (
               <ToggleGroupItem key={tab.value} value={tab.value}>
-                {tab.label} ({counts[tab.value]})
+                {t(tab.label as TranslationKey)} ({counts[tab.value]})
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
@@ -99,7 +101,7 @@ const ChannelView = () => {
             onClick={() => setOpenDialog('open')}
           >
             <Plus className="mr-1 size-4" />
-            Open Channel
+            {t('channels.page.openChannel')}
           </Button>
           <Button
             variant="outline"
@@ -107,7 +109,7 @@ const ChannelView = () => {
             onClick={() => setOpenDialog('details')}
           >
             <SlidersHorizontal className="mr-1 size-4" />
-            Edit Fees
+            {t('channels.page.editFees')}
           </Button>
         </div>
       </div>
@@ -126,9 +128,9 @@ const ChannelView = () => {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Open Channel</DialogTitle>
+            <DialogTitle>{t('channels.page.openChannel')}</DialogTitle>
             <DialogDescription>
-              Open a new payment channel with a Lightning Network peer.
+              {t('channels.page.openChannelDescription')}
             </DialogDescription>
           </DialogHeader>
           <OpenChannel closeCbk={() => setOpenDialog(null)} />
@@ -141,9 +143,9 @@ const ChannelView = () => {
       >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Edit Channel Fees</DialogTitle>
+            <DialogTitle>{t('channels.page.editFeesTitle')}</DialogTitle>
             <DialogDescription>
-              Update fee policies across your channels.
+              {t('channels.page.editFeesDescription')}
             </DialogDescription>
           </DialogHeader>
           <DetailsChange callback={() => setOpenDialog(null)} />

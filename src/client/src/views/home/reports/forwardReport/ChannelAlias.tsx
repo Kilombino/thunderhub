@@ -6,6 +6,7 @@ import { useGetClosedChannelsQuery } from '../../../../graphql/queries/__generat
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { Info } from 'lucide-react';
 import { getAliasFromClosedChannels } from './helpers';
+import { t } from '@/i18n';
 
 export const ChannelAlias: FC<{ id: string }> = ({ id }) => {
   const { data: closedChannelData } = useGetClosedChannelsQuery({
@@ -20,7 +21,7 @@ export const ChannelAlias: FC<{ id: string }> = ({ id }) => {
   });
 
   if (!id) {
-    return <>Unknown</>;
+    return <>{t('home.forwards.unknown')}</>;
   }
 
   if (loading) {
@@ -45,7 +46,7 @@ export const ChannelAlias: FC<{ id: string }> = ({ id }) => {
             <Info size={16} data-tip data-for={'channel_info'} />
           </span>
           <ReactTooltip id={'channel_info'} place={'right'}>
-            This channel has been closed.
+            {t('home.forwards.channelClosed')}
           </ReactTooltip>
         </>
       );
@@ -54,5 +55,5 @@ export const ChannelAlias: FC<{ id: string }> = ({ id }) => {
     return <>{closedAlias}</>;
   }
 
-  return <>Unknown</>;
+  return <>{t('home.forwards.unknown')}</>;
 };

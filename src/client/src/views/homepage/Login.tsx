@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { config } from '../../config/thunderhubConfig';
 import { GetServerAccountsQuery } from '../../graphql/queries/__generated__/getServerAccounts.generated';
+import { useTranslation } from '@/i18n';
 
 type ServerAccount = GetServerAccountsQuery['public']['get_server_accounts'][0];
 
@@ -17,6 +18,7 @@ type LoginProps = {
 };
 
 export const Login = ({ account, onBack }: LoginProps) => {
+  const { t } = useTranslation();
   const [pass, setPass] = useState('');
   const [token, setToken] = useState('');
 
@@ -31,9 +33,7 @@ export const Login = ({ account, onBack }: LoginProps) => {
     if (loading || !data?.public?.get_session_token) return;
     const { mayor, minor } = getVersion(data.public.get_session_token);
     if (mayor <= 0 && minor < 11) {
-      toast.error(
-        'ThunderHub supports LND version 0.11.0 and higher. Please update your node, you are in risk of losing funds.'
-      );
+      toast.error(t('login.oldLnd'));
     } else {
       window.location.href = `${config.basePath}/${account.slug}/home`;
     }
@@ -57,7 +57,7 @@ export const Login = ({ account, onBack }: LoginProps) => {
             onClick={onBack}
           >
             <ArrowLeft size={12} />
-            Account Login
+            {t('login.accountLogin')}
           </button>
         )}
         <div className="mb-5 text-center">
@@ -65,19 +65,19 @@ export const Login = ({ account, onBack }: LoginProps) => {
             {account.name}
           </h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Enter your credentials to connect
+            {t('login.enterCredentials')}
           </p>
         </div>
 
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-xs font-medium text-muted-foreground">
-              Password
+              {t('login.password')}
             </label>
             <Input
               autoFocus
               type="password"
-              placeholder="Enter password"
+              placeholder={t('login.passwordPlaceholder')}
               onChange={e => setPass(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'Enter') handleEnter();
@@ -88,11 +88,13 @@ export const Login = ({ account, onBack }: LoginProps) => {
           {!config.disable2FA && (
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-muted-foreground">
-                2FA Code{' '}
-                <span className="text-foreground/40">(if enabled)</span>
+                {t('login.twofaCode')}{' '}
+                <span className="text-foreground/40">
+                  {t('login.ifEnabled')}
+                </span>
               </label>
               <Input
-                placeholder="6-digit code"
+                placeholder={t('login.twofaPlaceholder')}
                 onChange={e => setToken(e.target.value)}
                 onKeyDown={e => {
                   if (e.key === 'Enter') handleEnter();
@@ -109,7 +111,7 @@ export const Login = ({ account, onBack }: LoginProps) => {
             {loading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              'Connect'
+              t('login.connect')
             )}
           </Button>
         </div>

@@ -18,6 +18,7 @@ import Big from 'big.js';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
+import { t } from '@/i18n';
 
 const subscribeToTheme = (cb: () => void) => {
   const observer = new MutationObserver(cb);
@@ -153,12 +154,14 @@ export const NodeInfoBar = () => {
           {syncedToChain ? (
             <>
               <CircleCheck size={10} />
-              Synced
+              {t('nav.node.synced')}
             </>
           ) : (
             <>
               <Spinner className="size-3" />
-              {syncPercentage ? `Syncing ${syncPercentage}%` : 'Syncing...'}
+              {syncPercentage
+                ? t('nav.node.syncingPercent', { percent: syncPercentage })
+                : t('nav.node.syncingDots')}
             </>
           )}
         </Badge>
@@ -169,7 +172,7 @@ export const NodeInfoBar = () => {
         {/* Total balance */}
         <div className={pill}>
           <Wallet size={11} className="text-muted-foreground/60" />
-          <span className={label}>Balance</span>
+          <span className={label}>{t('nav.bar.balance')}</span>
           <span className={value}>
             <Price amount={totalBalance} />
           </span>
@@ -184,13 +187,14 @@ export const NodeInfoBar = () => {
               channelPending === 0 ? 'text-yellow-500' : 'text-violet-500'
             )}
           />
-          <span className={label}>Lightning</span>
+          <span className={label}>{t('nav.bar.lightning')}</span>
           <span className={value}>
             <Price amount={totalLightning} />
           </span>
           {channelPending > 0 && (
             <span className="text-muted-foreground/50 text-[10px] inline-flex items-center gap-0.5">
-              +<Price amount={String(lightning.pending)} /> pending
+              +<Price amount={String(lightning.pending)} />{' '}
+              {t('nav.bar.pending')}
             </span>
           )}
         </div>
@@ -203,13 +207,13 @@ export const NodeInfoBar = () => {
               chainPending === 0 ? 'text-blue-400' : 'text-violet-500'
             )}
           />
-          <span className={label}>On-chain</span>
+          <span className={label}>{t('nav.bar.onchain')}</span>
           <span className={value}>
             <Price amount={totalChain} />
           </span>
           {chainPending > 0 && (
             <span className="text-muted-foreground/50 text-[10px] inline-flex items-center gap-0.5">
-              +<Price amount={String(onchain.pending)} /> pending
+              +<Price amount={String(onchain.pending)} /> {t('nav.bar.pending')}
             </span>
           )}
         </div>
@@ -219,16 +223,16 @@ export const NodeInfoBar = () => {
         {/* Channels */}
         <div className={pill}>
           <Radio size={11} className="text-emerald-500" />
-          <span className={label}>Channels</span>
+          <span className={label}>{t('nav.bar.channels')}</span>
           <span className={value}>{activeChannelCount}</span>
           {pendingChannelCount > 0 && (
             <span className="text-muted-foreground/50 text-[10px]">
-              {pendingChannelCount} pending
+              {t('nav.bar.pendingCount', { count: pendingChannelCount })}
             </span>
           )}
           {closedChannelCount > 0 && (
             <span className="text-muted-foreground/50 text-[10px]">
-              {closedChannelCount} closed
+              {t('nav.bar.closedCount', { count: closedChannelCount })}
             </span>
           )}
         </div>
@@ -236,7 +240,7 @@ export const NodeInfoBar = () => {
         {/* Peers */}
         <div className={pill}>
           <Users size={11} className="text-violet-400" />
-          <span className={label}>Peers</span>
+          <span className={label}>{t('nav.bar.peers')}</span>
           <span className={value}>{peersCount}</span>
         </div>
 
@@ -261,7 +265,7 @@ export const NodeInfoBar = () => {
         {currentBlockHeight > 0 && (
           <div className={pill}>
             <Box size={11} className="text-sky-500" />
-            <span className={label}>Block</span>
+            <span className={label}>{t('nav.bar.block')}</span>
             <span className={value}>{currentBlockHeight.toLocaleString()}</span>
           </div>
         )}

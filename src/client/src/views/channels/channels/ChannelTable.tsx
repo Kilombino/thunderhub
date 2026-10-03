@@ -50,6 +50,7 @@ import {
 import { colorFromString } from '../../../utils/color';
 import { useAccount } from '../../../hooks/UseAccount';
 import { config } from '@/config/thunderhubConfig';
+import { t } from '@/i18n';
 import { ChannelDetails } from './ChannelDetails';
 import { defaultHiddenColumns } from './helpers';
 import { VisibilityState } from '@tanstack/react-table';
@@ -94,7 +95,7 @@ const NoteCell = ({ note, channelId, isDbAccount }: NoteCellProps) => {
       });
       setOpen(false);
     } catch {
-      toast.error('Failed to save note');
+      toast.error(t('channels.note.saveError'));
     }
   };
 
@@ -106,7 +107,7 @@ const NoteCell = ({ note, channelId, isDbAccount }: NoteCellProps) => {
       });
       setOpen(false);
     } catch {
-      toast.error('Failed to delete note');
+      toast.error(t('channels.note.deleteError'));
     }
   };
 
@@ -146,7 +147,7 @@ const NoteCell = ({ note, channelId, isDbAccount }: NoteCellProps) => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent onClick={e => e.stopPropagation()}>
           <DialogHeader>
-            <DialogTitle>Channel Note</DialogTitle>
+            <DialogTitle>{t('channels.note.title')}</DialogTitle>
           </DialogHeader>
           {isDbAccount ? (
             <>
@@ -155,7 +156,7 @@ const NoteCell = ({ note, channelId, isDbAccount }: NoteCellProps) => {
                 value={value}
                 maxLength={500}
                 onChange={e => setValue(e.target.value)}
-                placeholder="Personal note for this channel..."
+                placeholder={t('channels.note.placeholder')}
                 onKeyDown={e => {
                   if (e.key === 'Enter' && value.trim()) handleSave();
                 }}
@@ -169,7 +170,7 @@ const NoteCell = ({ note, channelId, isDbAccount }: NoteCellProps) => {
                     onClick={handleDelete}
                   >
                     <Trash2 size={14} />
-                    Delete
+                    {t('common.delete')}
                   </Button>
                 )}
                 <Button
@@ -177,20 +178,20 @@ const NoteCell = ({ note, channelId, isDbAccount }: NoteCellProps) => {
                   disabled={saving || !value.trim()}
                   onClick={handleSave}
                 >
-                  Save
+                  {t('common.save')}
                 </Button>
               </DialogFooter>
             </>
           ) : (
             <p className="text-sm text-muted-foreground text-balance">
-              Channel notes require a database account.{' '}
+              {t('channels.note.requiresDatabase')}{' '}
               <a
                 href="https://docs.thunderhub.io/setup#database-optional"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline underline-offset-3 hover:text-foreground"
               >
-                Learn how to set up a database.
+                {t('channels.note.learnMore')}
               </a>
             </p>
           )}
@@ -341,7 +342,7 @@ export const ChannelTable = ({
               setChannel({
                 channel: c.id,
                 action: 'edit',
-                name: c.partner_node_info.node?.alias || 'Unknown',
+                name: c.partner_node_info.node?.alias || t('channels.unknown'),
               })
             }
           >
@@ -355,7 +356,7 @@ export const ChannelTable = ({
               setChannel({
                 channel: c.id,
                 action: 'close',
-                name: c.partner_node_info.node?.alias || 'Unknown',
+                name: c.partner_node_info.node?.alias || t('channels.unknown'),
               })
             }
           >
@@ -422,7 +423,7 @@ export const ChannelTable = ({
         ...actions,
         ...assetFields,
         note: c.note ?? '',
-        alias: c.partner_node_info.node?.alias || 'Unknown',
+        alias: c.partner_node_info.node?.alias || t('channels.unknown'),
         undercaseAlias: (
           c.partner_node_info.node?.alias || 'Unknown'
         ).toLowerCase(),
@@ -503,22 +504,23 @@ export const ChannelTable = ({
   const columns = useMemo(
     () => [
       {
-        header: 'Status',
+        id: 'Status',
+        header: t('channels.groups.status'),
         columns: [
           {
-            header: 'Active',
+            header: t('channels.columns.active'),
             accessorKey: 'channelActiveLogo',
             sortingFn: numberStringSorting('channelActive'),
             cell: ({ cell }: any) => cell.renderValue(),
           },
           {
-            header: 'Private',
+            header: t('channels.columns.private'),
             accessorKey: 'channelPrivateLogo',
             sortingFn: numberStringSorting('channelPrivate'),
             cell: ({ cell }: any) => cell.renderValue(),
           },
           {
-            header: 'Initiated',
+            header: t('channels.columns.initiated'),
             accessorKey: 'channelOpenerLogo',
             sortingFn: numberStringSorting('channelOpener'),
             cell: ({ cell }: any) => cell.renderValue(),
@@ -526,7 +528,8 @@ export const ChannelTable = ({
         ],
       },
       {
-        header: 'Actions',
+        id: 'Actions',
+        header: t('channels.groups.actions'),
         columns: [
           {
             header: <Edit size={14} />,
@@ -543,10 +546,11 @@ export const ChannelTable = ({
         ],
       },
       {
-        header: 'Info',
+        id: 'Info',
+        header: t('channels.groups.info'),
         columns: [
           {
-            header: 'Peer',
+            header: t('channels.columns.peer'),
             accessorKey: 'undercaseAlias',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -558,7 +562,7 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Channel Id',
+            header: t('channels.columns.channelId'),
             accessorKey: 'id',
             enableHiding: false,
             cell: ({ row }: any) => (
@@ -568,7 +572,7 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Note',
+            header: t('channels.columns.note'),
             accessorKey: 'note',
             enableSorting: false,
             cell: ({ row }: any) => (
@@ -580,7 +584,7 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Capacity',
+            header: t('channels.columns.capacity'),
             accessorKey: 'capacity',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -588,9 +592,12 @@ export const ChannelTable = ({
               </div>
             ),
           },
-          { header: 'Block Age', accessorKey: 'channel_age' },
           {
-            header: 'Channel Age',
+            header: t('channels.columns.blockAge'),
+            accessorKey: 'channel_age',
+          },
+          {
+            header: t('channels.columns.channelAge'),
             accessorKey: 'channel_age_duplicate',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -599,16 +606,17 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Past States',
+            header: t('channels.columns.pastStates'),
             accessorKey: 'past_states',
           },
         ],
       },
       {
-        header: 'Balance',
+        id: 'Balance',
+        header: t('channels.groups.balance'),
         columns: [
           {
-            header: 'Local',
+            header: t('channels.columns.local'),
             accessorKey: 'local_balance',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -617,7 +625,7 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Remote',
+            header: t('channels.columns.remote'),
             accessorKey: 'remote_balance',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -626,28 +634,48 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Percent',
+            header: t('channels.columns.percent'),
             accessorKey: 'balancePercentText',
             sortingFn: numberStringSorting('balancePercent'),
           },
         ],
       },
       {
-        header: 'Pending HTLC',
+        id: 'Pending HTLC',
+        header: t('channels.groups.pendingHtlc'),
         columns: [
-          { header: 'Total HTLC', accessorKey: 'pending_total_amount' },
-          { header: 'Total Sats', accessorKey: 'pending_total_tokens' },
-          { header: 'Incoming HTLC', accessorKey: 'pending_incoming_amount' },
-          { header: 'Incoming Sats', accessorKey: 'pending_incoming_tokens' },
-          { header: 'Outgoing HTLC', accessorKey: 'pending_outgoing_amount' },
-          { header: 'Outgoing Sats', accessorKey: 'pending_outgoing_tokens' },
+          {
+            header: t('channels.columns.totalHtlc'),
+            accessorKey: 'pending_total_amount',
+          },
+          {
+            header: t('channels.columns.totalSats'),
+            accessorKey: 'pending_total_tokens',
+          },
+          {
+            header: t('channels.columns.incomingHtlc'),
+            accessorKey: 'pending_incoming_amount',
+          },
+          {
+            header: t('channels.columns.incomingSats'),
+            accessorKey: 'pending_incoming_tokens',
+          },
+          {
+            header: t('channels.columns.outgoingHtlc'),
+            accessorKey: 'pending_outgoing_amount',
+          },
+          {
+            header: t('channels.columns.outgoingSats'),
+            accessorKey: 'pending_outgoing_tokens',
+          },
         ],
       },
       {
-        header: 'Monitoring',
+        id: 'Monitoring',
+        header: t('channels.groups.monitoring'),
         columns: [
           {
-            header: 'Online',
+            header: t('channels.columns.online'),
             accessorKey: 'time_online',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -658,7 +686,7 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Offline',
+            header: t('channels.columns.offline'),
             accessorKey: 'time_offline',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -669,17 +697,18 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Percent',
+            header: t('channels.columns.percent'),
             accessorKey: 'percentOnlineText',
             sortingFn: numberStringSorting('percentOnline'),
           },
         ],
       },
       {
-        header: 'Activity',
+        id: 'Activity',
+        header: t('channels.groups.activity'),
         columns: [
           {
-            header: 'Received',
+            header: t('channels.columns.received'),
             accessorKey: 'received',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -688,7 +717,7 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Sent',
+            header: t('channels.columns.sent'),
             accessorKey: 'sent',
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
@@ -697,62 +726,67 @@ export const ChannelTable = ({
             ),
           },
           {
-            header: 'Percent',
+            header: t('channels.columns.percent'),
             accessorKey: 'activityPercentText',
             sortingFn: numberStringSorting('activityPercent'),
           },
           {
-            header: 'Flow index',
+            header: t('channels.columns.flowIndex'),
             accessorKey: 'activityFlowIndex',
             sortingFn: numberStringSorting('activityFlowIndex'),
           },
         ],
       },
       {
-        header: 'My Fees',
+        id: 'My Fees',
+        header: t('channels.groups.myFees'),
         columns: [
-          { header: 'Rate', accessorKey: 'myRate' },
-          { header: 'Base', accessorKey: 'myBase' },
+          { header: t('channels.columns.rate'), accessorKey: 'myRate' },
+          { header: t('channels.columns.base'), accessorKey: 'myBase' },
         ],
       },
       {
-        header: 'Partner Fees',
+        id: 'Partner Fees',
+        header: t('channels.groups.partnerFees'),
         columns: [
-          { header: 'Rate', accessorKey: 'partnerRate' },
-          { header: 'Base', accessorKey: 'partnerBase' },
+          { header: t('channels.columns.rate'), accessorKey: 'partnerRate' },
+          { header: t('channels.columns.base'), accessorKey: 'partnerBase' },
         ],
       },
       {
-        header: 'My HTLC',
+        id: 'My HTLC',
+        header: t('channels.groups.myHtlc'),
         columns: [
-          { header: 'Max', accessorKey: 'myMaxHtlc' },
-          { header: 'Min', accessorKey: 'myMinHtlc' },
+          { header: t('channels.columns.max'), accessorKey: 'myMaxHtlc' },
+          { header: t('channels.columns.min'), accessorKey: 'myMinHtlc' },
         ],
       },
       {
-        header: 'Partner HTLC',
+        id: 'Partner HTLC',
+        header: t('channels.groups.partnerHtlc'),
         columns: [
-          { header: 'Max', accessorKey: 'partnerMaxHtlc' },
-          { header: 'Min', accessorKey: 'partnerMinHtlc' },
+          { header: t('channels.columns.max'), accessorKey: 'partnerMaxHtlc' },
+          { header: t('channels.columns.min'), accessorKey: 'partnerMinHtlc' },
         ],
       },
       {
-        header: 'Bars',
+        id: 'Bars',
+        header: t('channels.groups.bars'),
         columns: [
           {
-            header: 'Balance',
+            header: t('channels.columns.balance'),
             accessorKey: 'balanceBars',
             sortingFn: numberStringSorting('balancePercent'),
             cell: ({ cell }: any) => cell.renderValue(),
           },
           {
-            header: 'Proportional',
+            header: t('channels.columns.proportional'),
             accessorKey: 'proportionalBars',
             sortingFn: numberStringSorting('local_balance'),
             cell: ({ cell }: any) => cell.renderValue(),
           },
           {
-            header: 'Activity',
+            header: t('channels.columns.activity'),
             accessorKey: 'activityBars',
             sortingFn: numberStringSorting('activityPercent'),
             cell: ({ cell }: any) => cell.renderValue(),
@@ -762,14 +796,14 @@ export const ChannelTable = ({
       ...Array.from(uniqueAssets.entries()).map(([key, assetInfo]) => {
         const prefix = `asset_${key}`;
         const name = assetInfo.asset_name || assetInfo.asset_id.slice(0, 8);
-        const label = `Asset (${name})`;
+        const label = t('channels.groups.asset', { name });
 
         return {
           id: prefix,
           header: label,
           columns: [
             {
-              header: 'Capacity',
+              header: t('channels.columns.capacity'),
               accessorKey: `${prefix}_capacity`,
               cell: ({ cell }: any) => {
                 const val = cell.getValue();
@@ -781,7 +815,7 @@ export const ChannelTable = ({
               },
             },
             {
-              header: 'Local',
+              header: t('channels.columns.local'),
               accessorKey: `${prefix}_local`,
               cell: ({ cell }: any) => {
                 const val = cell.getValue();
@@ -793,7 +827,7 @@ export const ChannelTable = ({
               },
             },
             {
-              header: 'Remote',
+              header: t('channels.columns.remote'),
               accessorKey: `${prefix}_remote`,
               cell: ({ cell }: any) => {
                 const val = cell.getValue();
@@ -805,7 +839,7 @@ export const ChannelTable = ({
               },
             },
             {
-              header: 'Balance',
+              header: t('channels.columns.balance'),
               accessorKey: `${prefix}_balanceBar`,
               sortingFn: numberStringSorting(`${prefix}_balancePercent`),
               cell: ({ cell }: any) =>
@@ -844,7 +878,7 @@ export const ChannelTable = ({
   if (error) {
     return (
       <div className="flex items-center justify-center py-8 text-sm text-muted-foreground">
-        Error loading channels. Try refreshing.
+        {t('channels.table.loadError')}
       </div>
     );
   }
@@ -878,7 +912,7 @@ export const ChannelTable = ({
         initSorting={[{ id: 'balanceBars', desc: false }]}
         toggleConfiguration={handleToggle}
         defaultHiddenColumns={hiddenColumnState}
-        filterPlaceholder="channels"
+        filterPlaceholder={t('channels.table.filterPlaceholder')}
       />
       <Modal isOpen={!!channel} closeCallback={() => setChannel(null)}>
         {renderModalContent()}

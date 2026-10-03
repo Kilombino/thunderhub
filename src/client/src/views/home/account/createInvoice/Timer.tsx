@@ -1,4 +1,5 @@
 import { FC, useState, useEffect } from 'react';
+import { t } from '@/i18n';
 
 type TimerProps = {
   initialMinute: number;
@@ -30,7 +31,9 @@ export const Timer: FC<TimerProps> = ({ initialMinute, initialSeconds }) => {
 
   return minutes === 0 && seconds === 0 ? null : (
     <span className="text-xs text-muted-foreground">
-      {`Expires in ${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`}
+      {t('wallet.createInvoice.expiresInTime', {
+        time: `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`,
+      })}
     </span>
   );
 };

@@ -30,6 +30,7 @@ import { useTapdAvailable } from '../../hooks/useTapdAvailable';
 import { Badge } from '../../components/ui/badge';
 import { SideSettings } from './sideSettings/SideSettings';
 import { LITD_SETUP_DOCS_URL } from '../../utils/externalLinks';
+import { t, TranslationKey } from '@/i18n';
 
 type Icon = FC<LucideProps>;
 
@@ -39,7 +40,7 @@ const BetaBadge = ({ withTooltip = true }: { withTooltip?: boolean }) => {
       variant="outline"
       className="h-3.5 rounded-sm px-1 py-0 text-[8px] font-semibold uppercase tracking-wide border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 gap-0.5"
     >
-      Beta
+      {t('nav.beta')}
     </Badge>
   );
 
@@ -54,8 +55,7 @@ const BetaBadge = ({ withTooltip = true }: { withTooltip?: boolean }) => {
         side="right"
         className="text-xs max-w-52 bg-popover text-popover-foreground border border-border shadow-md [&_svg]:hidden!"
       >
-        This feature is currently in beta. Functionality may change as we
-        continue testing and improving.
+        {t('nav.betaTooltip')}
       </TooltipContent>
     </Tooltip>
   );
@@ -80,7 +80,8 @@ const TRADING = '/trading';
 const MAGMA = '/magma';
 
 interface NavItem {
-  title: string;
+  /** Translation key of the label */
+  title: TranslationKey;
   icon: Icon;
   link?: string;
   href?: string;
@@ -88,19 +89,20 @@ interface NavItem {
 }
 
 interface NavSection {
-  title: string;
+  /** Translation key of the heading */
+  title: TranslationKey;
   items: NavItem[];
 }
 
 const mainNav: NavItem[] = [
-  { title: 'Home', link: HOME, icon: Home },
-  { title: 'Dashboard', link: DASHBOARD, icon: Grid },
-  { title: 'Peers', link: PEERS, icon: Users },
-  { title: 'Channels', link: CHANNEL, icon: Cpu },
-  { title: 'Transactions', link: TRANS, icon: Server },
-  { title: 'Forwards', link: FORWARDS, icon: GitPullRequest },
-  { title: 'Chain', link: CHAIN_TRANS, icon: LinkIcon },
-  { title: 'Tools', link: TOOLS, icon: Shield },
+  { title: 'nav.items.home', link: HOME, icon: Home },
+  { title: 'nav.items.dashboard', link: DASHBOARD, icon: Grid },
+  { title: 'nav.items.peers', link: PEERS, icon: Users },
+  { title: 'nav.items.channels', link: CHANNEL, icon: Cpu },
+  { title: 'nav.items.transactions', link: TRANS, icon: Server },
+  { title: 'nav.items.forwards', link: FORWARDS, icon: GitPullRequest },
+  { title: 'nav.items.chain', link: CHAIN_TRANS, icon: LinkIcon },
+  { title: 'nav.items.tools', link: TOOLS, icon: Shield },
 ];
 
 interface NavigationProps {
@@ -109,32 +111,37 @@ interface NavigationProps {
 }
 
 const AMBOSS_SECTION: NavSection = {
-  title: 'Amboss',
+  title: 'nav.sections.amboss',
   items: [
-    { title: 'Services', link: AMBOSS, icon: Globe },
-    { title: 'Magma', link: MAGMA, icon: Flame },
+    { title: 'nav.items.services', link: AMBOSS, icon: Globe },
+    { title: 'nav.items.magma', link: MAGMA, icon: Flame },
   ],
 };
 
 const ASSETS_SECTION: NavSection = {
-  title: 'Taproot Assets',
+  title: 'nav.sections.taprootAssets',
   items: [
-    { title: 'Assets', link: ASSETS, icon: Gem },
-    { title: 'Channels', link: ASSET_CHANNELS, icon: Cpu },
-    { title: 'Transactions', link: ASSET_TRANSACTIONS, icon: Server },
-    { title: 'Tools', link: ASSET_TOOLS, icon: Shield },
-    { title: 'Trading', link: TRADING, icon: ArrowLeftRight, beta: true },
+    { title: 'nav.items.assets', link: ASSETS, icon: Gem },
+    { title: 'nav.items.channels', link: ASSET_CHANNELS, icon: Cpu },
+    { title: 'nav.items.transactions', link: ASSET_TRANSACTIONS, icon: Server },
+    { title: 'nav.items.tools', link: ASSET_TOOLS, icon: Shield },
+    {
+      title: 'nav.items.trading',
+      link: TRADING,
+      icon: ArrowLeftRight,
+      beta: true,
+    },
   ],
 };
 
 const ASSETS_SETUP_SECTION: NavSection = {
-  title: 'Taproot Assets',
-  items: [{ title: 'Setup', href: LITD_SETUP_DOCS_URL, icon: Gem }],
+  title: 'nav.sections.taprootAssets',
+  items: [{ title: 'nav.items.setup', href: LITD_SETUP_DOCS_URL, icon: Gem }],
 };
 
 const TOOLS_SECTION: NavSection = {
-  title: 'Tools',
-  items: [{ title: 'Swap', link: SWAP, icon: Shuffle }],
+  title: 'nav.sections.tools',
+  items: [{ title: 'nav.items.swap', link: SWAP, icon: Shuffle }],
 };
 
 export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
@@ -168,7 +175,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
         {open && (
           <span className="flex flex-1 items-center justify-between">
             <span className="flex items-center gap-1.5">
-              {item.title}
+              {t(item.title)}
               {item.beta && <BetaBadge />}
             </span>
             {item.href && (
@@ -201,7 +208,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
           <TooltipTrigger asChild>{button}</TooltipTrigger>
           <TooltipContent side="right" className="text-xs">
             <span className="flex items-center gap-1.5">
-              {item.title}
+              {t(item.title)}
               {item.beta && <BetaBadge withTooltip={false} />}
             </span>
           </TooltipContent>
@@ -230,7 +237,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
         <NavIcon size={16} />
         <span className="flex flex-1 items-center justify-between">
           <span className="flex items-center gap-1.5">
-            {item.title}
+            {t(item.title)}
             {item.beta && <BetaBadge />}
           </span>
           {item.href && (
@@ -265,7 +272,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
     return (
       <div className="px-4 py-2">
         <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 px-3 mb-1">
-          Navigation
+          {t('nav.navigation')}
         </div>
         <nav className="flex flex-col gap-0.5">
           {mainNav.map(item => renderBurgerNav(item))}
@@ -274,7 +281,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
           <div key={section.title}>
             <div className="my-2 mx-3 h-px bg-border/60" />
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 px-3 mb-1">
-              {section.title}
+              {t(section.title)}
             </div>
             <nav className="flex flex-col gap-0.5">
               {section.items.map(item => renderBurgerNav(item))}
@@ -284,7 +291,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
         <div className="my-2 mx-3 h-px bg-border/60" />
         <nav className="flex flex-col gap-0.5">
           {renderBurgerNav({
-            title: 'Settings',
+            title: 'nav.items.settings',
             link: SETTINGS,
             icon: Settings,
           })}
@@ -304,7 +311,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
         <div className="flex flex-col h-full">
           {sidebar && (
             <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 px-2.5 mb-1">
-              Menu
+              {t('nav.menu')}
             </div>
           )}
           <nav
@@ -325,7 +332,7 @@ export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
               />
               {sidebar && (
                 <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60 px-2.5 mb-1">
-                  {section.title}
+                  {t(section.title)}
                 </div>
               )}
               <nav

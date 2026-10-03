@@ -8,6 +8,7 @@ import { SupportBar } from './donate/DonateContent';
 import { LnUrlCard } from './lnurl';
 import { AmbossCard } from './amboss/AmbossCard';
 import { LightningAddressCard } from './lightningAddress/LightningAddress';
+import { t } from '@/i18n';
 
 export const QuickCard = ({
   children,
@@ -43,13 +44,13 @@ export const QuickActions = () => {
   const getTitle = () => {
     switch (openCard) {
       case 'decode':
-        return 'Decode a Lightning Request';
+        return t('home.quickActions.decodeTitle');
       case 'ln_url':
-        return 'Use lnurl';
+        return t('home.quickActions.lnurlTitle');
       case 'lightning_address':
-        return 'Pay to a Lightning Address';
+        return t('home.quickActions.lightningAddressTitle');
       default:
-        return 'Quick Actions';
+        return t('home.quickActions.title');
     }
   };
 
@@ -73,14 +74,14 @@ export const QuickActions = () => {
               onClick={() => setOpenCard('lightning_address')}
             >
               <Zap size={16} className="text-yellow-500" />
-              <QuickTitle>Address</QuickTitle>
+              <QuickTitle>{t('home.quickActions.address')}</QuickTitle>
             </QuickCard>
             <QuickCard
               className="hover:border-blue-500/30 hover:bg-blue-500/5"
               onClick={() => setOpenCard('decode')}
             >
               <Layers size={16} className="text-blue-500" />
-              <QuickTitle>Decode</QuickTitle>
+              <QuickTitle>{t('home.quickActions.decode')}</QuickTitle>
             </QuickCard>
             <QuickCard
               className="hover:border-emerald-500/30 hover:bg-emerald-500/5"

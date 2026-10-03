@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBitcoinFees } from '../../../../hooks/UseBitcoinFees';
+import { t } from '@/i18n';
 
 export const MempoolReport = () => {
   const { fast, halfHour, hour, minimum, dontShow } = useBitcoinFees();
@@ -9,16 +10,16 @@ export const MempoolReport = () => {
   }
 
   const fees = [
-    { label: 'Fastest', value: fast },
-    { label: 'Half Hour', value: halfHour },
-    { label: 'Hour', value: hour },
-    { label: 'Minimum', value: minimum },
+    { label: t('home.mempool.fastest'), value: fast },
+    { label: t('home.mempool.halfHour'), value: halfHour },
+    { label: t('home.mempool.hour'), value: hour },
+    { label: t('home.mempool.minimum'), value: minimum },
   ];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Mempool Fees</CardTitle>
+        <CardTitle>{t('home.mempool.title')}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

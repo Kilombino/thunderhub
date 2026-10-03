@@ -15,12 +15,13 @@ import { usePurchaseLiquidityMutation } from '../../../graphql/mutations/__gener
 import toast from 'react-hot-toast';
 import { useGetAmbossLoginTokenLazyQuery } from '../../../graphql/queries/__generated__/getAmbossLoginToken.generated';
 import { Badge } from '@/components/ui/badge';
+import { t } from '@/i18n';
 
 const GoToMagmaLink = () => {
   const [getToken, { data, loading: tokenLoading }] =
     useGetAmbossLoginTokenLazyQuery({
       fetchPolicy: 'network-only',
-      onError: () => toast.error('Error getting auth token'),
+      onError: () => toast.error(t('home.buyChannel.authTokenError')),
     });
 
   useEffect(() => {
@@ -68,7 +69,7 @@ export const BuyChannel = () => {
 
   const [purchase, purchaseData] = usePurchaseLiquidityMutation({
     onCompleted: () => {
-      toast.success('Liquidity Purchased!');
+      toast.success(t('home.buyChannel.purchased'));
       setConfirming(false);
     },
     onError: ({ graphQLErrors }) => {
@@ -92,7 +93,7 @@ export const BuyChannel = () => {
     return (
       <div className="flex flex-col items-center gap-2 py-6 text-center">
         <span className="text-sm text-muted-foreground">
-          Unable to fetch liquidity pricing. Please try again.
+          {t('home.buyChannel.pricingError')}
         </span>
       </div>
     );
@@ -110,15 +111,19 @@ export const BuyChannel = () => {
       {/* Value proposition */}
       <div className="grid grid-cols-3 gap-2">
         {[
-          { icon: Zap, label: 'Instant Setup', color: 'text-yellow-500' },
+          {
+            icon: Zap,
+            label: t('home.buyChannel.instantSetup'),
+            color: 'text-yellow-500',
+          },
           {
             icon: ShieldCheck,
-            label: 'Trusted Peers',
+            label: t('home.buyChannel.trustedPeers'),
             color: 'text-green-500',
           },
           {
             icon: ArrowRight,
-            label: 'Start Receiving',
+            label: t('home.buyChannel.startReceiving'),
             color: 'text-blue-500',
           },
         ].map(({ icon: Icon, label, color }) => (
@@ -137,7 +142,7 @@ export const BuyChannel = () => {
       {/* Amount selection */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-medium text-muted-foreground">
-          Select Amount
+          {t('home.buyChannel.selectAmount')}
         </label>
         <div className="grid grid-cols-5 gap-2">
           {PRESET_AMOUNTS.map(preset => (
@@ -167,7 +172,7 @@ export const BuyChannel = () => {
                 : 'border-border hover:border-primary/50'
             }`}
           >
-            Custom
+            {t('home.buyChannel.custom')}
           </button>
         </div>
       </div>
@@ -176,7 +181,7 @@ export const BuyChannel = () => {
       {custom && (
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Amount{' '}
+            {t('home.buyChannel.amount')}{' '}
             <Badge variant="secondary" className="ml-1 text-[10px]">
               ${MIN_AMOUNT} – ${MAX_AMOUNT.toLocaleString()}
             </Badge>
@@ -207,7 +212,7 @@ export const BuyChannel = () => {
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <div className="flex flex-col gap-0.5">
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-              You pay
+              {t('home.buyChannel.youPay')}
             </span>
             <span className="text-xl font-bold text-foreground">
               {formattedAmount}
@@ -218,13 +223,13 @@ export const BuyChannel = () => {
           </div>
           <div className="flex flex-col items-end gap-0.5">
             <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-              You receive
+              {t('home.buyChannel.youReceive')}
             </span>
             <span className="text-xl font-bold text-primary">
               ~{formattedLiquidity}
             </span>
             <span className="text-[10px] text-muted-foreground">
-              sats inbound
+              {t('home.buyChannel.satsInbound')}
             </span>
           </div>
         </div>
@@ -239,7 +244,7 @@ export const BuyChannel = () => {
           }
           onClick={() => setConfirming(true)}
         >
-          Boost Your Liquidity for {formattedAmount}
+          {t('home.buyChannel.boost', { amount: formattedAmount })}
         </Button>
       ) : (
         <div className="flex gap-2">
@@ -248,7 +253,7 @@ export const BuyChannel = () => {
             className="flex-1"
             onClick={() => setConfirming(false)}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             className="flex-1"
@@ -262,7 +267,7 @@ export const BuyChannel = () => {
             {isLoading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              `Confirm ${formattedAmount}`
+              t('home.buyChannel.confirm', { amount: formattedAmount })
             )}
           </Button>
         </div>
@@ -271,7 +276,7 @@ export const BuyChannel = () => {
       {/* Footer */}
       <div className="flex items-center justify-between text-[10px] text-muted-foreground">
         <span>
-          Sourced from{' '}
+          {t('home.buyChannel.sourcedFrom')}{' '}
           <a
             className="text-primary hover:underline"
             href="https://amboss.tech/rails/stats"
@@ -283,7 +288,7 @@ export const BuyChannel = () => {
           {' · '}
           <GoToMagmaLink />
         </span>
-        <span>Amounts are estimates</span>
+        <span>{t('home.buyChannel.estimates')}</span>
       </div>
     </div>
   );

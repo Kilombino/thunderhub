@@ -5,7 +5,9 @@ import {
   differenceInCalendarDays,
   isToday,
 } from 'date-fns';
+import { es as esLocale } from 'date-fns/locale';
 import { X, Copy } from 'lucide-react';
+import { getLanguage } from '@/i18n';
 import toast from 'react-hot-toast';
 import { config } from '../../config/thunderhubConfig';
 import { StatusDot, DetailLine } from './CardGeneric';
@@ -156,7 +158,9 @@ export const getChannelLink = (id: string) => {
 
 export const getDateDif = (date: string | null | undefined): string | null => {
   if (!date) return null;
-  return formatDistanceToNowStrict(new Date(date));
+  return formatDistanceToNowStrict(new Date(date), {
+    locale: getLanguage() === 'es' ? esLocale : undefined,
+  });
 };
 
 export const getPastFutureStr = (

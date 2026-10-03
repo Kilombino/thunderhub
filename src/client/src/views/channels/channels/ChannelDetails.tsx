@@ -2,11 +2,13 @@ import { FC } from 'react';
 import { Loader2 } from 'lucide-react';
 import { ChangeDetails } from '../../../components/modal/changeDetails/ChangeDetails';
 import { useGetChannelInfoQuery } from '../../../graphql/queries/__generated__/getChannel.generated';
+import { useTranslation } from '@/i18n';
 
 export const ChannelDetails: FC<{
   id?: string;
   name?: string;
 }> = ({ id = '', name = '' }) => {
+  const { t } = useTranslation();
   const { data, loading, error } = useGetChannelInfoQuery({
     variables: { id },
     skip: !id,
@@ -23,7 +25,7 @@ export const ChannelDetails: FC<{
   if (!data?.getChannel || error) {
     return (
       <div className="py-4 text-center text-sm text-muted-foreground">
-        Error getting channel information. Try refreshing the page.
+        {t('channels.details.error')}
       </div>
     );
   }

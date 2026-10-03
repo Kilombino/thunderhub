@@ -1,1 +1,41 @@
-export const login = {};
+export const login = {
+  tagline: 'Monitor and manage your Lightning node from anywhere.',
+  oldLnd:
+    'ThunderHub supports LND version 0.11.0 and higher. Please update your node, you are in risk of losing funds.',
+  accountLogin: 'Account Login',
+  ssoAccount: 'SSO Account',
+  enterCredentials: 'Enter your credentials to connect',
+  password: 'Password',
+  passwordPlaceholder: 'Enter password',
+  twofaCode: '2FA Code',
+  ifEnabled: '(if enabled)',
+  twofaPlaceholder: '6-digit code',
+  connect: 'Connect',
+  login: 'Login',
+  accounts: 'Accounts',
+  serverAccounts: 'Server Accounts',
+  otherAccounts: 'Other Accounts',
+  unableToConnect: 'Unable to connect to this node',
+  dbLogin: {
+    subtitle: 'Sign in with your account credentials',
+    email: 'Email',
+    emailPlaceholder: 'Enter email',
+    signIn: 'Sign In',
+  },
+  intro: {
+    welcome: 'Welcome to ThunderHub',
+    getStarted: 'To get started, create an account on your server.',
+    viewInstructions: 'View setup instructions',
+    alreadyCreated: 'Already created accounts?',
+    missingInfo:
+      'Your accounts might be missing required information. Check your server logs for details.',
+    serverLogs: 'On startup, the server logs which accounts are available.',
+  },
+  continue: {
+    yourAccount: 'your account',
+    alreadySignedIn: "You're already signed in",
+    continueAs: 'Continue as',
+    continue: 'Continue',
+    switchAccount: 'Log in with another account',
+  },
+};

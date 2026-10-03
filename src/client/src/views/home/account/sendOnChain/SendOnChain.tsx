@@ -13,8 +13,10 @@ import { usePriceState } from '../../../../context/PriceContext';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from '@/i18n';
 
 export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
+  const { t } = useTranslation();
   const { fast, halfHour, hour, minimum, dontShow } = useBitcoinFees();
   const { currency, displayValues, fetchFees } = useConfigState();
   const priceContext = usePriceState();
@@ -34,7 +36,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
   const [payAddress, { loading }] = usePayAddressMutation({
     onError: error => toast.error(getErrorContent(error)),
     onCompleted: () => {
-      toast.success('Payment Sent!');
+      toast.success(t('wallet.sendOnChain.paymentSent'));
       setOpen();
     },
     refetchQueries: ['GetNodeInfo', 'GetBalances'],
@@ -48,7 +50,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
 
   const feeEstimate = () => {
     if (type === 'target') {
-      return <>(~{amount} blocks)</>;
+      return <>(~{t('wallet.sendOnChain.blocksCount', { count: amount })})</>;
     }
     return <>(~{format({ amount: amount * 223 })})</>;
   };
@@ -69,9 +71,13 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
 
   // Deduplicate fee speeds
   const feeSpeeds = [
-    { label: 'Fastest', value: fast },
-    ...(halfHour !== fast ? [{ label: '30 min', value: halfHour }] : []),
-    ...(hour !== halfHour ? [{ label: '1 hour', value: hour }] : []),
+    { label: t('wallet.fees.fastest'), value: fast },
+    ...(halfHour !== fast
+      ? [{ label: t('wallet.fees.halfHour'), value: halfHour }]
+      : []),
+    ...(hour !== halfHour
+      ? [{ label: t('wallet.fees.hour'), value: hour }]
+      : []),
   ];
 
   return (
@@ -79,7 +85,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
       {/* Address */}
       <div className="flex flex-col gap-1">
         <label className="text-xs font-medium text-muted-foreground">
-          Address
+          {t('wallet.sendOnChain.address')}
         </label>
         <Input
           value={address}
@@ -93,7 +99,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
       {/* Send All toggle */}
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">
-          Send All
+          {t('wallet.sendOnChain.sendAll')}
         </span>
         <Switch checked={sendAll} onCheckedChange={setSendAll} />
       </div>
@@ -102,7 +108,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
       {!sendAll && (
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Amount{' '}
+            {t('wallet.sendOnChain.amount')}{' '}
             <span className="text-foreground">
               <Price amount={tokens} />
             </span>
@@ -121,7 +127,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
       {/* Fee type */}
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">
-          Fee Type
+          {t('wallet.sendOnChain.feeType')}
         </span>
         <ToggleGroup
           type="single"
@@ -137,10 +143,16 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
           }}
         >
           {fetchFees && !dontShow && (
-            <ToggleGroupItem value="none">Auto</ToggleGroupItem>
+            <ToggleGroupItem value="none">
+              {t('wallet.fees.auto')}
+            </ToggleGroupItem>
           )}
-          <ToggleGroupItem value="fee">Fee</ToggleGroupItem>
-          <ToggleGroupItem value="target">Target</ToggleGroupItem>
+          <ToggleGroupItem value="fee">
+            {t('wallet.sendOnChain.fee')}
+          </ToggleGroupItem>
+          <ToggleGroupItem value="target">
+            {t('wallet.sendOnChain.target')}
+          </ToggleGroupItem>
         </ToggleGroup>
       </div>
 
@@ -148,11 +160,11 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-muted-foreground">
-            Fee Amount{' '}
+            {t('wallet.sendOnChain.feeAmount')}{' '}
             <span className="text-foreground/60">{feeEstimate()}</span>
             {!dontShow && (
               <Badge variant="secondary" className="ml-1.5 text-[10px]">
-                min {minimum} sat/vB
+                {t('wallet.fees.minimum', { minimum })}
               </Badge>
             )}
           </span>
@@ -187,7 +199,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
                 </ToggleGroupItem>
               ))}
               <ToggleGroupItem value="custom" className="flex-1">
-                Custom
+                {t('wallet.fees.custom')}
               </ToggleGroupItem>
             </ToggleGroup>
             {customFee && (
@@ -202,7 +214,9 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
         ) : (
           <Input
             value={amount && amount > 0 ? amount : ''}
-            placeholder={type === 'target' ? 'Blocks' : 'sats/vB'}
+            placeholder={
+              type === 'target' ? t('wallet.sendOnChain.blocks') : 'sats/vB'
+            }
             type="number"
             onChange={e => setAmount(Number(e.target.value))}
           />
@@ -217,27 +231,39 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
           className="w-full"
           onClick={() => setConfirming(true)}
         >
-          Send
+          {t('wallet.sendOnChain.send')}
         </Button>
       ) : (
         <div className="flex flex-col gap-2">
           <div className="divide-y divide-border rounded border border-border text-xs">
             <div className="flex items-center justify-between px-3 py-2">
-              <span className="text-muted-foreground">Amount</span>
+              <span className="text-muted-foreground">
+                {t('wallet.sendOnChain.amount')}
+              </span>
               <span className="font-medium">
-                {sendAll ? 'All' : <Price amount={tokens} />}
+                {sendAll ? (
+                  t('wallet.sendOnChain.all')
+                ) : (
+                  <Price amount={tokens} />
+                )}
               </span>
             </div>
             <div className="flex items-center justify-between px-3 py-2">
-              <span className="text-muted-foreground">Address</span>
+              <span className="text-muted-foreground">
+                {t('wallet.sendOnChain.address')}
+              </span>
               <span className="max-w-50 truncate font-mono text-[11px] font-medium">
                 {address}
               </span>
             </div>
             <div className="flex items-center justify-between px-3 py-2">
-              <span className="text-muted-foreground">Fee</span>
+              <span className="text-muted-foreground">
+                {t('wallet.sendOnChain.fee')}
+              </span>
               <span className="font-medium">
-                {type === 'target' ? `${amount} blocks` : `${amount} sats/vB`}
+                {type === 'target'
+                  ? t('wallet.sendOnChain.blocksCount', { count: amount })
+                  : `${amount} sats/vB`}
               </span>
             </div>
           </div>
@@ -247,7 +273,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
               className="flex-1"
               onClick={() => setConfirming(false)}
             >
-              Cancel
+              {t('wallet.sendOnChain.cancel')}
             </Button>
             <Button
               className="flex-1"
@@ -261,7 +287,7 @@ export const SendOnChainCard = ({ setOpen }: { setOpen: () => void }) => {
               {loading ? (
                 <Loader2 className="animate-spin" size={16} />
               ) : (
-                'Confirm Send'
+                t('wallet.sendOnChain.confirmSend')
               )}
             </Button>
           </div>

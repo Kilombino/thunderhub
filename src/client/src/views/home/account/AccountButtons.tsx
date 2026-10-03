@@ -6,6 +6,7 @@ import { CreateInvoiceCard } from './createInvoice/CreateInvoice';
 import { PayCard } from './pay/Payment';
 import { ReceiveOnChainCard } from './receiveOnChain/ReceiveOnChain';
 import { SendOnChainCard } from './sendOnChain/SendOnChain';
+import { useTranslation } from '@/i18n';
 
 type ActiveState =
   | 'none'
@@ -30,36 +31,40 @@ const ActionSection = ({
   receiveKey: ActiveState;
   active: ActiveState;
   onToggle: (key: ActiveState) => void;
-}) => (
-  <div className="flex items-center justify-between rounded-lg bg-card py-4 px-4 ring-1 ring-foreground/10 text-card-foreground">
-    <div className="flex items-center gap-2">
-      <Icon size={14} className={iconClassName} />
-      <span className="text-sm font-medium">{label}</span>
+}) => {
+  const { t } = useTranslation();
+  return (
+    <div className="flex items-center justify-between rounded-lg bg-card py-4 px-4 ring-1 ring-foreground/10 text-card-foreground">
+      <div className="flex items-center gap-2">
+        <Icon size={14} className={iconClassName} />
+        <span className="text-sm font-medium">{label}</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant={active === sendKey ? 'default' : 'outline'}
+          size="sm"
+          className="text-xs"
+          onClick={() => onToggle(sendKey)}
+        >
+          <ArrowUpRight size={14} />
+          {t('wallet.actions.send')}
+        </Button>
+        <Button
+          variant={active === receiveKey ? 'default' : 'outline'}
+          size="sm"
+          className="text-xs"
+          onClick={() => onToggle(receiveKey)}
+        >
+          <ArrowDownLeft size={14} />
+          {t('wallet.actions.receive')}
+        </Button>
+      </div>
     </div>
-    <div className="flex items-center gap-2">
-      <Button
-        variant={active === sendKey ? 'default' : 'outline'}
-        size="sm"
-        className="text-xs"
-        onClick={() => onToggle(sendKey)}
-      >
-        <ArrowUpRight size={14} />
-        Send
-      </Button>
-      <Button
-        variant={active === receiveKey ? 'default' : 'outline'}
-        size="sm"
-        className="text-xs"
-        onClick={() => onToggle(receiveKey)}
-      >
-        <ArrowDownLeft size={14} />
-        Receive
-      </Button>
-    </div>
-  </div>
-);
+  );
+};
 
 export const AccountButtons = () => {
+  const { t } = useTranslation();
   const [state, setState] = useState<ActiveState>('none');
 
   const toggle = (key: ActiveState) => {
@@ -94,7 +99,7 @@ export const AccountButtons = () => {
           onToggle={toggle}
         />
         <ActionSection
-          label="On-chain"
+          label={t('wallet.actions.onChain')}
           icon={Anchor}
           iconClassName="text-yellow-500"
           sendKey="send_chain"
