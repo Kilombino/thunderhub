@@ -8,6 +8,7 @@ import { getAddressLink } from '../../../components/generic/helpers';
 import { Price } from '../../../components/price/Price';
 import { blockToTime } from '../../../utils/helpers';
 import { Coins } from 'lucide-react';
+import { t } from '@/i18n';
 
 export const ChainUtxos = () => {
   const { loading, data } = useGetUtxosQuery({
@@ -31,7 +32,8 @@ export const ChainUtxos = () => {
         accessorKey: 'index',
       },
       {
-        header: 'Sats',
+        id: 'Sats',
+        header: t('chain.utxos.columns.sats'),
         accessorKey: 'tokens',
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap font-mono">
@@ -39,13 +41,19 @@ export const ChainUtxos = () => {
           </div>
         ),
       },
-      { header: 'Confirmations', accessorKey: 'confirmation_count' },
       {
-        header: 'Since',
+        id: 'Confirmations',
+        header: t('chain.utxos.columns.confirmations'),
+        accessorKey: 'confirmation_count',
+      },
+      {
+        id: 'Since',
+        header: t('chain.utxos.columns.since'),
         accessorKey: 'time',
       },
       {
-        header: 'Address',
+        id: 'Address',
+        header: t('chain.utxos.columns.address'),
         enableSorting: false,
         accessorKey: 'output_addresses',
         cell: ({ row }: any) => (
@@ -55,7 +63,8 @@ export const ChainUtxos = () => {
         ),
       },
       {
-        header: 'Format',
+        id: 'Format',
+        header: t('chain.utxos.columns.format'),
         enableSorting: false,
         accessorKey: 'address_format',
       },
@@ -71,7 +80,7 @@ export const ChainUtxos = () => {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
         <Coins size={24} className="mb-2 opacity-50" />
-        <span className="text-sm">No UTXOs found</span>
+        <span className="text-sm">{t('chain.utxos.empty')}</span>
       </div>
     );
   }

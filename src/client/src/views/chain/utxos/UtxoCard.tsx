@@ -8,6 +8,7 @@ import {
 import { getPrice } from '../../../components/price/Price';
 import { useConfigState } from '../../../context/ConfigContext';
 import { usePriceState } from '../../../context/PriceContext';
+import { t } from '@/i18n';
 
 interface TransactionsCardProps {
   utxo: Utxo;
@@ -50,12 +51,15 @@ export const UtxoCard = ({
     return (
       <>
         <Separator className="my-3" />
-        {renderLine('Address Format:', address_format)}
-        {renderLine('Confirmations: ', confirmation_count)}
-        {renderLine('Output Script: ', output_script)}
-        {renderLine('Transaction Id: ', getTransactionLink(transaction_id))}
+        {renderLine(t('chain.utxos.card.addressFormat'), address_format)}
+        {renderLine(t('chain.utxos.card.confirmations'), confirmation_count)}
+        {renderLine(t('chain.utxos.card.outputScript'), output_script)}
         {renderLine(
-          'Transaction Vout: ',
+          t('chain.utxos.card.transactionId'),
+          getTransactionLink(transaction_id)
+        )}
+        {renderLine(
+          t('chain.utxos.card.transactionVout'),
           transaction_vout >= 0 ? `${transaction_vout}` : '-'
         )}
       </>
@@ -68,8 +72,8 @@ export const UtxoCard = ({
       className="rounded-md border border-border bg-card p-4 hover:shadow-sm transition-shadow"
     >
       <MainInfo onClick={() => handleClick()}>
-        {renderLine('Address', address)}
-        {renderLine('Amount', formatAmount)}
+        {renderLine(t('chain.utxos.card.address'), address)}
+        {renderLine(t('chain.utxos.card.amount'), formatAmount)}
       </MainInfo>
       {index === indexOpen && renderDetails()}
     </div>

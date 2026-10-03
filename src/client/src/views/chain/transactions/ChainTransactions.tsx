@@ -1,6 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useGetChainTransactionsQuery } from '../../../graphql/queries/__generated__/getChainTransactions.generated';
+import {
+  GetChainTransactionsQuery,
+  useGetChainTransactionsQuery,
+} from '../../../graphql/queries/__generated__/getChainTransactions.generated';
 import { getErrorContent } from '../../../utils/error';
 import { LoadingCard } from '../../../components/loading/LoadingCard';
 import Table from '../../../components/table';
@@ -10,11 +13,24 @@ import {
   getTransactionLink,
 } from '../../../components/generic/helpers';
 import { Price } from '../../../components/price/Price';
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, Rocket } from 'lucide-react';
 import { useChartColors } from '../../../lib/chart-colors';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { useTranslation } from '@/i18n';
+import { CpfpDialog } from './CpfpDialog';
+
+type ChainTx = GetChainTransactionsQuery['getChainTransactions'][number];
 
 export const ChainTransactions = () => {
+  const { t } = useTranslation();
   const chartColors = useChartColors();
+  const [bumping, setBumping] = useState<ChainTx | null>(null);
 
   const { loading, data } = useGetChainTransactionsQuery({
     onError: error => toast.error(getErrorContent(error)),
@@ -32,7 +48,8 @@ export const ChainTransactions = () => {
   const columns = useMemo(
     () => [
       {
-        header: 'Type',
+        id: 'Type',
+        header: t('chain.transactions.columns.type'),
         accessorKey: 'transaction_type',
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap">
@@ -45,16 +62,20 @@ export const ChainTransactions = () => {
         ),
       },
       {
-        header: 'Date',
+        id: 'Date',
+        header: t('chain.transactions.columns.date'),
         accessorKey: 'created_at',
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap">
-            {`${getDateDif(row.original.created_at)} ago`}
+            {t('chain.transactions.ago', {
+              time: getDateDif(row.original.created_at) || '',
+            })}
           </div>
         ),
       },
       {
-        header: 'Sats',
+        id: 'Sats',
+        header: t('chain.transactions.columns.sats'),
         accessorKey: 'tokens',
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap font-mono">
@@ -63,7 +84,8 @@ export const ChainTransactions = () => {
         ),
       },
       {
-        header: 'Fee',
+        id: 'Fee',
+        header: t('chain.transactions.columns.fee'),
         accessorKey: 'fee',
         cell: ({ row }: any) => (
           <div className="whitespace-nowrap font-mono">
@@ -71,10 +93,27 @@ export const ChainTransactions = () => {
           </div>
         ),
       },
-      { header: 'Confirmations', accessorKey: 'confirmation_count' },
-      { header: 'Block Height', accessorKey: 'confirmation_height' },
       {
-        header: 'Output Addresses',
+        id: 'Confirmations',
+        header: t('chain.transactions.columns.confirmations'),
+        accessorKey: 'confirmation_count',
+        cell: ({ row }: any) =>
+          row.original.is_confirmed ? (
+            row.original.confirmation_count
+          ) : (
+            <Badge variant="secondary">
+              {t('chain.transactions.unconfirmed')}
+            </Badge>
+          ),
+      },
+      {
+        id: 'Block Height',
+        header: t('chain.transactions.columns.blockHeight'),
+        accessorKey: 'confirmation_height',
+      },
+      {
+        id: 'Output Addresses',
+        header: t('chain.transactions.columns.outputAddresses'),
         accessorKey: 'output_addresses',
         enableSorting: false,
         cell: ({ row }: any) =>
@@ -85,7 +124,8 @@ export const ChainTransactions = () => {
           )),
       },
       {
-        header: 'Transaction',
+        id: 'Transaction',
+        header: t('chain.transactions.columns.transaction'),
         accessorKey: 'id',
         enableSorting: false,
         cell: ({ row }: any) => (
@@ -94,8 +134,42 @@ export const ChainTransactions = () => {
           </div>
         ),
       },
+      {
+        id: 'Actions',
+        header: t('chain.transactions.columns.actions'),
+        enableSorting: false,
+        cell: ({ row }: any) => {
+          const tx: ChainTx = row.original;
+          if (tx.is_confirmed) return null;
+          if (tx.cpfp_vout == null) {
+            return (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="whitespace-nowrap text-xs text-muted-foreground">
+                    {t('chain.cpfp.noWalletOutputShort')}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  {t('chain.cpfp.noWalletOutput')}
+                </TooltipContent>
+              </Tooltip>
+            );
+          }
+          return (
+            <Button
+              variant="outline"
+              size="sm"
+              className="whitespace-nowrap"
+              onClick={() => setBumping(tx)}
+            >
+              <Rocket size={14} />
+              {t('chain.cpfp.action')}
+            </Button>
+          );
+        },
+      },
     ],
-    [chartColors]
+    [chartColors, t]
   );
 
   if (loading) {
@@ -106,10 +180,15 @@ export const ChainTransactions = () => {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
         <ArrowUpDown size={24} className="mb-2 opacity-50" />
-        <span className="text-sm">No on-chain transactions found</span>
+        <span className="text-sm">{t('chain.transactions.empty')}</span>
       </div>
     );
   }
 
-  return <Table columns={columns} data={tableData} withSorting={true} />;
+  return (
+    <>
+      <Table columns={columns} data={tableData} withSorting={true} />
+      <CpfpDialog transaction={bumping} onClose={() => setBumping(null)} />
+    </>
+  );
 };
