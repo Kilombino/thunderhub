@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import {
   AlertTriangle,
   ChevronDown,
@@ -19,12 +19,59 @@ import { useConfigState } from '../../../context/ConfigContext';
 import { PeerSelect } from '../../../components/select/specific/PeerSelect';
 import { Separator } from '@/components/ui/separator';
 import { getErrorContent } from '../../../utils/error';
+import { useTranslation } from '@/i18n';
+import { CoinControlOpen } from './CoinControlOpen';
 
 type OpenChannelProps = {
   closeCbk: () => void;
 };
 
 export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
+  const { t } = useTranslation();
+  const [mode, setMode] = useState<'auto' | 'coins'>('auto');
+
+  const modeToggle = (
+    <div className="flex items-center justify-between">
+      <span className="text-xs font-medium text-muted-foreground">
+        {t('openChannel.funding.label')}
+      </span>
+      <ToggleGroup
+        type="single"
+        variant="outline"
+        size="sm"
+        value={mode}
+        onValueChange={value => {
+          if (value) setMode(value as 'auto' | 'coins');
+        }}
+      >
+        <ToggleGroupItem value="auto">
+          {t('openChannel.funding.automatic')}
+        </ToggleGroupItem>
+        <ToggleGroupItem value="coins">
+          {t('openChannel.funding.coinControl')}
+        </ToggleGroupItem>
+      </ToggleGroup>
+    </div>
+  );
+
+  if (mode === 'coins') {
+    return (
+      <div className="flex flex-col gap-3">
+        {modeToggle}
+        <Separator />
+        <CoinControlOpen closeCbk={closeCbk} />
+      </div>
+    );
+  }
+
+  return <AutomaticOpenChannel closeCbk={closeCbk} modeToggle={modeToggle} />;
+};
+
+const AutomaticOpenChannel = ({
+  closeCbk,
+  modeToggle,
+}: OpenChannelProps & { modeToggle: ReactNode }) => {
+  const { t } = useTranslation();
   const [useRecommended, setUseRecommended] = useState(true);
 
   const { fetchFees } = useConfigState();
@@ -50,7 +97,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
   const [openChannel, { loading }] = useOpenChannelMutation({
     onError: error => toast.error(getErrorContent(error)),
     onCompleted: () => {
-      toast.success('Channel Opened');
+      toast.success(t('openChannel.opened'));
       closeCbk();
     },
     refetchQueries: ['GetChannels', 'GetPendingChannels'],
@@ -87,9 +134,9 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
     const seen = new Set<number>();
     const options: { value: string; label: string }[] = [];
     const entries = [
-      { value: 'fast', rate: fast, label: 'Fastest' },
-      { value: 'half', rate: halfHour, label: '30 min' },
-      { value: 'hour', rate: hour, label: '1 hour' },
+      { value: 'fast', rate: fast, label: t('openChannel.fastest') },
+      { value: 'half', rate: halfHour, label: t('openChannel.halfHour') },
+      { value: 'hour', rate: hour, label: t('openChannel.hour') },
     ];
     for (const e of entries) {
       if (!seen.has(e.rate)) {
@@ -102,10 +149,12 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
 
   return (
     <div className="flex flex-col gap-3">
+      {modeToggle}
+      <Separator />
       {/* Peer */}
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">
-          Use Recommended Peer
+          {t('openChannel.useRecommended')}
         </span>
         <Switch checked={useRecommended} onCheckedChange={setUseRecommended} />
       </div>
@@ -115,16 +164,16 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
           <Zap size={16} className="mt-0.5 shrink-0 text-primary" />
           <div className="flex flex-col gap-0.5 text-xs">
             <span className="font-medium text-primary">
-              Amboss Rails Cluster
+              {t('openChannel.railsTitle')}
             </span>
             <span className="text-muted-foreground">
-              Optimized for fast, reliable, high-throughput payments.{' '}
+              {t('openChannel.railsDescription')}{' '}
               <a
                 className="text-primary hover:underline"
                 href="https://amboss.tech/rails/stats"
                 target="_blank"
               >
-                Learn more
+                {t('openChannel.learnMore')}
               </a>
             </span>
           </div>
@@ -138,15 +187,15 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
             />
             <div className="flex flex-col gap-0.5 text-xs">
               <span className="font-medium text-orange-500">
-                Performance may vary
+                {t('openChannel.performanceTitle')}
               </span>
               <span className="text-muted-foreground">
-                For the best experience, connect to the{' '}
+                {t('openChannel.performanceDescription')}{' '}
                 <button
                   className="inline cursor-pointer border-none bg-transparent p-0 text-xs text-primary hover:underline"
                   onClick={() => setUseRecommended(true)}
                 >
-                  Amboss Rails cluster
+                  {t('openChannel.railsLink')}
                 </button>
                 .
               </span>
@@ -156,7 +205,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <label className="text-xs font-medium text-muted-foreground">
-                Node
+                {t('openChannel.node')}
               </label>
               <ToggleGroup
                 type="single"
@@ -170,14 +219,18 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
                   }
                 }}
               >
-                <ToggleGroupItem value="new">New</ToggleGroupItem>
-                <ToggleGroupItem value="existing">Existing</ToggleGroupItem>
+                <ToggleGroupItem value="new">
+                  {t('openChannel.newPeer')}
+                </ToggleGroupItem>
+                <ToggleGroupItem value="existing">
+                  {t('openChannel.existingPeer')}
+                </ToggleGroupItem>
               </ToggleGroup>
             </div>
             {isNewPeer ? (
               <Input
                 value={publicKey}
-                placeholder="PublicKey@Socket"
+                placeholder={t('openChannel.peerPlaceholder')}
                 onChange={e => setPublicKey(e.target.value)}
               />
             ) : (
@@ -192,7 +245,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
       {/* Channel Size */}
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">
-          Max Size
+          {t('openChannel.maxSize')}
         </span>
         <Switch
           checked={isMaxFunding}
@@ -206,13 +259,13 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
       {!isMaxFunding && (
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Channel Size{' '}
+            {t('openChannel.channelSize')}{' '}
             <span className="text-foreground">
               <Price amount={size} />
             </span>
           </label>
           <Input
-            placeholder="Sats"
+            placeholder={t('openChannel.satsPlaceholder')}
             type="number"
             value={size && size > 0 ? size : ''}
             onChange={e => setSize(Number(e.target.value))}
@@ -226,7 +279,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
       <div className="grid grid-cols-2 gap-3">
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Fee Rate{' '}
+            {t('openChannel.feeRate')}{' '}
             {feeRate != null && (
               <span className="text-foreground">
                 <Price amount={feeRate} override="ppm" />
@@ -248,7 +301,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-xs font-medium text-muted-foreground">
-            Base Fee{' '}
+            {t('openChannel.baseFee')}{' '}
             {baseFee != null && (
               <span className="text-foreground">
                 <Price amount={baseFee} />
@@ -276,13 +329,13 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-muted-foreground">
-            On-chain Fee{' '}
+            {t('openChannel.onChainFee')}{' '}
             <span className="text-foreground">
               <Price amount={fee * 223} />
             </span>
             {fetchFees && !dontShow && (
               <Badge variant="secondary" className="ml-1.5">
-                min {minimum} sat/vB
+                {t('openChannel.minFee', { minimum })}
               </Badge>
             )}
           </span>
@@ -303,8 +356,12 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
                 }
               }}
             >
-              <ToggleGroupItem value="none">Auto</ToggleGroupItem>
-              <ToggleGroupItem value="fee">Custom</ToggleGroupItem>
+              <ToggleGroupItem value="none">
+                {t('openChannel.auto')}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="fee">
+                {t('openChannel.custom')}
+              </ToggleGroupItem>
             </ToggleGroup>
           )}
         </div>
@@ -331,7 +388,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
           </ToggleGroup>
         ) : (
           <Input
-            placeholder="sats/vByte"
+            placeholder={t('openChannel.feePlaceholder')}
             type="number"
             onChange={e => setFee(Number(e.target.value))}
           />
@@ -357,14 +414,14 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
           size={14}
           className={showAdvanced ? 'rotate-180 transition' : 'transition'}
         />
-        Advanced
+        {t('openChannel.advanced')}
       </Button>
 
       {showAdvanced && (
         <>
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground">
-              Type
+              {t('openChannel.type')}
             </span>
             <ToggleGroup
               type="single"
@@ -375,8 +432,12 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
                 if (value) setPrivateChannel(value === 'private');
               }}
             >
-              <ToggleGroupItem value="private">Private</ToggleGroupItem>
-              <ToggleGroupItem value="public">Public</ToggleGroupItem>
+              <ToggleGroupItem value="private">
+                {t('openChannel.private')}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="public">
+                {t('openChannel.public')}
+              </ToggleGroupItem>
             </ToggleGroup>
           </div>
 
@@ -384,10 +445,10 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
             <div className="flex items-center justify-between">
               <div className="flex flex-col gap-0.5">
                 <span className="text-xs font-medium text-destructive">
-                  Push Tokens to Peer
+                  {t('openChannel.pushTitle')}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  These sats are gifted and cannot be recovered.
+                  {t('openChannel.pushDescription')}
                 </span>
               </div>
               <ToggleGroup
@@ -399,18 +460,20 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
                   if (value) setPushType(value);
                 }}
               >
-                <ToggleGroupItem value="none">None</ToggleGroupItem>
+                <ToggleGroupItem value="none">
+                  {t('openChannel.pushNone')}
+                </ToggleGroupItem>
                 <ToggleGroupItem
                   value="half"
                   className="data-[state=on]:bg-destructive/10 data-[state=on]:text-destructive"
                 >
-                  Half
+                  {t('openChannel.pushHalf')}
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value="custom"
                   className="data-[state=on]:bg-destructive/10 data-[state=on]:text-destructive"
                 >
-                  Custom
+                  {t('openChannel.pushCustom')}
                 </ToggleGroupItem>
               </ToggleGroup>
             </div>
@@ -418,14 +481,18 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
             {pushType === 'custom' && (
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-medium text-muted-foreground">
-                  Amount{' '}
+                  {t('openChannel.amount')}{' '}
                   <span className="text-destructive">
                     <Price amount={Math.min(pushTokens, size * 0.9)} />
                   </span>
                 </label>
                 <Input
                   placeholder={
-                    size > 0 ? `Sats (Max: ${Math.floor(size * 0.9)})` : 'Sats'
+                    size > 0
+                      ? t('openChannel.pushPlaceholderMax', {
+                          max: Math.floor(size * 0.9),
+                        })
+                      : t('openChannel.satsPlaceholder')
                   }
                   type="number"
                   value={pushTokens > 0 ? pushTokens : ''}
@@ -438,8 +505,8 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
               <div className="flex items-center gap-1.5 text-xs font-medium text-destructive">
                 <AlertTriangle size={14} className="shrink-0" />
                 <span>
-                  You will lose <Price amount={pushAmount} /> when this channel
-                  opens.
+                  {t('openChannel.youWillLose')} <Price amount={pushAmount} />{' '}
+                  {t('openChannel.whenOpens')}
                 </span>
               </div>
             )}
@@ -455,7 +522,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
             disabled={loading}
             onClick={() => setConfirming(false)}
           >
-            Cancel
+            {t('openChannel.cancel')}
           </Button>
           <Button
             variant="default"
@@ -483,7 +550,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
             {loading ? (
               <Loader2 className="animate-spin" size={16} />
             ) : (
-              'Confirm Open'
+              t('openChannel.confirmOpen')
             )}
           </Button>
         </div>
@@ -494,7 +561,7 @@ export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
           disabled={!canOpen || loading}
           onClick={() => setConfirming(true)}
         >
-          Open Channel <ChevronRight size={18} />
+          {t('openChannel.open')} <ChevronRight size={18} />
         </Button>
       )}
     </div>

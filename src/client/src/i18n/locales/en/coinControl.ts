@@ -1,1 +1,40 @@
-export const coinControl = {};
+export const coinControl = {
+  intro:
+    'Choose exactly which coins fund the channel and pay any fee rate down to 0.1 sat/vB. The channel is funded through a PSBT that you review before it is signed.',
+  peer: 'Peer',
+  peerPlaceholder: 'PublicKey or PublicKey@host:port',
+  channelSize: 'Channel size (sats)',
+  useAll: 'Use all selected',
+  feeRate: 'Fee rate (sat/vB)',
+  feeRateHint: 'Minimum 0.1 sat/vB, decimals allowed.',
+  lowFeeWarning:
+    'Below 1 sat/vB confirmation can take a long time: most XBT pools only mine transactions paying at least 1 sat/vB. Your peer forgets an unconfirmed channel after ~2016 blocks. You can speed it up later from Chain > Transactions (CPFP).',
+  utxos: 'Coins to spend',
+  utxosEmpty: 'The wallet has no UTXOs.',
+  selected: '{count} selected · {total} sats',
+  unconfirmed: 'unconfirmed',
+  confirmations: '{count} conf.',
+  outpoint: 'Outpoint',
+  addressType: 'Type',
+  routingFees: 'Routing fees (optional)',
+  prepare: 'Prepare transaction',
+  insufficient: 'The selected coins do not cover the channel and the fee.',
+  review: {
+    title: 'Review before signing',
+    expires: 'The peer waits for the funding until {time}.',
+    inputs: 'Inputs',
+    channel: 'Channel',
+    change: 'Change (back to the wallet)',
+    noChange: 'No change',
+    fee: 'Fee',
+    feeDetail:
+      '{fee} sats · ≈{rate} sat/vB (≈{vsize} vB, requested {requested} sat/vB)',
+    peer: 'Peer',
+    fundingAddress: 'Funding address',
+    sign: 'Sign and open channel',
+    cancel: 'Cancel and release coins',
+    cancelled: 'Channel cancelled and coins released',
+  },
+  opened: 'Channel funding broadcast: {txid}',
+  openedDetail: 'Paid {fee} sats ({rate} sat/vB over {vsize} vB).',
+};
