@@ -95,6 +95,10 @@ export class LndService implements LightningProvider {
     return lnd;
   }
 
+  getAuthenticatedLnd(lnd: AuthenticatedLnd): AuthenticatedLnd {
+    return lnd;
+  }
+
   async verifyConnection(lnd: AuthenticatedLnd): Promise<void> {
     await to(getWalletInfo({ lnd }));
   }

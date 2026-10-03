@@ -87,6 +87,10 @@ export class LitdService implements LightningProvider, TaprootAssetsProvider {
     return connection.lnd;
   }
 
+  getAuthenticatedLnd(connection: LitdConnection) {
+    return this.getLnd(connection);
+  }
+
   private getLnd(connection: LitdConnection) {
     return connection.lnd;
   }

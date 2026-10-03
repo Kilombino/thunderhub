@@ -25,6 +25,7 @@ import { TapdApiModule } from './tapd/tapd.module';
 import { MagmaModule } from './magma/magma.module';
 import { TradeModule } from './trade/trade.module';
 import { PublicModule } from './public/public.module';
+import { CoinControlModule } from './coinControl/coinControl.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { PublicModule } from './public/public.module';
     MagmaModule,
     TradeModule,
     PublicModule,
+    CoinControlModule,
   ],
 })
 export class ApiModule {}

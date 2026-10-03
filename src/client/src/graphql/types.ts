@@ -171,11 +171,29 @@ export type ChainAddressSend = {
   tokens?: Maybe<Scalars['Float']['output']>;
 };
 
+export type ChainFeeBump = {
+  __typename?: 'ChainFeeBump';
+  /** Maximum fee LND may spend on the child (sats) */
+  budget: Scalars['Float']['output'];
+  /** Estimated child fee in sats */
+  child_fee: Scalars['Float']['output'];
+  /** Fee rate requested for the child (sat/vB) */
+  child_fee_rate: Scalars['Float']['output'];
+  /** Estimated parent + child fee rate (sat/vB) */
+  package_fee_rate: Scalars['Float']['output'];
+  status: Scalars['String']['output'];
+  transaction_id: Scalars['String']['output'];
+  transaction_vout: Scalars['Int']['output'];
+};
+
 export type ChainTransaction = {
   __typename?: 'ChainTransaction';
   block_id?: Maybe<Scalars['String']['output']>;
   confirmation_count?: Maybe<Scalars['Float']['output']>;
   confirmation_height?: Maybe<Scalars['Float']['output']>;
+  cpfp_tokens?: Maybe<Scalars['Float']['output']>;
+  /** Unconfirmed only: index of the largest wallet-owned output, spendable by a CPFP child */
+  cpfp_vout?: Maybe<Scalars['Int']['output']>;
   created_at: Scalars['String']['output'];
   description?: Maybe<Scalars['String']['output']>;
   fee?: Maybe<Scalars['Float']['output']>;
@@ -185,6 +203,8 @@ export type ChainTransaction = {
   output_addresses: Array<Scalars['String']['output']>;
   tokens: Scalars['Float']['output'];
   transaction?: Maybe<Scalars['String']['output']>;
+  /** Virtual size of the transaction */
+  vsize?: Maybe<Scalars['Float']['output']>;
 };
 
 export type Channel = {
@@ -308,6 +328,43 @@ export type ClosedChannel = {
   partner_public_key: Scalars['String']['output'];
   transaction_id: Scalars['String']['output'];
   transaction_vout: Scalars['Float']['output'];
+};
+
+export type CoinControlChannelProposal = {
+  __typename?: 'CoinControlChannelProposal';
+  change: Scalars['Float']['output'];
+  channel_amount: Scalars['Float']['output'];
+  estimated_fee_rate: Scalars['Float']['output'];
+  estimated_vsize: Scalars['Float']['output'];
+  expires_at: Scalars['String']['output'];
+  fee: Scalars['Float']['output'];
+  funding_address: Scalars['String']['output'];
+  input_total: Scalars['Float']['output'];
+  inputs: Array<CoinControlInput>;
+  partner_public_key: Scalars['String']['output'];
+  pending_channel_id: Scalars['String']['output'];
+  requested_fee_rate: Scalars['Float']['output'];
+  sat_per_kw: Scalars['Float']['output'];
+};
+
+export type CoinControlChannelResult = {
+  __typename?: 'CoinControlChannelResult';
+  fee: Scalars['Float']['output'];
+  fee_rate: Scalars['Float']['output'];
+  transaction_id: Scalars['String']['output'];
+  vsize: Scalars['Float']['output'];
+};
+
+export type CoinControlInput = {
+  __typename?: 'CoinControlInput';
+  tokens: Scalars['Float']['output'];
+  transaction_id: Scalars['String']['output'];
+  transaction_vout: Scalars['Int']['output'];
+};
+
+export type CoinControlOutpointInput = {
+  transaction_id: Scalars['String']['input'];
+  transaction_vout: Scalars['Int']['input'];
 };
 
 export enum ConfigFields {
@@ -654,8 +711,11 @@ export type Mutation = {
   __typename?: 'Mutation';
   addPeer: Scalars['Boolean']['output'];
   bakeSuperMacaroon: SuperMacaroon;
+  bumpChainTransactionFee: ChainFeeBump;
+  cancelCoinControlChannel: Scalars['Boolean']['output'];
   claimBoltzTransaction: Scalars['String']['output'];
   closeChannel: OpenOrCloseChannel;
+  confirmCoinControlChannel: CoinControlChannelResult;
   createAddress: Scalars['String']['output'];
   createBoltzReverseSwap: CreateBoltzReverseSwapType;
   createInvoice: CreateInvoice;
@@ -672,6 +732,7 @@ export type Mutation = {
   magma: MagmaMutations;
   openChannel: OpenOrCloseChannel;
   pay: Scalars['Boolean']['output'];
+  prepareCoinControlChannel: CoinControlChannelProposal;
   public: PublicMutation;
   purchaseLiquidity: Scalars['Boolean']['output'];
   pushBackup: Scalars['Boolean']['output'];
@@ -699,6 +760,15 @@ export type MutationBakeSuperMacaroonArgs = {
   input: BakeSuperMacaroonInput;
 };
 
+export type MutationBumpChainTransactionFeeArgs = {
+  fee_rate: Scalars['Float']['input'];
+  transaction_id: Scalars['String']['input'];
+};
+
+export type MutationCancelCoinControlChannelArgs = {
+  pending_channel_id: Scalars['String']['input'];
+};
+
 export type MutationClaimBoltzTransactionArgs = {
   destination: Scalars['String']['input'];
   fee: Scalars['Float']['input'];
@@ -714,6 +784,10 @@ export type MutationCloseChannelArgs = {
   id: Scalars['String']['input'];
   targetConfirmations?: InputMaybe<Scalars['Float']['input']>;
   tokensPerVByte?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type MutationConfirmCoinControlChannelArgs = {
+  pending_channel_id: Scalars['String']['input'];
 };
 
 export type MutationCreateAddressArgs = {
@@ -782,6 +856,10 @@ export type MutationPayArgs = {
   max_paths: Scalars['Float']['input'];
   out?: InputMaybe<Array<Scalars['String']['input']>>;
   request: Scalars['String']['input'];
+};
+
+export type MutationPrepareCoinControlChannelArgs = {
+  input: PrepareCoinControlChannelInput;
 };
 
 export type MutationPurchaseLiquidityArgs = {
@@ -1104,6 +1182,20 @@ export type Policy = {
   min_htlc_mtokens?: Maybe<Scalars['String']['output']>;
   public_key: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['String']['output']>;
+};
+
+export type PrepareCoinControlChannelInput = {
+  base_fee_mtokens?: InputMaybe<Scalars['String']['input']>;
+  /** Channel capacity in sats */
+  channel_size: Scalars['Float']['input'];
+  /** On-chain fee rate in sat/vB (decimals allowed) */
+  fee_rate: Scalars['Float']['input'];
+  is_private?: InputMaybe<Scalars['Boolean']['input']>;
+  outpoints: Array<CoinControlOutpointInput>;
+  /** Peer public key, optionally as pubkey@host:port */
+  partner_public_key: Scalars['String']['input'];
+  /** Routing fee rate in ppm */
+  routing_fee_rate?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type PublicMutation = {

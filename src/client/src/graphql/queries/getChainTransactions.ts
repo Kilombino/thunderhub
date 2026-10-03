@@ -9,8 +9,13 @@ export const GET_CHAIN_TRANSACTIONS = gql`
       created_at
       fee
       id
+      is_confirmed
+      is_outgoing
       output_addresses
       tokens
+      vsize
+      cpfp_vout
+      cpfp_tokens
     }
   }
 `;

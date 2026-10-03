@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { Routes } from 'lightning';
+import { AuthenticatedLnd, Routes } from 'lightning';
 
 // ─── Account types ───────────────────────────────────────────────
 
@@ -251,6 +251,12 @@ export type DiffieHellmanComputeSecretOptions = {
 export interface LightningProvider {
   /** Which capabilities this provider supports */
   getCapabilities(): Set<Capability>;
+
+  /**
+   * Raw LND handle for flows the provider interface does not model
+   * (PSBT channel funding, coin control, fee bumping).
+   */
+  getAuthenticatedLnd(connection: any): AuthenticatedLnd;
 
   // ── Wallet ──
   getWalletInfo(connection: any): Promise<any>;

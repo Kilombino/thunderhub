@@ -17,8 +17,13 @@ export type GetChainTransactionsQuery = {
     created_at: string;
     fee?: number | null;
     id: string;
+    is_confirmed: boolean;
+    is_outgoing: boolean;
     output_addresses: Array<string>;
     tokens: number;
+    vsize?: number | null;
+    cpfp_vout?: number | null;
+    cpfp_tokens?: number | null;
   }>;
 };
 
@@ -31,8 +36,13 @@ export const GetChainTransactionsDocument = gql`
       created_at
       fee
       id
+      is_confirmed
+      is_outgoing
       output_addresses
       tokens
+      vsize
+      cpfp_vout
+      cpfp_tokens
     }
   }
 `;

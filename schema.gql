@@ -131,10 +131,33 @@ type ChainAddressSend {
   tokens: Float
 }
 
+type ChainFeeBump {
+  """Maximum fee LND may spend on the child (sats)"""
+  budget: Float!
+
+  """Estimated child fee in sats"""
+  child_fee: Float!
+
+  """Fee rate requested for the child (sat/vB)"""
+  child_fee_rate: Float!
+
+  """Estimated parent + child fee rate (sat/vB)"""
+  package_fee_rate: Float!
+  status: String!
+  transaction_id: String!
+  transaction_vout: Int!
+}
+
 type ChainTransaction {
   block_id: String
   confirmation_count: Float
   confirmation_height: Float
+  cpfp_tokens: Float
+
+  """
+  Unconfirmed only: index of the largest wallet-owned output, spendable by a CPFP child
+  """
+  cpfp_vout: Int
   created_at: String!
   description: String
   fee: Float
@@ -144,6 +167,9 @@ type ChainTransaction {
   output_addresses: [String!]!
   tokens: Float!
   transaction: String
+
+  """Virtual size of the transaction"""
+  vsize: Float
 }
 
 type Channel {
@@ -249,6 +275,40 @@ type ClosedChannel {
   partner_public_key: String!
   transaction_id: String!
   transaction_vout: Float!
+}
+
+type CoinControlChannelProposal {
+  change: Float!
+  channel_amount: Float!
+  estimated_fee_rate: Float!
+  estimated_vsize: Float!
+  expires_at: String!
+  fee: Float!
+  funding_address: String!
+  input_total: Float!
+  inputs: [CoinControlInput!]!
+  partner_public_key: String!
+  pending_channel_id: String!
+  requested_fee_rate: Float!
+  sat_per_kw: Float!
+}
+
+type CoinControlChannelResult {
+  fee: Float!
+  fee_rate: Float!
+  transaction_id: String!
+  vsize: Float!
+}
+
+type CoinControlInput {
+  tokens: Float!
+  transaction_id: String!
+  transaction_vout: Int!
+}
+
+input CoinControlOutpointInput {
+  transaction_id: String!
+  transaction_vout: Int!
 }
 
 enum ConfigFields {
@@ -550,8 +610,15 @@ type MessageType {
 type Mutation {
   addPeer(isTemporary: Boolean, publicKey: String, socket: String, url: String): Boolean!
   bakeSuperMacaroon(input: BakeSuperMacaroonInput!): SuperMacaroon!
+  bumpChainTransactionFee(
+    """Target package fee rate in sat/vB"""
+    fee_rate: Float!
+    transaction_id: String!
+  ): ChainFeeBump!
+  cancelCoinControlChannel(pending_channel_id: String!): Boolean!
   claimBoltzTransaction(destination: String!, fee: Float!, id: String!, lockupAddress: String!, preimage: String!, privateKey: String!, redeem: String!): String!
   closeChannel(forceClose: Boolean, id: String!, targetConfirmations: Float, tokensPerVByte: Float): OpenOrCloseChannel!
+  confirmCoinControlChannel(pending_channel_id: String!): CoinControlChannelResult!
   createAddress(type: String! = "p2tr"): String!
   createBoltzReverseSwap(address: String, amount: Float!): CreateBoltzReverseSwapType!
   createInvoice(amount: Float!, description: String, includePrivate: Boolean, secondsUntil: Float): CreateInvoice!
@@ -568,6 +635,7 @@ type Mutation {
   magma: MagmaMutations!
   openChannel(input: OpenChannelParams!): OpenOrCloseChannel!
   pay(max_fee: Float!, max_paths: Float!, out: [String!], request: String!): Boolean!
+  prepareCoinControlChannel(input: PrepareCoinControlChannelInput!): CoinControlChannelProposal!
   public: PublicMutation!
   purchaseLiquidity(amount_cents: String!): Boolean!
   pushBackup: Boolean!
@@ -836,6 +904,24 @@ type Policy {
   min_htlc_mtokens: String
   public_key: String!
   updated_at: String
+}
+
+input PrepareCoinControlChannelInput {
+  base_fee_mtokens: String
+
+  """Channel capacity in sats"""
+  channel_size: Float!
+
+  """On-chain fee rate in sat/vB (decimals allowed)"""
+  fee_rate: Float!
+  is_private: Boolean
+  outpoints: [CoinControlOutpointInput!]!
+
+  """Peer public key, optionally as pubkey@host:port"""
+  partner_public_key: String!
+
+  """Routing fee rate in ppm"""
+  routing_fee_rate: Float
 }
 
 type PublicMutation {

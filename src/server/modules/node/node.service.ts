@@ -48,6 +48,11 @@ export class NodeService {
     return { account, provider };
   }
 
+  getAuthenticatedLnd(id: string) {
+    const { account, provider } = this.getAccountAndProvider(id);
+    return provider.getAuthenticatedLnd(account.connection);
+  }
+
   getCapabilities(id: string): Set<string> {
     const { provider } = this.getAccountAndProvider(id);
     return provider.getCapabilities();
