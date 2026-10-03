@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { config, initConfig } from './config/thunderhubConfig';
 import { stripTrailingSlashes } from './utils/path';
+import { installClipboardFallback } from './utils/clipboardPolyfill';
 
 async function bootstrap() {
   const basePath = stripTrailingSlashes(import.meta.env.BASE_URL);
@@ -26,6 +27,7 @@ async function bootstrap() {
     console.error(`Failed to fetch config from ${configUrl}:`, error);
   }
 
+  installClipboardFallback();
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <BrowserRouter basename={config.basePath || '/'}>
