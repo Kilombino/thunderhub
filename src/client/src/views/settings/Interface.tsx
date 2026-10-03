@@ -6,12 +6,14 @@ import {
 } from '@/components/ui/native-select';
 import { useConfigState, useConfigDispatch } from '../../context/ConfigContext';
 import { usePriceState, usePriceDispatch } from '../../context/PriceContext';
+import { LANGUAGES, Language, useTranslation } from '@/i18n';
 
 export const InterfaceSettings = () => {
   const { fiat, prices, dontShow } = usePriceState();
   const { theme, currency } = useConfigState();
   const dispatch = useConfigDispatch();
   const priceDispatch = usePriceDispatch();
+  const { t, language, setLanguage } = useTranslation();
 
   const fiatOptions = prices
     ? Object.entries(prices)
@@ -27,6 +29,30 @@ export const InterfaceSettings = () => {
       <h2 className="text-lg font-semibold">Interface</h2>
       <Card>
         <CardContent className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">
+                {t('settings.language.title')}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {t('settings.language.description')}
+              </span>
+            </div>
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              value={language}
+              onValueChange={v => {
+                if (v) setLanguage(v as Language);
+              }}
+            >
+              {LANGUAGES.map(l => (
+                <ToggleGroupItem key={l.code} value={l.code}>
+                  {l.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Theme</span>
             <ToggleGroup
