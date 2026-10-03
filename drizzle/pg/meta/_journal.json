@@ -29,6 +29,13 @@
       "when": 1777519591448,
       "tag": "0003_lush_winter_soldier",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791057665948,
+      "tag": "0004_account_channel_notes",
+      "breakpoints": true
     }
   ]
 }

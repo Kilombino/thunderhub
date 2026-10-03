@@ -54,12 +54,24 @@ export const drizzleProvider: FactoryProvider = {
       if (!path) {
         throw new Error('DB_SQLITE_PATH is required when DB_TYPE is sqlite');
       }
-      const db = drizzleSqlite(new Database(path));
-      logger.log('Running SQLite migrations...');
-      migrateSqlite(db, {
-        migrationsFolder: join(migrationsRoot, 'sqlite'),
-      });
-      logger.log('SQLite migrations complete.');
+      let db: ReturnType<typeof drizzleSqlite>;
+      try {
+        db = drizzleSqlite(new Database(path));
+        logger.log('Running SQLite migrations...');
+        migrateSqlite(db, {
+          migrationsFolder: join(migrationsRoot, 'sqlite'),
+        });
+        logger.log('SQLite migrations complete.');
+      } catch (error: any) {
+        // Usually a read-only or missing volume. Keep the server usable with
+        // config-file accounts instead of crashing; only notes are lost.
+        logger.error(
+          `Unable to open SQLite database at ${path}: ${error?.message || error}. ` +
+            'Continuing without database (channel notes disabled). ' +
+            'Make sure the directory is writable.'
+        );
+        return null;
+      }
       return { db, schema: sqliteSchema };
     }
 

@@ -6,13 +6,17 @@ import { Logger } from 'winston';
 import { ContextType } from 'src/server/app.module';
 import { NodeService } from '../../node/node.service';
 import { CurrentUser } from '../../security/security.decorators';
-import { AuthType, UserId } from '../../security/security.types';
+import { UserId } from '../../security/security.types';
 import { Channel, SingleChannelParentType } from './channels.types';
+import { ChannelMetadataService } from './channel-metadata.service';
+import { NoteOwnerService } from './note-owner.service';
 
 @Resolver(Channel)
 export class ChannelResolver {
   constructor(
     private nodeService: NodeService,
+    private channelMetadataService: ChannelMetadataService,
+    private noteOwnerService: NoteOwnerService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {}
 
@@ -109,13 +113,11 @@ export class ChannelResolver {
     @Parent() { id }: Channel,
     @Context() { loaders }: ContextType
   ): Promise<string | null> {
-    if (user.authType !== AuthType.USER) return null;
-    const dbUserId = user.userId ?? user.id;
-    const nodeId = user.id;
-    return loaders.channelNotesLoader.load({
-      userId: dbUserId,
-      nodeId,
-      channelId: id,
-    });
+    if (!this.channelMetadataService.isEnabled()) return null;
+    const [owner, error] = await toWithError(
+      this.noteOwnerService.getOwner(user)
+    );
+    if (error || !owner) return null;
+    return loaders.channelNotesLoader.load({ owner, channelId: id });
   }
 }

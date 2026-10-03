@@ -30,6 +30,7 @@ import {
   UserMutations,
 } from './channel-metadata.types';
 import { ChannelMetadataService } from './channel-metadata.service';
+import { NoteOwnerService } from './note-owner.service';
 
 function toAssetField(ac: {
   assetId: string;
@@ -487,7 +488,10 @@ export class OffchainMutationsResolver {
 
 @Resolver(() => ChannelsMutations)
 export class ChannelsMutationsResolver {
-  constructor(private channelMetadataService: ChannelMetadataService) {}
+  constructor(
+    private channelMetadataService: ChannelMetadataService,
+    private noteOwnerService: NoteOwnerService
+  ) {}
 
   @ResolveField(() => ChannelMetadata)
   async upsert_note(
@@ -504,14 +508,8 @@ export class ChannelsMutationsResolver {
     if (note.length > 500) {
       throw new GraphQLError('Note must be 500 characters or fewer.');
     }
-    const dbUserId = user.userId ?? user.id;
-    const nodeId = user.id;
-    return this.channelMetadataService.upsertNote(
-      dbUserId,
-      nodeId,
-      channelId,
-      note
-    );
+    const owner = await this.noteOwnerService.getOwner(user);
+    return this.channelMetadataService.upsertNote(owner, channelId, note);
   }
 
   @ResolveField(() => Boolean)
@@ -522,8 +520,7 @@ export class ChannelsMutationsResolver {
     if (!/^\d+x\d+x\d+$/.test(channelId)) {
       throw new GraphQLError('Invalid channel ID format.');
     }
-    const dbUserId = user.userId ?? user.id;
-    const nodeId = user.id;
-    return this.channelMetadataService.deleteNote(dbUserId, nodeId, channelId);
+    const owner = await this.noteOwnerService.getOwner(user);
+    return this.channelMetadataService.deleteNote(owner, channelId);
   }
 }

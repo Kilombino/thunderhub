@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { AmbossService } from '../api/amboss/amboss.service';
 import { EdgeInfo, NodeAlias } from '../api/amboss/amboss.types';
-import { ChannelMetadataService } from '../api/channels/channel-metadata.service';
+import {
+  ChannelMetadataService,
+  NoteOwner,
+  noteOwnerKey,
+} from '../api/channels/channel-metadata.service';
 
 export type ChannelNoteKey = {
-  userId: string;
-  nodeId: string;
+  owner: NoteOwner;
   channelId: string;
 };
 
@@ -38,32 +41,27 @@ export class DataloaderService {
       string
     >(
       async (keys: readonly ChannelNoteKey[]) => {
-        const grouped = new Map<string, ChannelNoteKey[]>();
+        const grouped = new Map<string, NoteOwner>();
         for (const key of keys) {
-          const groupKey = `${key.userId}:${key.nodeId}`;
-          const group = grouped.get(groupKey) || [];
-          group.push(key);
-          grouped.set(groupKey, group);
+          grouped.set(noteOwnerKey(key.owner), key.owner);
         }
 
         const noteMaps = new Map<string, Map<string, string>>();
-        for (const [groupKey, group] of grouped) {
-          const { userId, nodeId } = group[0];
-          const map = await this.channelMetadataService.getNotesByNode(
-            userId,
-            nodeId
+        for (const [groupKey, owner] of grouped) {
+          noteMaps.set(
+            groupKey,
+            await this.channelMetadataService.getNotes(owner)
           );
-          noteMaps.set(groupKey, map);
         }
 
-        return keys.map(key => {
-          const groupKey = `${key.userId}:${key.nodeId}`;
-          return noteMaps.get(groupKey)?.get(key.channelId) ?? null;
-        });
+        return keys.map(
+          key =>
+            noteMaps.get(noteOwnerKey(key.owner))?.get(key.channelId) ?? null
+        );
       },
       {
         cacheKeyFn: (key: ChannelNoteKey) =>
-          `${key.userId}:${key.nodeId}:${key.channelId}`,
+          `${noteOwnerKey(key.owner)}:${key.channelId}`,
       }
     );
 

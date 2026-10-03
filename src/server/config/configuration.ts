@@ -1,6 +1,10 @@
 import crypto from 'crypto';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import {
+  getDefaultKeyPath,
+  resolveEncryptionKey,
+} from '../utils/encryption/key-file';
 
 type SSOConfig = {
   serverUrl: string;
@@ -133,6 +137,39 @@ const getPackageVersion = (): string => {
   }
 };
 
+const getDatabaseConfig = (): DatabaseConfig => {
+  const dbType = process.env.DB_TYPE;
+  if (!dbType) return undefined;
+
+  const sqlitePath = process.env.DB_SQLITE_PATH;
+
+  // Without an explicit key, generate one and keep it next to the database
+  // (or at DB_ENCRYPTION_KEY_PATH) so node credentials are always encrypted.
+  const { key, generated, warning } = resolveEncryptionKey({
+    envKey: process.env.DB_ENCRYPTION_KEY,
+    keyPath:
+      process.env.DB_ENCRYPTION_KEY_PATH ||
+      (dbType === 'sqlite' ? getDefaultKeyPath(sqlitePath) : undefined),
+  });
+
+  if (warning) console.warn(warning);
+  if (generated) console.log('Generated a new database encryption key.');
+
+  if (dbType === 'postgres') {
+    return {
+      type: 'postgres' as const,
+      url: process.env.DB_POSTGRES_URL,
+      encryptionKey: key,
+    };
+  }
+
+  return {
+    type: 'sqlite' as const,
+    path: sqlitePath,
+    encryptionKey: key,
+  };
+};
+
 export default (): ConfigType => {
   const isProduction = process.env.NODE_ENV === 'production';
 
@@ -246,19 +283,7 @@ export default (): ConfigType => {
     subscriptions,
     amboss,
     clientConfig,
-    database: process.env.DB_TYPE
-      ? process.env.DB_TYPE === 'postgres'
-        ? {
-            type: 'postgres' as const,
-            url: process.env.DB_POSTGRES_URL,
-            encryptionKey: process.env.DB_ENCRYPTION_KEY,
-          }
-        : {
-            type: 'sqlite' as const,
-            path: process.env.DB_SQLITE_PATH,
-            encryptionKey: process.env.DB_ENCRYPTION_KEY,
-          }
-      : undefined,
+    database: getDatabaseConfig(),
   };
 
   if (!isProduction) {

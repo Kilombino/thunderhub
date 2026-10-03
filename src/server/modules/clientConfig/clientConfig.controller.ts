@@ -20,6 +20,10 @@ export class ClientConfigController {
 
     const needsSetup = await this.userService.needsSetup();
 
-    return { ...clientConfig, needsSetup };
+    // Reflect whether the database actually opened (it may be disabled at
+    // runtime, e.g. on a read-only volume) rather than only DB_TYPE.
+    const dbEnabled = this.userService.isDbEnabled();
+
+    return { ...clientConfig, dbEnabled, needsSetup };
   }
 }

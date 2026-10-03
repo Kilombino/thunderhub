@@ -29,6 +29,13 @@
       "when": 1777519591063,
       "tag": "0003_orange_captain_universe",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791057665142,
+      "tag": "0004_account_channel_notes",
+      "breakpoints": true
     }
   ]
 }

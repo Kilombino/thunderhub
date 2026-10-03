@@ -58,6 +58,13 @@ COPY --from=build /app/src/client/dist/ ./src/client/dist
 COPY --from=build /app/dist/ ./dist
 COPY --from=build /app/drizzle/ ./drizzle
 
+# Channel notes out of the box: SQLite database (migrations run on start) and
+# an auto-generated encryption key stored next to it (/data/.thub-db-key).
+# /data must be a writable volume; set DB_TYPE='' to disable the database.
+ENV DB_TYPE=sqlite
+ENV DB_SQLITE_PATH=/data/thunderhub.db
+RUN mkdir -p /data && chown node:node /data
+
 # Run as non-root user
 USER node
 

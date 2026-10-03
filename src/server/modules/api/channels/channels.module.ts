@@ -9,6 +9,7 @@ import {
   ChannelsMutationsResolver,
 } from './channels.resolver';
 import { ChannelMetadataService } from './channel-metadata.service';
+import { NoteOwnerService } from './note-owner.service';
 import { FetchModule } from '../../fetch/fetch.module';
 import { AmbossModule } from '../amboss/amboss.module';
 import { TapdModule } from '../../node/tapd/tapd.module';
@@ -19,6 +20,7 @@ import { TapdModule } from '../../node/tapd/tapd.module';
     ChannelsResolver,
     ChannelResolver,
     ChannelMetadataService,
+    NoteOwnerService,
     UserMutationRoot,
     UserMutationsResolver,
     OffchainMutationsResolver,

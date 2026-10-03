@@ -4,6 +4,7 @@ import { DRIZZLE, DrizzleProvider } from '../database/drizzle.provider';
 import { and, asc, count, eq, sql } from 'drizzle-orm';
 import { hash, verify } from '@node-rs/argon2';
 import { encryptValue } from '../../utils/encryption/field-encryption';
+import { AccountsService } from '../accounts/accounts.service';
 
 @Injectable()
 export class UserService {
@@ -11,7 +12,8 @@ export class UserService {
 
   constructor(
     @Inject(DRIZZLE) private readonly drizzle: DrizzleProvider,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly accountsService: AccountsService
   ) {}
 
   isDbEnabled(): boolean {
@@ -29,8 +31,17 @@ export class UserService {
     return Number(rows[0]?.count ?? 0) > 0;
   }
 
+  /**
+   * Accounts defined in the account config file (or SSO) can log in without
+   * any database user, so their presence means the server is already set up.
+   */
+  hasConfigAccounts(): boolean {
+    return Object.keys(this.accountsService.getAllAccounts()).length > 0;
+  }
+
   async needsSetup(): Promise<boolean> {
     if (!this.isDbEnabled()) return false;
+    if (this.hasConfigAccounts()) return false;
     return !(await this.hasUsers());
   }
 

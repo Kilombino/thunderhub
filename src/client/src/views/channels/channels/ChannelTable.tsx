@@ -49,6 +49,7 @@ import {
 } from '../../../utils/helpers';
 import { colorFromString } from '../../../utils/color';
 import { useAccount } from '../../../hooks/UseAccount';
+import { config } from '@/config/thunderhubConfig';
 import { ChannelDetails } from './ChannelDetails';
 import { defaultHiddenColumns } from './helpers';
 import { VisibilityState } from '@tanstack/react-table';
@@ -207,7 +208,8 @@ export const ChannelTable = ({
 }: { assetOnly?: boolean; storageKey?: string } = {}) => {
   const chartColors = useChartColors();
   const account = useAccount();
-  const isDbAccount = account?.type === 'db';
+  // Notes work for every account type as long as the server has a database.
+  const isDbAccount = config.dbEnabled || account?.type === 'db';
 
   const [channel, setChannel] = useState<{
     name: string;
