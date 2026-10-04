@@ -26,6 +26,7 @@ import { MagmaModule } from './magma/magma.module';
 import { TradeModule } from './trade/trade.module';
 import { PublicModule } from './public/public.module';
 import { CoinControlModule } from './coinControl/coinControl.module';
+import { OffersModule } from './offers/offers.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { CoinControlModule } from './coinControl/coinControl.module';
     TradeModule,
     PublicModule,
     CoinControlModule,
+    OffersModule,
   ],
 })
 export class ApiModule {}

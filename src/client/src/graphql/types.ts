@@ -145,6 +145,23 @@ export type BitcoinFee = {
   minimum: Scalars['Float']['output'];
 };
 
+export type Bolt12Offer = {
+  __typename?: 'Bolt12Offer';
+  /** ISO 8601 expiry, null for never */
+  absolute_expiry?: Maybe<Scalars['String']['output']>;
+  /** Requested amount in millisats, 0 for any amount */
+  amount_msat: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  /** Who is being paid (offer_issuer) */
+  issuer?: Maybe<Scalars['String']['output']>;
+  issuer_id?: Maybe<Scalars['String']['output']>;
+  num_paths: Scalars['Int']['output'];
+  offer_id: Scalars['String']['output'];
+  quantity_any: Scalars['Boolean']['output'];
+  /** Largest quantity a request may ask for, 0 for none */
+  quantity_max: Scalars['Float']['output'];
+};
+
 export type BoltzInfoType = {
   __typename?: 'BoltzInfoType';
   feePercent: Scalars['Float']['output'];
@@ -452,6 +469,19 @@ export type DecodeInvoice = {
   tokens: Scalars['Float']['output'];
 };
 
+export type DecodedBolt12 = {
+  __typename?: 'DecodedBolt12';
+  chains: Array<Scalars['String']['output']>;
+  for_this_chain: Scalars['Boolean']['output'];
+  offer?: Maybe<Bolt12Offer>;
+  /** Whether this node minted the offer */
+  ours: Scalars['Boolean']['output'];
+  /** offer, invoice_request or invoice */
+  type: Scalars['String']['output'];
+  valid: Scalars['Boolean']['output'];
+  validation_error?: Maybe<Scalars['String']['output']>;
+};
+
 export type DeleteNodeResult = {
   __typename?: 'DeleteNodeResult';
   success: Scalars['Boolean']['output'];
@@ -732,6 +762,7 @@ export type Mutation = {
   magma: MagmaMutations;
   openChannel: OpenOrCloseChannel;
   pay: Scalars['Boolean']['output'];
+  payOffer: PayOfferResult;
   prepareCoinControlChannel: CoinControlChannelProposal;
   public: PublicMutation;
   purchaseLiquidity: Scalars['Boolean']['output'];
@@ -856,6 +887,15 @@ export type MutationPayArgs = {
   max_paths: Scalars['Float']['input'];
   out?: InputMaybe<Array<Scalars['String']['input']>>;
   request: Scalars['String']['input'];
+};
+
+export type MutationPayOfferArgs = {
+  max_fee?: InputMaybe<Scalars['Float']['input']>;
+  max_paths?: InputMaybe<Scalars['Float']['input']>;
+  offer: Scalars['String']['input'];
+  payer_note?: InputMaybe<Scalars['String']['input']>;
+  quantity?: InputMaybe<Scalars['Float']['input']>;
+  tokens?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type MutationPrepareCoinControlChannelArgs = {
@@ -1075,6 +1115,16 @@ export type PayInvoice = {
   tokens: Scalars['Float']['output'];
 };
 
+export type PayOfferResult = {
+  __typename?: 'PayOfferResult';
+  amount_msat: Scalars['String']['output'];
+  /** The paid BOLT 12 invoice (lni1...) */
+  bolt12: Scalars['String']['output'];
+  fee_msat: Scalars['String']['output'];
+  payment_hash: Scalars['String']['output'];
+  payment_preimage: Scalars['String']['output'];
+};
+
 export type PayRequest = {
   __typename?: 'PayRequest';
   callback?: Maybe<Scalars['String']['output']>;
@@ -1106,6 +1156,8 @@ export type PaymentType = {
   hops: Array<Node>;
   id: Scalars['String']['output'];
   index?: Maybe<Scalars['Float']['output']>;
+  /** Paid to a BOLT 12 offer (no BOLT 11 request, blinded path) */
+  is_bolt12?: Maybe<Scalars['Boolean']['output']>;
   is_confirmed: Scalars['Boolean']['output'];
   is_outgoing: Scalars['Boolean']['output'];
   mtokens: Scalars['String']['output'];
@@ -1235,6 +1287,7 @@ export type PublicQueries = {
 
 export type Query = {
   __typename?: 'Query';
+  decodeBolt12: DecodedBolt12;
   getAccount: ServerAccount;
   getAmbossLoginToken: Scalars['String']['output'];
   getAmbossUser?: Maybe<AmbossUser>;
@@ -1282,6 +1335,10 @@ export type Query = {
   verifyBackup: Scalars['Boolean']['output'];
   verifyBackups: Scalars['Boolean']['output'];
   verifyMessage: Scalars['String']['output'];
+};
+
+export type QueryDecodeBolt12Args = {
+  bolt12: Scalars['String']['input'];
 };
 
 export type QueryGetAmbossLoginTokenArgs = {

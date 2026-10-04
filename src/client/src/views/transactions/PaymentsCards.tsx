@@ -86,6 +86,7 @@ export const PaymentsCard = ({
     secret,
     tokens,
     date,
+    is_bolt12,
   } = payment;
 
   const alias = destination_node?.node?.alias;
@@ -116,7 +117,18 @@ export const PaymentsCard = ({
     setIndexOpen(isOpen ? 0 : index);
   };
 
-  const title = description || alias || 'Unknown';
+  // BOLT 12 payments keep no request in LND and end at a blinded node id,
+  // so there is no description or alias to show.
+  const title = description || alias || (is_bolt12 ? 'BOLT 12' : 'Unknown');
+
+  const bolt12Badge = is_bolt12 ? (
+    <Badge
+      variant="secondary"
+      className="justify-center text-[10px] rounded-sm shrink-0"
+    >
+      BOLT 12
+    </Badge>
+  ) : null;
 
   return (
     <div className="rounded border border-border bg-card/50 hover:bg-card transition-colors">
@@ -130,6 +142,7 @@ export const PaymentsCard = ({
           </div>
           <div className="hidden sm:flex flex-1 min-w-0 items-center gap-2">
             <span className="font-medium text-sm truncate">{title}</span>
+            {description || alias ? bolt12Badge : null}
             {tradeDisplayMode === 'computed' &&
               descriptionDisplay?.isTradeMemo && <ComputedMarker />}
           </div>
@@ -149,6 +162,7 @@ export const PaymentsCard = ({
           <span className="text-xs truncate text-muted-foreground">
             {title}
           </span>
+          {description || alias ? bolt12Badge : null}
           {tradeDisplayMode === 'computed' &&
             descriptionDisplay?.isTradeMemo && <ComputedMarker />}
           <span className="text-[11px] text-muted-foreground shrink-0 ml-auto">
@@ -198,6 +212,7 @@ export const PaymentsCard = ({
               {`${mtokens} millisats`}
             </DetailRow>
             {request && <DetailRow label="Request">{request}</DetailRow>}
+            {is_bolt12 && <DetailRow label="Type">BOLT 12 offer</DetailRow>}
           </DetailTable>
         </div>
       )}

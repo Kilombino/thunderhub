@@ -18,6 +18,7 @@ export type GetPaymentQuery = {
     id: string;
     is_confirmed: boolean;
     is_outgoing: boolean;
+    is_bolt12?: boolean | null;
     mtokens: string;
     request?: string | null;
     safe_fee: number;
@@ -67,6 +68,7 @@ export const GetPaymentDocument = gql`
       id
       is_confirmed
       is_outgoing
+      is_bolt12
       mtokens
       request
       safe_fee

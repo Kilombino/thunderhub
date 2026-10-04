@@ -108,6 +108,25 @@ type BitcoinFee {
   minimum: Float!
 }
 
+type Bolt12Offer {
+  """ISO 8601 expiry, null for never"""
+  absolute_expiry: String
+
+  """Requested amount in millisats, 0 for any amount"""
+  amount_msat: String!
+  description: String
+
+  """Who is being paid (offer_issuer)"""
+  issuer: String
+  issuer_id: String
+  num_paths: Int!
+  offer_id: String!
+  quantity_any: Boolean!
+
+  """Largest quantity a request may ask for, 0 for none"""
+  quantity_max: Float!
+}
+
 type BoltzInfoType {
   feePercent: Float!
   max: Float!
@@ -389,6 +408,20 @@ type DecodeInvoice {
   tokens: Float!
 }
 
+type DecodedBolt12 {
+  chains: [String!]!
+  for_this_chain: Boolean!
+  offer: Bolt12Offer
+
+  """Whether this node minted the offer"""
+  ours: Boolean!
+
+  """offer, invoice_request or invoice"""
+  type: String!
+  valid: Boolean!
+  validation_error: String
+}
+
 type DeleteNodeResult {
   success: Boolean!
 }
@@ -635,6 +668,17 @@ type Mutation {
   magma: MagmaMutations!
   openChannel(input: OpenChannelParams!): OpenOrCloseChannel!
   pay(max_fee: Float!, max_paths: Float!, out: [String!], request: String!): Boolean!
+  payOffer(
+    """Max routing fee in sats"""
+    max_fee: Float
+    max_paths: Float
+    offer: String!
+    payer_note: String
+    quantity: Float
+
+    """Amount in sats, required when the offer sets none"""
+    tokens: Float
+  ): PayOfferResult!
   prepareCoinControlChannel(input: PrepareCoinControlChannelInput!): CoinControlChannelProposal!
   public: PublicMutation!
   purchaseLiquidity(amount_cents: String!): Boolean!
@@ -805,6 +849,16 @@ type PayInvoice {
   tokens: Float!
 }
 
+type PayOfferResult {
+  amount_msat: String!
+
+  """The paid BOLT 12 invoice (lni1...)"""
+  bolt12: String!
+  fee_msat: String!
+  payment_hash: String!
+  payment_preimage: String!
+}
+
 type PayRequest {
   callback: String
   commentAllowed: Float
@@ -833,6 +887,9 @@ type PaymentType {
   hops: [Node!]!
   id: String!
   index: Float
+
+  """Paid to a BOLT 12 offer (no BOLT 11 request, blinded path)"""
+  is_bolt12: Boolean
   is_confirmed: Boolean!
   is_outgoing: Boolean!
   mtokens: String!
@@ -938,6 +995,7 @@ type PublicQueries {
 }
 
 type Query {
+  decodeBolt12(bolt12: String!): DecodedBolt12!
   getAccount: ServerAccount!
   getAmbossLoginToken(redirect_url: String): String!
   getAmbossUser: AmbossUser

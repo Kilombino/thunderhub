@@ -10,6 +10,7 @@ import { usePayMutation } from '../../../../graphql/mutations/__generated__/pay.
 import { Separator } from '@/components/ui/separator';
 import { decode } from 'light-bolt11-decoder';
 import { t } from '@/i18n';
+import { isBolt12Offer, PayOffer } from './PayOffer';
 
 interface PayProps {
   predefinedRequest?: string;
@@ -97,8 +98,10 @@ export const Pay: FC<PayProps> = ({
     onError: error => toast.error(getErrorContent(error)),
   });
 
+  const isOffer = !predefinedRequest && isBolt12Offer(request);
+
   const handlePay = () => {
-    if (loading || !request) return;
+    if (loading || !request || isOffer) return;
     pay({
       variables: {
         max_fee: fee,
@@ -119,89 +122,104 @@ export const Pay: FC<PayProps> = ({
           </label>
           <Input
             value={request}
-            placeholder="lnbc..."
+            placeholder={t('wallet.pay.requestPlaceholder')}
             onChange={e => setRequest(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handlePay()}
           />
         </div>
       )}
 
-      {/* Decoded info */}
-      <DecodeInvoice invoice={request || predefinedRequest} />
-
-      <Separator />
-
-      {/* Max Fee, Max Paths, Out Channels */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-muted-foreground">
-            {t('wallet.pay.maxFee')}{' '}
-            <span className="text-foreground">
-              <Price amount={fee} />
-            </span>
-          </label>
-          <Input
-            placeholder="sats"
-            type="number"
-            value={fee && fee > 0 ? fee : ''}
-            onChange={e => setFee(Math.max(1, Number(e.target.value)))}
-            onKeyDown={e => e.key === 'Enter' && handlePay()}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-muted-foreground">
-            {t('wallet.pay.maxPaths')}
-          </label>
-          <Input
-            placeholder={t('wallet.pay.pathsPlaceholder')}
-            type="number"
-            value={paths && paths > 0 ? paths : ''}
-            onChange={e => setPaths(Math.max(1, Number(e.target.value)))}
-            onKeyDown={e => e.key === 'Enter' && handlePay()}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-medium text-muted-foreground">
-            {t('wallet.pay.outChannels')}
-          </label>
-          <ChannelSelect callback={p => setPeers(p.map(peer => peer.id))} />
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* Pay / Confirm */}
-      {!confirming ? (
-        <Button
-          variant="outline"
-          disabled={loading || !request}
-          className="w-full"
-          onClick={() => setConfirming(true)}
-          autoFocus
-        >
-          {t('wallet.pay.pay')}
-        </Button>
+      {/* BOLT 12 offers have their own flow */}
+      {isOffer ? (
+        <PayOffer
+          key={request.trim()}
+          offer={request.trim()}
+          defaultFee={defaultFee}
+          payCallback={() => {
+            setRequest('');
+            if (payCallback) payCallback();
+          }}
+        />
       ) : (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            className="flex-1"
-            onClick={() => setConfirming(false)}
-          >
-            {t('wallet.pay.cancel')}
-          </Button>
-          <Button
-            className="flex-1"
-            disabled={loading || !request}
-            onClick={handlePay}
-          >
-            {loading ? (
-              <Loader2 className="animate-spin" size={16} />
-            ) : (
-              t('wallet.pay.confirmPay')
-            )}
-          </Button>
-        </div>
+        <>
+          {/* Decoded info */}
+          <DecodeInvoice invoice={request || predefinedRequest} />
+
+          <Separator />
+
+          {/* Max Fee, Max Paths, Out Channels */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t('wallet.pay.maxFee')}{' '}
+                <span className="text-foreground">
+                  <Price amount={fee} />
+                </span>
+              </label>
+              <Input
+                placeholder="sats"
+                type="number"
+                value={fee && fee > 0 ? fee : ''}
+                onChange={e => setFee(Math.max(1, Number(e.target.value)))}
+                onKeyDown={e => e.key === 'Enter' && handlePay()}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t('wallet.pay.maxPaths')}
+              </label>
+              <Input
+                placeholder={t('wallet.pay.pathsPlaceholder')}
+                type="number"
+                value={paths && paths > 0 ? paths : ''}
+                onChange={e => setPaths(Math.max(1, Number(e.target.value)))}
+                onKeyDown={e => e.key === 'Enter' && handlePay()}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">
+                {t('wallet.pay.outChannels')}
+              </label>
+              <ChannelSelect callback={p => setPeers(p.map(peer => peer.id))} />
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Pay / Confirm */}
+          {!confirming ? (
+            <Button
+              variant="outline"
+              disabled={loading || !request}
+              className="w-full"
+              onClick={() => setConfirming(true)}
+              autoFocus
+            >
+              {t('wallet.pay.pay')}
+            </Button>
+          ) : (
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setConfirming(false)}
+              >
+                {t('wallet.pay.cancel')}
+              </Button>
+              <Button
+                className="flex-1"
+                disabled={loading || !request}
+                onClick={handlePay}
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin" size={16} />
+                ) : (
+                  t('wallet.pay.confirmPay')
+                )}
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

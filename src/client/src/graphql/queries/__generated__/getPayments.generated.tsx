@@ -22,6 +22,7 @@ export type GetPaymentsQuery = {
       index?: number | null;
       is_confirmed: boolean;
       is_outgoing: boolean;
+      is_bolt12?: boolean | null;
       mtokens: string;
       request?: string | null;
       safe_fee: number;
@@ -75,6 +76,7 @@ export const GetPaymentsDocument = gql`
         index
         is_confirmed
         is_outgoing
+        is_bolt12
         mtokens
         request
         safe_fee

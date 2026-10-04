@@ -1,6 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { decodeMessages } from 'src/server/utils/customRecords';
 import { NodeService } from '../../node/node.service';
+import { isBolt12Payment } from '../offers/offers.helpers';
 import { CurrentUser } from '../../security/security.decorators';
 import { UserId } from '../../security/security.types';
 import {
@@ -66,6 +67,7 @@ export class TransactionsResolver {
       date: payment.created_at,
       is_confirmed: result.is_confirmed ?? false,
       is_outgoing: true,
+      is_bolt12: isBolt12Payment(payment),
       safe_fee: payment.fee,
       safe_tokens: payment.tokens,
       destination_node: { publicKey: payment.destination },
@@ -88,6 +90,7 @@ export class TransactionsResolver {
       ...payment,
       type: 'payment',
       date: payment.created_at,
+      is_bolt12: isBolt12Payment(payment),
       destination_node: { publicKey: payment.destination },
       hops: [...payment.hops.map(hop => ({ publicKey: hop }))],
     }));

@@ -109,6 +109,11 @@ export class PaymentType {
   mtokens: string;
   @Field({ nullable: true })
   request: string;
+  @Field({
+    nullable: true,
+    description: 'Paid to a BOLT 12 offer (no BOLT 11 request, blinded path)',
+  })
+  is_bolt12: boolean;
   @Field()
   safe_fee: number;
   @Field({ nullable: true })

@@ -25,6 +25,7 @@ export const GET_PAYMENTS = gql`
         index
         is_confirmed
         is_outgoing
+        is_bolt12
         mtokens
         request
         safe_fee

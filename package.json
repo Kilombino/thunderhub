@@ -66,6 +66,8 @@
     "@as-integrations/express5": "^1.1.2",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@fontsource-variable/noto-sans": "^5.2.10",
+    "@grpc/grpc-js": "1.14.3",
+    "@grpc/proto-loader": "0.8.0",
     "@lightningpolar/tapd-api": "^0.7.0-alpha",
     "@nestjs/apollo": "^13.2.4",
     "@nestjs/common": "^11.1.16",
