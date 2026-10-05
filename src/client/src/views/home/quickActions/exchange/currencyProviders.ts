@@ -9,15 +9,6 @@ export type CurrencyProvider = {
   methods: ('lightning' | 'onchain')[];
 };
 
-export const CURRENCY_PROVIDERS: CurrencyProvider[] = [
-  {
-    id: 'bringin-eur',
-    currency: 'EUR',
-    currencySymbol: '€',
-    name: 'Bringin',
-    referralUrl: 'https://bringin.me/AMBOSS',
-    description: 'Convert between sats and EUR',
-    localStorageKey: 'bringin_lightning_address',
-    methods: ['lightning', 'onchain'],
-  },
-];
+// XBT fork: Bringin (sats <-> EUR) works only on the SHA-256 Lightning network and
+// on-chain Bitcoin; it cannot receive or send XBT, so no fiat provider is offered.
+export const CURRENCY_PROVIDERS: CurrencyProvider[] = [];
