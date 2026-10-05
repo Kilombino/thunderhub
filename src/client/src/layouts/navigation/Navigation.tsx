@@ -9,7 +9,6 @@ import {
   Link as LinkIcon,
   Users,
   Grid,
-  Globe,
   ExternalLink,
   LucideProps,
 } from 'lucide-react';
@@ -64,7 +63,6 @@ const FORWARDS = '/forwards';
 const CHAIN_TRANS = '/chain';
 const TOOLS = '/tools';
 const SETTINGS = '/settings';
-const AMBOSS = '/amboss';
 
 interface NavItem {
   /** Translation key of the label */
@@ -97,18 +95,13 @@ interface NavigationProps {
   setOpen?: (state: boolean) => void;
 }
 
-const AMBOSS_SECTION: NavSection = {
-  title: 'nav.sections.amboss',
-  items: [{ title: 'nav.items.services', link: AMBOSS, icon: Globe }],
-};
-
 export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
   const nodePath = useNodePath();
   const { sidebar } = useConfigState();
 
-  // XBT fork: Magma, Taproot Assets and Swap are Amboss / SHA-256 Lightning services that
-  // do not exist on the BLAKE2b chain, so only Amboss's account page stays.
-  const sections: NavSection[] = [AMBOSS_SECTION];
+  // XBT fork: the Amboss services (account, Magma), Taproot Assets and Swap belong to the
+  // SHA-256 Lightning network and do not exist on the BLAKE2b chain.
+  const sections: NavSection[] = [];
 
   const renderNavButton = (item: NavItem, open = true) => {
     const isActive = !!item.link && nodePath === item.link;

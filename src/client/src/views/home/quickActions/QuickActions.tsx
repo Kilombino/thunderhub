@@ -3,10 +3,7 @@ import { X, Layers, Command, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DecodeCard } from './decode/Decode';
-import { SupportCard } from './donate/DonateCard';
-import { SupportBar } from './donate/DonateContent';
 import { LnUrlCard } from './lnurl';
-import { AmbossCard } from './amboss/AmbossCard';
 import { LightningAddressCard } from './lightningAddress/LightningAddress';
 import { t } from '@/i18n';
 
@@ -56,8 +53,6 @@ export const QuickActions = () => {
 
   const renderContent = () => {
     switch (openCard) {
-      case 'support':
-        return <SupportBar />;
       case 'decode':
         return <DecodeCard />;
       case 'ln_url':
@@ -67,8 +62,6 @@ export const QuickActions = () => {
       default:
         return (
           <div className="flex flex-wrap gap-2">
-            <SupportCard callback={() => setOpenCard('support')} />
-            <AmbossCard />
             <QuickCard
               className="hover:border-yellow-500/30 hover:bg-yellow-500/5"
               onClick={() => setOpenCard('lightning_address')}
