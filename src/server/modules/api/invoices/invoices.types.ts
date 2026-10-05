@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Node } from '../node/node.types';
 
 @ObjectType()
@@ -103,4 +103,28 @@ export class PayInvoice {
   safe_tokens: number;
   @Field()
   tokens: number;
+}
+
+@ObjectType()
+export class PaymentFeeEstimate {
+  @Field({ description: 'Outgoing channel id' })
+  channel: string;
+  @Field()
+  partner_public_key: string;
+  @Field()
+  local_balance: number;
+  @Field({
+    nullable: true,
+    description: 'Estimated routing fee in sats, rounded up',
+  })
+  fee?: number;
+  @Field({ nullable: true })
+  fee_mtokens?: string;
+  @Field(() => Int, { nullable: true })
+  hops?: number;
+  @Field({
+    nullable: true,
+    description: 'insufficient_balance, no_route or error when there is no fee',
+  })
+  error?: string;
 }

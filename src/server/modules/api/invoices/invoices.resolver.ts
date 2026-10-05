@@ -6,11 +6,26 @@ import { Logger } from 'winston';
 import { NodeService } from '../../node/node.service';
 import { CurrentUser } from '../../security/security.decorators';
 import { UserId } from '../../security/security.types';
-import { CreateInvoice, PayInvoice } from './invoices.types';
+import {
+  CreateInvoice,
+  PayInvoice,
+  PaymentFeeEstimate,
+} from './invoices.types';
 import { randomBytes, createHash } from 'crypto';
+import { toWithError } from '../../../utils/async';
+import {
+  FeeEstimateChannel,
+  isOutgoingCandidate,
+  mapWithConcurrency,
+  sortFeeEstimates,
+  spendableBalance,
+  toFeeEstimate,
+} from './invoices.helpers';
 
 const KEYSEND_TYPE = '5482373484';
 const MESSAGE_TYPE = '34349334';
+/** Route queries in flight at once when estimating fees per channel. */
+const FEE_ESTIMATE_CONCURRENCY = 4;
 
 @Resolver()
 export class InvoicesResolver {
@@ -47,6 +62,74 @@ export class InvoicesResolver {
       .catch(e => {
         if (e) return 'timeout';
       });
+  }
+
+  /**
+   * Estimates the routing fee of paying a BOLT 11 invoice out of each active
+   * channel, without paying: one QueryRoutes per channel, restricted to that
+   * outgoing channel, with the invoice's amount, final CLTV delta and route
+   * hints. Channels that cannot send the amount are not queried.
+   */
+  @Query(() => [PaymentFeeEstimate])
+  async estimatePaymentFees(
+    @CurrentUser() user: UserId,
+    @Args('request') request: string
+  ): Promise<PaymentFeeEstimate[]> {
+    const decoded = await this.nodeService.decodePaymentRequest(
+      user.id,
+      request.trim()
+    );
+
+    const mtokens: string = decoded?.mtokens || '0';
+    if (BigInt(mtokens) <= BigInt(0)) {
+      throw new GraphQLError(
+        'This invoice has no amount, so there is nothing to estimate'
+      );
+    }
+    const tokens = Number(decoded.tokens || 0);
+
+    const { channels } = await this.nodeService.getChannels(user.id, {
+      is_active: true,
+    });
+    const candidates = (channels as FeeEstimateChannel[]).filter(
+      isOutgoingCandidate
+    );
+
+    const rows = await mapWithConcurrency(
+      candidates,
+      FEE_ESTIMATE_CONCURRENCY,
+      async channel => {
+        if (spendableBalance(channel) < tokens) {
+          return {
+            channel: channel.id,
+            partner_public_key: channel.partner_public_key,
+            local_balance: channel.local_balance,
+            error: 'insufficient_balance',
+          };
+        }
+
+        const [result, error] = await toWithError(
+          this.nodeService.getRouteToDestination(user.id, {
+            destination: decoded.destination,
+            mtokens,
+            cltv_delta: decoded.cltv_delta,
+            outgoing_channel: channel.id,
+            ...(decoded.routes?.length && { routes: decoded.routes }),
+          })
+        );
+
+        if (error) {
+          this.logger.debug('Fee estimate failed for channel', {
+            channel: channel.id,
+            error: error.message,
+          });
+        }
+
+        return toFeeEstimate(channel, result, error);
+      }
+    );
+
+    return sortFeeEstimates(rows);
   }
 
   @Mutation(() => CreateInvoice)

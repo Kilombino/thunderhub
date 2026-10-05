@@ -877,6 +877,21 @@ type PaySuccess {
   url: String
 }
 
+type PaymentFeeEstimate {
+  """Outgoing channel id"""
+  channel: String!
+
+  """insufficient_balance, no_route or error when there is no fee"""
+  error: String
+
+  """Estimated routing fee in sats, rounded up"""
+  fee: Float
+  fee_mtokens: String
+  hops: Int
+  local_balance: Float!
+  partner_public_key: String!
+}
+
 type PaymentType {
   created_at: String!
   date: String!
@@ -996,6 +1011,7 @@ type PublicQueries {
 
 type Query {
   decodeBolt12(bolt12: String!): DecodedBolt12!
+  estimatePaymentFees(request: String!): [PaymentFeeEstimate!]!
   getAccount: ServerAccount!
   getAmbossLoginToken(redirect_url: String): String!
   getAmbossUser: AmbossUser

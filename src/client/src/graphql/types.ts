@@ -1145,6 +1145,20 @@ export type PaySuccess = {
   url?: Maybe<Scalars['String']['output']>;
 };
 
+export type PaymentFeeEstimate = {
+  __typename?: 'PaymentFeeEstimate';
+  /** Outgoing channel id */
+  channel: Scalars['String']['output'];
+  /** insufficient_balance, no_route or error when there is no fee */
+  error?: Maybe<Scalars['String']['output']>;
+  /** Estimated routing fee in sats, rounded up */
+  fee?: Maybe<Scalars['Float']['output']>;
+  fee_mtokens?: Maybe<Scalars['String']['output']>;
+  hops?: Maybe<Scalars['Int']['output']>;
+  local_balance: Scalars['Float']['output'];
+  partner_public_key: Scalars['String']['output'];
+};
+
 export type PaymentType = {
   __typename?: 'PaymentType';
   created_at: Scalars['String']['output'];
@@ -1288,6 +1302,7 @@ export type PublicQueries = {
 export type Query = {
   __typename?: 'Query';
   decodeBolt12: DecodedBolt12;
+  estimatePaymentFees: Array<PaymentFeeEstimate>;
   getAccount: ServerAccount;
   getAmbossLoginToken: Scalars['String']['output'];
   getAmbossUser?: Maybe<AmbossUser>;
@@ -1339,6 +1354,10 @@ export type Query = {
 
 export type QueryDecodeBolt12Args = {
   bolt12: Scalars['String']['input'];
+};
+
+export type QueryEstimatePaymentFeesArgs = {
+  request: Scalars['String']['input'];
 };
 
 export type QueryGetAmbossLoginTokenArgs = {
