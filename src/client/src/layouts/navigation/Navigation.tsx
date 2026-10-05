@@ -8,13 +8,9 @@ import {
   GitPullRequest,
   Link as LinkIcon,
   Users,
-  Shuffle,
   Grid,
   Globe,
-  Gem,
-  ArrowLeftRight,
   ExternalLink,
-  Flame,
   LucideProps,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -26,10 +22,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '../../components/ui/tooltip';
-import { useTapdAvailable } from '../../hooks/useTapdAvailable';
 import { Badge } from '../../components/ui/badge';
 import { SideSettings } from './sideSettings/SideSettings';
-import { LITD_SETUP_DOCS_URL } from '../../utils/externalLinks';
 import { t, TranslationKey } from '@/i18n';
 
 type Icon = FC<LucideProps>;
@@ -70,14 +64,7 @@ const FORWARDS = '/forwards';
 const CHAIN_TRANS = '/chain';
 const TOOLS = '/tools';
 const SETTINGS = '/settings';
-const SWAP = '/swap';
 const AMBOSS = '/amboss';
-const ASSETS = '/assets';
-const ASSET_CHANNELS = '/asset-channels';
-const ASSET_TRANSACTIONS = '/asset-transactions';
-const ASSET_TOOLS = '/asset-tools';
-const TRADING = '/trading';
-const MAGMA = '/magma';
 
 interface NavItem {
   /** Translation key of the label */
@@ -112,49 +99,16 @@ interface NavigationProps {
 
 const AMBOSS_SECTION: NavSection = {
   title: 'nav.sections.amboss',
-  items: [
-    { title: 'nav.items.services', link: AMBOSS, icon: Globe },
-    { title: 'nav.items.magma', link: MAGMA, icon: Flame },
-  ],
-};
-
-const ASSETS_SECTION: NavSection = {
-  title: 'nav.sections.taprootAssets',
-  items: [
-    { title: 'nav.items.assets', link: ASSETS, icon: Gem },
-    { title: 'nav.items.channels', link: ASSET_CHANNELS, icon: Cpu },
-    { title: 'nav.items.transactions', link: ASSET_TRANSACTIONS, icon: Server },
-    { title: 'nav.items.tools', link: ASSET_TOOLS, icon: Shield },
-    {
-      title: 'nav.items.trading',
-      link: TRADING,
-      icon: ArrowLeftRight,
-      beta: true,
-    },
-  ],
-};
-
-const ASSETS_SETUP_SECTION: NavSection = {
-  title: 'nav.sections.taprootAssets',
-  items: [{ title: 'nav.items.setup', href: LITD_SETUP_DOCS_URL, icon: Gem }],
-};
-
-const TOOLS_SECTION: NavSection = {
-  title: 'nav.sections.tools',
-  items: [{ title: 'nav.items.swap', link: SWAP, icon: Shuffle }],
+  items: [{ title: 'nav.items.services', link: AMBOSS, icon: Globe }],
 };
 
 export const Navigation = ({ isBurger, setOpen }: NavigationProps) => {
   const nodePath = useNodePath();
   const { sidebar } = useConfigState();
 
-  const { available: tapdAvailable } = useTapdAvailable();
-
-  const sections: NavSection[] = [
-    AMBOSS_SECTION,
-    tapdAvailable ? ASSETS_SECTION : ASSETS_SETUP_SECTION,
-    TOOLS_SECTION,
-  ];
+  // XBT fork: Magma, Taproot Assets and Swap are Amboss / SHA-256 Lightning services that
+  // do not exist on the BLAKE2b chain, so only Amboss's account page stays.
+  const sections: NavSection[] = [AMBOSS_SECTION];
 
   const renderNavButton = (item: NavItem, open = true) => {
     const isActive = !!item.link && nodePath === item.link;

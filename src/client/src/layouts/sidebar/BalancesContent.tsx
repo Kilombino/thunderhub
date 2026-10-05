@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { Wallet, Zap, Anchor, Cable, Rocket, ChevronDown } from 'lucide-react';
+import { Wallet, Zap, Anchor, Cable, ChevronDown } from 'lucide-react';
 import { Price } from '../../components/price/Price';
 import { useNodeBalances } from '../../hooks/UseNodeBalances';
 import { useConfigState, useConfigDispatch } from '../../context/ConfigContext';
 import { OpenChannel } from '../../views/home/liquidity/OpenChannel';
-import { BuyChannel } from '../../views/home/liquidity/BuyChannel';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +14,7 @@ import {
 import Big from 'big.js';
 import { t } from '@/i18n';
 
-type DialogState = 'none' | 'open' | 'buy';
+type DialogState = 'none' | 'open';
 
 export const BalancesContent = () => {
   const { onchain, lightning } = useNodeBalances();
@@ -167,13 +166,6 @@ export const BalancesContent = () => {
               <Cable size={13} className="text-blue-500" />
               {t('nav.balances.openChannel')}
             </button>
-            <button
-              className="flex items-center gap-2 w-full px-2 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-accent/50"
-              onClick={() => setOpenDialog('buy')}
-            >
-              <Rocket size={13} className="text-orange-500" />
-              {t('nav.balances.buyInbound')}
-            </button>
           </div>
         )}
       </div>
@@ -190,21 +182,6 @@ export const BalancesContent = () => {
             </DialogDescription>
           </DialogHeader>
           <OpenChannel closeCbk={() => setOpenDialog('none')} />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog
-        open={openDialog === 'buy'}
-        onOpenChange={open => !open && setOpenDialog('none')}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t('nav.balances.buyInbound')}</DialogTitle>
-            <DialogDescription>
-              {t('nav.balances.buyInboundDescription')}
-            </DialogDescription>
-          </DialogHeader>
-          <BuyChannel />
         </DialogContent>
       </Dialog>
     </div>
