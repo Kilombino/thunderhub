@@ -3,16 +3,11 @@ import {
   Cpu,
   Menu,
   Settings,
-  Heart,
   PanelRight,
   ArrowDownToLine,
   ArrowUpFromLine,
 } from 'lucide-react';
 import { useNodePath } from '../../hooks/useNodeSlug';
-import {
-  useDonate,
-  DonateModal,
-} from '../../views/home/quickActions/donate/DonateContent';
 import {
   useDeposit,
   DepositModal,
@@ -40,13 +35,6 @@ export const Header = () => {
   const nodePath = useNodePath();
   const [open, setOpen] = useState(false);
   const [balancesOpen, setBalancesOpen] = useState(false);
-
-  const {
-    openDonate,
-    payRequest: donatePayRequest,
-    modalOpen: donateModalOpen,
-    closeDonate,
-  } = useDonate();
 
   const {
     openDeposit,
@@ -79,7 +67,6 @@ export const Header = () => {
           >
             <BurgerMenu
               setOpen={setOpen}
-              openDonate={openDonate}
               openDeposit={openDeposit}
               openWithdraw={openWithdraw}
             />
@@ -151,14 +138,6 @@ export const Header = () => {
           </SheetContent>
         </Sheet>
 
-        <Button
-          onClick={openDonate}
-          variant="ghost"
-          size="icon-sm"
-          className="text-muted-foreground hover:text-foreground"
-        >
-          <Heart size={14} className="text-red-500 fill-red-500" />
-        </Button>
         <Link to={SETTINGS} noStyling>
           <Button
             variant="ghost"
@@ -210,11 +189,6 @@ export const Header = () => {
           </div>
         )}
       </header>
-      <DonateModal
-        payRequest={donatePayRequest}
-        modalOpen={donateModalOpen}
-        closeDonate={closeDonate}
-      />
       <DepositModal modalOpen={depositModalOpen} closeDeposit={closeDeposit} />
       <WithdrawModal
         modalOpen={withdrawModalOpen}
