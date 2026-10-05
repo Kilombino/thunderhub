@@ -126,7 +126,7 @@ const ChannelView = () => {
         open={openDialog === 'open'}
         onOpenChange={open => !open && setOpenDialog(null)}
       >
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>{t('channels.page.openChannel')}</DialogTitle>
             <DialogDescription>
