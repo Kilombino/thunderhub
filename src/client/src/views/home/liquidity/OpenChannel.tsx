@@ -72,7 +72,9 @@ const AutomaticOpenChannel = ({
   modeToggle,
 }: OpenChannelProps & { modeToggle: ReactNode }) => {
   const { t } = useTranslation();
-  const [useRecommended, setUseRecommended] = useState(true);
+  // XBT fork: Amboss Rails is a peer on the SHA-256 Lightning network; it does not exist
+  // on the BLAKE2b chain, so the recommended-peer option is off and hidden.
+  const [useRecommended] = useState(false);
 
   const { fetchFees } = useConfigState();
   const { fast, halfHour, hour, minimum, dontShow } =
@@ -152,13 +154,6 @@ const AutomaticOpenChannel = ({
       {modeToggle}
       <Separator />
       {/* Peer */}
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">
-          {t('openChannel.useRecommended')}
-        </span>
-        <Switch checked={useRecommended} onCheckedChange={setUseRecommended} />
-      </div>
-
       {useRecommended ? (
         <div className="flex items-start gap-3 rounded border border-primary/20 bg-primary/5 p-3">
           <Zap size={16} className="mt-0.5 shrink-0 text-primary" />
@@ -180,28 +175,6 @@ const AutomaticOpenChannel = ({
         </div>
       ) : (
         <>
-          <div className="flex items-start gap-3 rounded border border-orange-500/30 bg-orange-500/5 p-3">
-            <AlertTriangle
-              size={16}
-              className="mt-0.5 shrink-0 text-orange-500"
-            />
-            <div className="flex flex-col gap-0.5 text-xs">
-              <span className="font-medium text-orange-500">
-                {t('openChannel.performanceTitle')}
-              </span>
-              <span className="text-muted-foreground">
-                {t('openChannel.performanceDescription')}{' '}
-                <button
-                  className="inline cursor-pointer border-none bg-transparent p-0 text-xs text-primary hover:underline"
-                  onClick={() => setUseRecommended(true)}
-                >
-                  {t('openChannel.railsLink')}
-                </button>
-                .
-              </span>
-            </div>
-          </div>
-
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
               <label className="text-xs font-medium text-muted-foreground">
