@@ -4,13 +4,13 @@ import { getErrorContent } from '../../../../utils/error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
-import { ChannelSelect } from '../../../../components/select/specific/ChannelSelect';
 import { Price } from '../../../../components/price/Price';
 import { usePayMutation } from '../../../../graphql/mutations/__generated__/pay.generated';
 import { Separator } from '@/components/ui/separator';
 import { decode } from 'light-bolt11-decoder';
 import { t } from '@/i18n';
 import { isBolt12Offer, PayOffer } from './PayOffer';
+import { OutgoingChannel } from './OutgoingChannel';
 
 interface PayProps {
   predefinedRequest?: string;
@@ -83,7 +83,7 @@ export const Pay: FC<PayProps> = ({
   defaultPaths = 10,
 }) => {
   const [request, setRequest] = useState<string>(predefinedRequest || '');
-  const [peers, setPeers] = useState<string[]>([]);
+  const [outgoingChannel, setOutgoingChannel] = useState<string>('');
   const [fee, setFee] = useState<number>(defaultFee);
   const [paths, setPaths] = useState<number>(defaultPaths);
   const [confirming, setConfirming] = useState(false);
@@ -107,7 +107,7 @@ export const Pay: FC<PayProps> = ({
         max_fee: fee,
         max_paths: paths,
         request,
-        ...(peers?.length && { out: peers }),
+        ...(outgoingChannel && { out: [outgoingChannel] }),
       },
     });
   };
@@ -147,8 +147,8 @@ export const Pay: FC<PayProps> = ({
 
           <Separator />
 
-          {/* Max Fee, Max Paths, Out Channels */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Max Fee, Max Paths */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-muted-foreground">
                 {t('wallet.pay.maxFee')}{' '}
@@ -176,13 +176,15 @@ export const Pay: FC<PayProps> = ({
                 onKeyDown={e => e.key === 'Enter' && handlePay()}
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-muted-foreground">
-                {t('wallet.pay.outChannels')}
-              </label>
-              <ChannelSelect callback={p => setPeers(p.map(peer => peer.id))} />
-            </div>
           </div>
+
+          {/* Outgoing channel, with per-channel fee estimates */}
+          <OutgoingChannel
+            request={request || predefinedRequest || ''}
+            value={outgoingChannel}
+            onChange={setOutgoingChannel}
+            maxFee={fee}
+          />
 
           <Separator />
 

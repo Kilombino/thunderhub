@@ -69,6 +69,23 @@ export const wallet: PartialMessages['wallet'] = {
     cancel: 'Cancelar',
     confirmPay: 'Confirmar pago',
     requestPlaceholder: 'lnbc... o lno1... (oferta BOLT 12)',
+    outgoing: {
+      label: 'Canal de salida',
+      automatic: 'Automático (LND elige la ruta)',
+      option: '{alias} · {balance} sats de salida',
+      estimate: 'Calcular comisiones',
+      channel: 'Canal',
+      outbound: 'Saldo de salida',
+      fee: 'Comisión est.',
+      hops: 'Saltos',
+      noRoute: 'sin ruta',
+      insufficientBalance: 'saldo insuficiente',
+      failed: 'error',
+      overMaxFee: 'Supera la comisión máxima: el pago fallaría',
+      noChannels: 'No hay canales activos desde los que pagar.',
+      estimateNote:
+        'Consulta de rutas a LND (QueryRoutes): no se paga nada. La comisión real puede variar si esa ruta falla y LND prueba otra. Pulsa una fila para pagar por ese canal.',
+    },
   },
   payOffer: {
     offer: 'Oferta BOLT 12',

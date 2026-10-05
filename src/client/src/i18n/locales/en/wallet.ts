@@ -67,6 +67,23 @@ export const wallet = {
     cancel: 'Cancel',
     confirmPay: 'Confirm Pay',
     requestPlaceholder: 'lnbc... or lno1... (BOLT 12 offer)',
+    outgoing: {
+      label: 'Outgoing channel',
+      automatic: 'Automatic (LND picks the route)',
+      option: '{alias} · {balance} sats out',
+      estimate: 'Estimate fees',
+      channel: 'Channel',
+      outbound: 'Outbound',
+      fee: 'Est. fee',
+      hops: 'Hops',
+      noRoute: 'no route',
+      insufficientBalance: 'not enough balance',
+      failed: 'error',
+      overMaxFee: 'Above the max fee: the payment would fail',
+      noChannels: 'No active channels to pay from.',
+      estimateNote:
+        'Asked to LND as a route query (QueryRoutes): nothing is paid. The real fee can differ if that route fails and LND tries another. Click a row to pay from that channel.',
+    },
   },
   payOffer: {
     offer: 'BOLT 12 offer',
