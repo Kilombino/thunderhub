@@ -151,10 +151,10 @@ export const CoinControlOpen = ({ closeCbk }: CoinControlOpenProps) => {
   const canPrepare =
     !!publicKey &&
     feeRateValid &&
-    selectedUtxos.length > 0 &&
     Number.isInteger(amount) &&
     amount > 0 &&
-    amount <= maxAmount;
+    // With no coins ticked the server picks them; otherwise they must cover it.
+    (selectedUtxos.length === 0 || amount <= maxAmount);
 
   const toggle = (key: string) =>
     setSelected(prev => {
@@ -307,10 +307,12 @@ export const CoinControlOpen = ({ closeCbk }: CoinControlOpenProps) => {
             {t('coinControl.utxos')}
           </label>
           <span className="text-xs text-muted-foreground">
-            {t('coinControl.selected', {
-              count: selectedUtxos.length,
-              total: selectedTotal.toLocaleString(),
-            })}
+            {selectedUtxos.length
+              ? t('coinControl.selected', {
+                  count: selectedUtxos.length,
+                  total: selectedTotal.toLocaleString(),
+                })
+              : t('coinControl.autoSelect')}
           </span>
         </div>
         {loadingUtxos ? (

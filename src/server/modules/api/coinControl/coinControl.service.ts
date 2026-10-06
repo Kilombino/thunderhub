@@ -4,6 +4,8 @@ import { Logger } from 'winston';
 import {
   AuthenticatedLnd,
   cancelPendingChannel,
+  createChainAddress,
+  lockUtxo,
   fundPendingChannels,
   getUtxos,
   openChannels,
@@ -18,12 +20,15 @@ import {
   PsbtSummary,
   WalletUtxo,
   asOutpoint,
+  autoSelectUtxos,
   feeRateToSatPerKw,
+  planFunding,
   selectUtxos,
   summarizeFundedPsbt,
   transactionIdFromHex,
   transactionVsize,
 } from './coinControl.helpers';
+import { Psbt, address as btcAddress } from 'bitcoinjs-lib';
 import {
   CoinControlChannelProposal,
   CoinControlChannelResult,
@@ -32,7 +37,17 @@ import {
 
 /** LND drops a pending PSBT channel after 10 minutes; stay below that. */
 const SESSION_TTL_MS = 9 * 60 * 1000;
-const CHANGE_TYPE_P2TR = 'CHANGE_ADDRESS_TYPE_P2TR';
+/**
+ * The output script of a segwit address (P2WSH funding, P2TR change), built
+ * from the bech32 data so no elliptic-curve library is needed for P2TR.
+ */
+const segwitScript = (addr: string): Buffer => {
+  const { version, data } = btcAddress.fromBech32(addr);
+  return Buffer.concat([
+    Buffer.from([version === 0 ? 0x00 : 0x50 + version, data.length]),
+    data,
+  ]);
+};
 const isPublicKey = (n: string) => /^0[23][0-9a-f]{64}$/i.test(n);
 
 type UtxoLock = Outpoint & { id: string };
@@ -85,8 +100,13 @@ export class CoinControlService implements OnModuleDestroy {
       await this.nodeService.addPeer(accountId, publicKey, socket, false);
     }
 
-    const { utxos } = await to<{ utxos: WalletUtxo[] }>(getUtxos({ lnd }));
-    const { selected } = selectUtxos(utxos, outpoints, channel_size);
+    const { utxos } = await to<{
+      utxos: (WalletUtxo & { output_script: string })[];
+    }>(getUtxos({ lnd }));
+    // No coins ticked: pick them automatically, still at the exact fee rate.
+    const { selected } = outpoints.length
+      ? selectUtxos(utxos, outpoints, channel_size)
+      : autoSelectUtxos(utxos, channel_size, fee_rate);
 
     this.logger.info('Starting coin control channel open', {
       partner: publicKey,
@@ -124,12 +144,11 @@ export class CoinControlService implements OnModuleDestroy {
     };
 
     try {
-      const funded = await this.fundPsbt(lnd, {
+      const funded = await this.buildPsbt(lnd, {
         address: channel.address,
         tokens: channel.tokens,
-        inputs: selected,
-        satPerKw,
-        spendUnconfirmed: selected.some(u => !u.confirmation_count),
+        inputs: selected as (WalletUtxo & { output_script: string })[],
+        feeRate: fee_rate,
       });
       session.locks = funded.locks;
       session.psbt = funded.psbt;
@@ -272,62 +291,77 @@ export class CoinControlService implements OnModuleDestroy {
   }
 
   /**
-   * WalletKit FundPsbt with an explicit input list (no coin selection) and a
-   * fee rate in sat/kw, which unlike sat/vB allows rates below 1 sat/vB.
-   * The `lightning` fundPsbt helper only accepts whole sat/vB.
+   * Builds the funding PSBT here: exactly the chosen coins, the channel output,
+   * change to a fresh P2TR address and the fee for the requested rate. LND's
+   * FundPsbt would raise any rate below 253 sat/kw to that floor (1.012
+   * sat/vB); LND only signs this one (FinalizePsbt). The coins are leased so
+   * nothing else spends them while the user reviews.
    */
-  private fundPsbt(
+  private async buildPsbt(
     lnd: AuthenticatedLnd,
     args: {
       address: string;
       tokens: number;
-      inputs: Outpoint[];
-      satPerKw: number;
-      spendUnconfirmed: boolean;
+      inputs: (WalletUtxo & { output_script: string })[];
+      feeRate: number;
     }
   ): Promise<{ psbt: string; changeIndex: number; locks: UtxoLock[] }> {
-    return new Promise((resolve, reject) => {
-      (lnd as any).wallet.fundPsbt(
-        {
-          raw: {
-            inputs: args.inputs.map(i => ({
-              output_index: i.transaction_vout,
-              txid_bytes: Buffer.from(i.transaction_id, 'hex').reverse(),
-            })),
-            outputs: { [args.address]: String(args.tokens) },
+    const plan = planFunding(args.inputs, args.tokens, args.feeRate);
+
+    const locks: UtxoLock[] = [];
+    try {
+      for (const input of args.inputs) {
+        const { id } = await to<{ id: string }>(
+          lockUtxo({
+            lnd,
+            transaction_id: input.transaction_id,
+            transaction_vout: input.transaction_vout,
+          })
+        );
+        locks.push({
+          id,
+          transaction_id: input.transaction_id,
+          transaction_vout: input.transaction_vout,
+        });
+      }
+
+      const packet = new Psbt();
+      for (const input of args.inputs) {
+        packet.addInput({
+          hash: input.transaction_id,
+          index: input.transaction_vout,
+          witnessUtxo: {
+            script: Buffer.from(input.output_script, 'hex'),
+            value: input.tokens,
           },
-          sat_per_kw: String(args.satPerKw),
-          change_type: CHANGE_TYPE_P2TR,
-          min_confs: 0,
-          spend_unconfirmed: args.spendUnconfirmed,
-        },
-        (err: any, res: any) => {
-          if (err) {
-            return reject(
-              new Error(`Error funding PSBT: ${err.details || err.message}`)
-            );
-          }
-          if (!res?.funded_psbt) {
-            return reject(new Error('Expected a funded PSBT from LND'));
-          }
+        });
+      }
 
-          const locks: UtxoLock[] = (res.locked_utxos || []).map(
-            (lock: any) => ({
-              id: Buffer.from(lock.id).toString('hex'),
-              transaction_id: Buffer.from(lock.outpoint.txid_bytes)
-                .reverse()
-                .toString('hex'),
-              transaction_vout: lock.outpoint.output_index,
-            })
-          );
-
-          return resolve({
-            psbt: Buffer.from(res.funded_psbt).toString('hex'),
-            changeIndex: Number(res.change_output_index),
-            locks,
-          });
-        }
+      const outputs: { address: string; value: number; change: boolean }[] = [
+        { address: args.address, value: args.tokens, change: false },
+      ];
+      if (plan.change > 0) {
+        const { address } = await to<{ address: string }>(
+          createChainAddress({ lnd, format: 'p2tr' })
+        );
+        outputs.push({ address, value: plan.change, change: true });
+      }
+      // Random output order, so the change is not always in the same place.
+      if (outputs.length === 2 && Math.random() < 0.5) outputs.reverse();
+      outputs.forEach(o =>
+        packet.addOutput({ script: segwitScript(o.address), value: o.value })
       );
-    });
+
+      return {
+        psbt: packet.toHex(),
+        changeIndex: outputs.findIndex(o => o.change),
+        locks,
+      };
+    } catch (error) {
+      for (const lock of locks) {
+        await toWithError(unlockUtxo({ lnd, ...lock }));
+      }
+      throw error;
+    }
   }
 }

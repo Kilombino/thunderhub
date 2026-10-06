@@ -4,8 +4,8 @@ export const openChannel: PartialMessages['openChannel'] = {
   opened: 'Canal abierto',
   funding: {
     label: 'Financiación',
-    automatic: 'Automática',
-    coinControl: 'Control de monedas (PSBT)',
+    automatic: 'LND (desde 1 sat/vB)',
+    coinControl: 'Monedas y comisión (desde 0,1 sat/vB)',
   },
   useRecommended: 'Usar par recomendado',
   railsTitle: 'Clúster Amboss Rails',

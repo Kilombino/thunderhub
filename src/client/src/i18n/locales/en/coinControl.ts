@@ -12,6 +12,7 @@ export const coinControl = {
   utxos: 'Coins to spend',
   utxosEmpty: 'The wallet has no UTXOs.',
   selected: '{count} selected · {total} sats',
+  autoSelect: 'None ticked: picked automatically (largest confirmed first)',
   unconfirmed: 'unconfirmed',
   confirmations: '{count} conf.',
   outpoint: 'Outpoint',

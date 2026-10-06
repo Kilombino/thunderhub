@@ -108,6 +108,70 @@ export const selectUtxos = (
 };
 
 /**
+ * Picks coins automatically when the user ticked none: confirmed coins,
+ * largest first, until they cover the amount plus the fee of a transaction
+ * with change at `satPerVbyte`.
+ */
+export const autoSelectUtxos = (
+  utxos: WalletUtxo[],
+  amount: number,
+  satPerVbyte: number
+): { selected: WalletUtxo[]; total: number } => {
+  const pool = utxos
+    .filter(u => (u.confirmation_count || 0) > 0)
+    .sort((a, b) => b.tokens - a.tokens);
+  const selected: WalletUtxo[] = [];
+  let total = 0;
+  for (const utxo of pool) {
+    selected.push(utxo);
+    total += utxo.tokens;
+    const fee = Math.ceil(
+      satPerVbyte *
+        estimateVsize(
+          selected.map(u => u.address_format),
+          2
+        )
+    );
+    if (total >= amount + fee) return { selected, total };
+  }
+  throw new Error(
+    `Confirmed wallet coins (${total} sats) do not cover the channel amount (${amount} sats) plus fees`
+  );
+};
+
+/** Smallest change output worth creating (P2TR dust limit). */
+export const CHANGE_DUST_LIMIT = 330;
+
+/**
+ * The funding transaction's outputs and fee, computed here rather than by
+ * LND's FundPsbt, which never goes below 253 sat/kw (1.012 sat/vB) whatever it
+ * is asked for. Change is dropped (and given to the fee) when it would be dust.
+ */
+export const planFunding = (
+  inputs: Pick<WalletUtxo, 'tokens' | 'address_format'>[],
+  amount: number,
+  satPerVbyte: number
+): { fee: number; change: number; vsize: number } => {
+  const total = inputs.reduce((sum, u) => sum + u.tokens, 0);
+  const formats = inputs.map(u => u.address_format);
+  // One extra sat keeps the signed transaction at or above the requested rate.
+  const withChange = estimateVsize(formats, 2);
+  const feeWithChange = Math.ceil(satPerVbyte * withChange) + 1;
+  const change = total - amount - feeWithChange;
+  if (change >= CHANGE_DUST_LIMIT) {
+    return { fee: feeWithChange, change, vsize: withChange };
+  }
+  const noChange = estimateVsize(formats, 1);
+  const fee = total - amount;
+  if (fee < Math.ceil(satPerVbyte * noChange) + 1) {
+    throw new Error(
+      `Selected UTXOs (${total} sats) do not cover the channel amount (${amount} sats) plus fees`
+    );
+  }
+  return { fee, change: 0, vsize: noChange };
+};
+
+/**
  * Largest channel that the selected coins can fund without change at the
  * given fee rate (a small margin covers LND's own size estimate).
  */

@@ -14,6 +14,7 @@ export const coinControl: PartialMessages['coinControl'] = {
   utxos: 'Monedas a gastar',
   utxosEmpty: 'La cartera no tiene UTXOs.',
   selected: '{count} seleccionadas · {total} sats',
+  autoSelect: 'Ninguna marcada: se eligen solas (las confirmadas más grandes)',
   unconfirmed: 'sin confirmar',
   confirmations: '{count} conf.',
   outpoint: 'Outpoint',

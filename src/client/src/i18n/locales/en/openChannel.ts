@@ -2,8 +2,8 @@ export const openChannel = {
   opened: 'Channel Opened',
   funding: {
     label: 'Funding',
-    automatic: 'Automatic',
-    coinControl: 'Coin control (PSBT)',
+    automatic: 'LND (from 1 sat/vB)',
+    coinControl: 'Coins and fee (from 0.1 sat/vB)',
   },
   useRecommended: 'Use Recommended Peer',
   railsTitle: 'Amboss Rails Cluster',

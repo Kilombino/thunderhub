@@ -2,6 +2,8 @@ import { Psbt } from 'bitcoinjs-lib';
 import {
   CPFP_CHILD_VBYTES,
   asOutpoint,
+  autoSelectUtxos,
+  planFunding,
   cpfpChildFeeRate,
   estimateVsize,
   largestWalletOutput,
@@ -192,5 +194,50 @@ describe('largestWalletOutput', () => {
     ];
     expect(largestWalletOutput(list, txid(5))?.transaction_vout).toBe(2);
     expect(largestWalletOutput(list, txid(7))).toBeUndefined();
+  });
+});
+
+describe('planFunding', () => {
+  const p2wpkh = (tokens: number) => ({ tokens, address_format: 'p2wpkh' });
+
+  it('pays exactly the requested rate below 1 sat/vB, which LND would floor', () => {
+    const plan = planFunding([p2wpkh(6_999_844)], 1_000_000, 0.1);
+    // 10.5 + 68 + 2 * 43 = 164.5 -> 165 vB; 0.1 * 165 = 16.5 -> 17, +1
+    expect(plan.vsize).toBe(165);
+    expect(plan.fee).toBe(18);
+    expect(plan.change).toBe(6_999_844 - 1_000_000 - 18);
+  });
+
+  it('drops dust change into the fee', () => {
+    const plan = planFunding([p2wpkh(1_000_100)], 1_000_000, 0.1);
+    expect(plan.change).toBe(0);
+    expect(plan.fee).toBe(100);
+  });
+
+  it('refuses coins that do not cover amount and fee', () => {
+    expect(() => planFunding([p2wpkh(1_000_005)], 1_000_000, 1)).toThrow();
+  });
+});
+
+describe('autoSelectUtxos', () => {
+  const u = (id: string, tokens: number, confirmation_count = 3) => ({
+    transaction_id: id.repeat(64).slice(0, 64),
+    transaction_vout: 0,
+    tokens,
+    address_format: 'p2tr',
+    confirmation_count,
+  });
+
+  it('takes confirmed coins, largest first, until they cover the channel', () => {
+    const { selected } = autoSelectUtxos(
+      [u('a', 300_000), u('b', 900_000), u('c', 5_000_000, 0), u('d', 200_000)],
+      1_000_000,
+      0.1
+    );
+    expect(selected.map(s => s.tokens)).toEqual([900_000, 300_000]);
+  });
+
+  it('fails when the confirmed coins are not enough', () => {
+    expect(() => autoSelectUtxos([u('a', 10_000)], 1_000_000, 0.1)).toThrow();
   });
 });

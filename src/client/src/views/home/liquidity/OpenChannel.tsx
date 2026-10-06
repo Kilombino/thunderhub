@@ -28,7 +28,9 @@ type OpenChannelProps = {
 
 export const OpenChannel = ({ closeCbk }: OpenChannelProps) => {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<'auto' | 'coins'>('auto');
+  // Coin control first: it takes any fee rate down to 0.1 sat/vB and, with no
+  // coins ticked, picks them itself. The plain LND open stays as the other option.
+  const [mode, setMode] = useState<'auto' | 'coins'>('coins');
 
   const modeToggle = (
     <div className="flex items-center justify-between">
