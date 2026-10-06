@@ -245,6 +245,18 @@ export class CoinControlService implements OnModuleDestroy {
     } catch (error) {
       this.logger.error('Error funding coin control channel', { error });
       await this.release(session);
+      // LND drops the pending channel when the peer disconnects mid-open (common
+      // over Tor). Nothing was signed into the chain: say so plainly.
+      if (
+        /no channel reservation found|no funding intent found/i.test(
+          String(error)
+        )
+      ) {
+        throw new Error(
+          'El nodo remoto se desconectó durante la apertura y el canal pendiente se canceló. ' +
+            'No se ha gastado nada y las monedas quedan libres: vuelve a intentarlo.'
+        );
+      }
       throw error;
     }
   }
