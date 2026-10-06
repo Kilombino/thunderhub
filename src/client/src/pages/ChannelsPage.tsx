@@ -126,7 +126,12 @@ const ChannelView = () => {
         open={openDialog === 'open'}
         onOpenChange={open => !open && setOpenDialog(null)}
       >
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        <DialogContent
+          className="max-h-[90vh] overflow-y-auto sm:max-w-lg"
+          // Opening a channel is a multi-step flow: only the close button ends it.
+          onInteractOutside={e => e.preventDefault()}
+          onEscapeKeyDown={e => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>{t('channels.page.openChannel')}</DialogTitle>
             <DialogDescription>
