@@ -567,7 +567,10 @@ export const ChannelTable = ({
             enableHiding: false,
             cell: ({ row }: any) => (
               <div className="whitespace-nowrap">
-                {getChannelLink(row.original.id)}
+                {getChannelLink(
+                  row.original.id,
+                  row.original.partner_public_key
+                )}
               </div>
             ),
           },

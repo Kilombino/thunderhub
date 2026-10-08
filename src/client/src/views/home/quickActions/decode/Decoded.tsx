@@ -93,7 +93,7 @@ export const Decoded = ({ request, setShow }: DecodedProps) => {
           <Row label={t('home.decode.destination')}>
             {!config.disableLinks ? (
               <a
-                href={`https://amboss.space/node/${destination}`}
+                href={`https://lightning.paperclippool.xyz/network#node=${destination}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"

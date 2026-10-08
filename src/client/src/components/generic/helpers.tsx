@@ -109,6 +109,10 @@ export const getWithCopy = (text: string | null | undefined) => {
   );
 };
 
+// XBT fork: the BLAKE2b Lightning network's explorer (Amboss only knows the other chain).
+const NETWORK_EXPLORER = 'https://lightning.paperclippool.xyz/network';
+const nodeUrl = (publicKey: string) => `${NETWORK_EXPLORER}#node=${publicKey}`;
+
 export const getNodeLink = (
   publicKey: string | undefined | null,
   alias?: string | undefined | null
@@ -116,7 +120,7 @@ export const getNodeLink = (
   if (!publicKey || (alias && alias === 'Node not found')) {
     return 'Node not found';
   }
-  const link = `https://amboss.space/node/${publicKey}`;
+  const link = nodeUrl(publicKey);
   const text = alias ? alias : shorten(publicKey);
   return (
     <span className="flex items-center">
@@ -136,15 +140,21 @@ export const getNodeLink = (
   );
 };
 
-export const getChannelLink = (id: string) => {
-  const link = `https://amboss.space/edge/${id}`;
+/**
+ * A channel id, linked to the explorer page of the node on its other end when that is
+ * known (the explorer has node pages, not channel pages).
+ */
+export const getChannelLink = (
+  id: string,
+  partnerPublicKey?: string | null
+) => {
   return (
     <span className="flex items-center">
-      {config.disableLinks ? (
+      {config.disableLinks || !partnerPublicKey ? (
         id
       ) : (
         <a
-          href={link}
+          href={nodeUrl(partnerPublicKey)}
           target="_blank"
           className="no-underline text-primary hover:underline"
         >

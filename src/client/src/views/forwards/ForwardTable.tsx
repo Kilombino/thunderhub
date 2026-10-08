@@ -37,7 +37,10 @@ export const ForwardTable: FC<{ days: number }> = ({ days }) => {
       accessorKey: 'channel',
       cell: ({ row }: any) => (
         <div style={{ whiteSpace: 'nowrap' }}>
-          {getChannelLink(row.original.channel)}
+          {getChannelLink(
+            row.original.channel,
+            row.original.channel_info?.node2_info?.public_key
+          )}
         </div>
       ),
     },
