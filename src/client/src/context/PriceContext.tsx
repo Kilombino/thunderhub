@@ -41,17 +41,23 @@ export const StateContext = createContext<State | undefined>(undefined);
 export const DispatchContext = createContext<Dispatch | undefined>(undefined);
 
 const initialState: State = {
-  fiat: 'EUR',
+  fiat: 'USD',
   dontShow: true,
-  prices: { EUR: { last: 0, symbol: '€' } },
+  prices: { USD: { last: 0, symbol: '$' } },
 };
 
 const stateReducer = (state: State, action: ActionType): State => {
   switch (action.type) {
     case 'dontShow':
       return { ...initialState, dontShow: true };
-    case 'fetched':
-      return { ...state, ...action.state, dontShow: false };
+    case 'fetched': {
+      // XBT fork: the feed only has USD (BTCB2/USDC); fall back to it if another was saved.
+      const prices = action.state.prices || {};
+      const fiat = prices[state.fiat]
+        ? state.fiat
+        : Object.keys(prices)[0] || state.fiat;
+      return { ...state, ...action.state, fiat, dontShow: false };
+    }
     case 'change': {
       localStorage.setItem('fiat', action.fiat);
       return { ...state, fiat: action.fiat };
@@ -68,7 +74,7 @@ const PriceProvider: FC<{ children?: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(stateReducer, initialState);
 
   useEffect(() => {
-    const fiat = localStorage.getItem('fiat') || 'EUR';
+    const fiat = localStorage.getItem('fiat') || 'USD';
     dispatch({ type: 'initChange', fiat });
   }, []);
 

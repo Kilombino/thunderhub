@@ -176,7 +176,9 @@ export default (): ConfigType => {
     blockstream: 'https://blockstream.info',
     fees: `${mempool}/api/v1/fees/recommended`,
     blockHeight: `${mempool}/api/blocks/tip/height`,
-    ticker: 'https://blockchain.info/ticker',
+    // XBT fork: the price of BTC on the BLAKE2b chain (BTCB2), from Neoxa, the exchange where
+    // it trades. blockchain.info prices the SHA-256 chain, which is a different coin.
+    ticker: 'https://neoxa.exchange/api/exchange/ticker/BTCB2_USDC',
     github: 'https://api.github.com/repos/apotdevin/thunderhub/releases/latest',
     boltz: 'https://api.boltz.exchange',
   };

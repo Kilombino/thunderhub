@@ -20,9 +20,14 @@ export class BitcoinResolver {
       const response = await this.fetchService.fetchWithProxy(
         this.configService.get('urls.ticker')
       );
-      const json = await response.json();
+      const json = (await response.json()) as any;
 
-      return JSON.stringify(json);
+      // Neoxa quotes against USDC, taken as USD. The client expects blockchain.info's shape.
+      const last = json?.ticker?.lastPrice;
+      if (typeof last !== 'number' || !(last > 0)) {
+        throw new Error('No BTCB2 price in the ticker');
+      }
+      return JSON.stringify({ USD: { last, symbol: '$' } });
     } catch (error: any) {
       this.logger.error('Error getting bitcoin price', { error });
       throw new Error('Problem getting Bitcoin price.');
