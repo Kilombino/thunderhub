@@ -22,13 +22,6 @@ export const settings = {
     forwardAttempts: 'Forward Attempts',
     autoClose: 'Auto Close',
   },
-  amboss: {
-    autoBackups: 'Auto Backups',
-    healthcheckPings: 'Healthcheck Pings',
-    onchainPush: 'Onchain Push',
-    channelsPush: 'Channels Push',
-    privateChannelsPush: 'Private Channel Push',
-  },
   security: {
     title: 'Security',
     enable2fa: 'Enable 2FA',

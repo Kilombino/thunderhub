@@ -72,12 +72,6 @@ export const home = {
     another: 'Decode Another',
     placeholder: 'Lightning Invoice',
   },
-  amboss: {
-    loggedIn: 'Logged in',
-    loginError: 'Error logging in',
-    goTo: 'Go To',
-    login: 'Login',
-  },
   lnurl: {
     inputRequired: 'Please input a LNURL',
     decodeError: 'Problem decoding LNURL',

@@ -25,7 +25,6 @@ import { useGetNodeInfoQuery } from './graphql/queries/__generated__/getNodeInfo
 import { useGetAccountQuery } from './graphql/queries/__generated__/getAccount.generated';
 import { Navigation } from './layouts/navigation/Navigation';
 import { RightSidebar } from './layouts/sidebar/RightSidebar';
-import { TradingProvider } from './context/TradingContext';
 import { NodeSlugProvider } from './hooks/useNodeSlug';
 import { RequireTapd } from './components/RequireTapd';
 import 'react-grid-layout/css/styles.css';
@@ -43,13 +42,10 @@ import ChainPage from './pages/ChainPage';
 import ToolsPage from './pages/ToolsPage';
 import SwapPage from './pages/SwapPage';
 import SettingsPage from './pages/SettingsPage';
-import AmbossPage from './pages/AmbossPage';
 import AssetsPage from './pages/AssetsPage';
 import AssetChannelsPage from './pages/AssetChannelsPage';
 import AssetTransactionsPage from './pages/AssetTransactionsPage';
 import AssetToolsPage from './pages/AssetToolsPage';
-import TradingPage from './pages/TradingPage';
-import MagmaPage from './pages/MagmaPage';
 import SetupPage from './pages/SetupPage';
 import NodeSetupPage from './pages/NodeSetupPage';
 
@@ -181,21 +177,19 @@ const Wrapper: FC<{ children?: ReactNode }> = ({ children }) => {
       <div className="pb-30">
         {!isRoot && <Header />}
         <Listener isRoot={isRoot} />
-        <TradingProvider>
-          <div className="flex">
-            {!isRoot && authenticated && <Navigation />}
-            <div className="flex-1 min-w-0 overflow-hidden bg-muted/20 dark:bg-transparent">
-              {checking ? (
-                <LoadingCard noCard={true} loadingHeight={'80vh'} />
-              ) : isRoot || authenticated ? (
-                children
-              ) : (
-                <NotAuthenticated />
-              )}
-            </div>
-            {!isRoot && authenticated && <RightSidebar />}
+        <div className="flex">
+          {!isRoot && authenticated && <Navigation />}
+          <div className="flex-1 min-w-0 overflow-hidden bg-muted/20 dark:bg-transparent">
+            {checking ? (
+              <LoadingCard noCard={true} loadingHeight={'80vh'} />
+            ) : isRoot || authenticated ? (
+              children
+            ) : (
+              <NotAuthenticated />
+            )}
           </div>
-        </TradingProvider>
+          {!isRoot && authenticated && <RightSidebar />}
+        </div>
       </div>
       <Footer />
       <Toaster
@@ -238,7 +232,6 @@ const AUTHENTICATED_ROUTES = (
         </Suspense>
       }
     />
-    <Route path="amboss" element={<AmbossPage />} />
     <Route
       path="assets"
       element={
@@ -279,16 +272,6 @@ const AUTHENTICATED_ROUTES = (
         </RequireTapd>
       }
     />
-    <Route
-      path="trading"
-      element={
-        <RequireTapd>
-          <TradingPage />
-        </RequireTapd>
-      }
-    />
-    <Route path="magma" element={<MagmaPage />} />
-    <Route path="magma/sales" element={<MagmaPage />} />
     <Route path="*" element={<Navigate to="home" replace />} />
   </>
 );
@@ -308,15 +291,11 @@ const LEGACY_PATHS = [
   'swap',
   'settings',
   'settings/dashboard',
-  'amboss',
   'assets',
   'asset-channels',
   'asset-channels/pending',
   'asset-transactions',
   'asset-tools',
-  'trading',
-  'magma',
-  'magma/sales',
 ];
 
 const AppRoutes = () => (

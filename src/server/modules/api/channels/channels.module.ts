@@ -11,11 +11,10 @@ import {
 import { ChannelMetadataService } from './channel-metadata.service';
 import { NoteOwnerService } from './note-owner.service';
 import { FetchModule } from '../../fetch/fetch.module';
-import { AmbossModule } from '../amboss/amboss.module';
 import { TapdModule } from '../../node/tapd/tapd.module';
 
 @Module({
-  imports: [NodeModule, FetchModule, AmbossModule, TapdModule],
+  imports: [NodeModule, FetchModule, TapdModule],
   providers: [
     ChannelsResolver,
     ChannelResolver,

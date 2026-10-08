@@ -60,17 +60,6 @@ type AggregatedSideStats {
   tokens: Float!
 }
 
-type AmbossSubscription {
-  end_date: String!
-  subscribed: Boolean!
-  upgradable: Boolean!
-}
-
-type AmbossUser {
-  backups: UserBackupInfo!
-  subscription: AmbossSubscription!
-}
-
 type AssetChannelSummary {
   has_active_channel: Boolean!
   open_count: Int!
@@ -131,15 +120,6 @@ type BoltzInfoType {
   feePercent: Float!
   max: Float!
   min: Float!
-}
-
-input CancelMagmaOrderInput {
-  cancellationReason: OrderCancellationReason!
-  orderId: String!
-}
-
-type CancelMagmaOrderResult {
-  success: Boolean!
 }
 
 type ChainAddressSend {
@@ -487,16 +467,6 @@ type GetPaymentsType {
   payments: [PaymentType!]!
 }
 
-input GetTapOffersInput {
-  ambossAssetId: String
-  limit: Int
-  minAmount: String
-  offset: Int
-  sortBy: TapOfferSortBy
-  sortDir: TapOfferSortDir
-  transactionType: TapTransactionType!
-}
-
 type GetTradeInvoicesResult {
   invoices: [TradeInvoice!]!
   next: String
@@ -557,10 +527,6 @@ type LightningBalance {
   pending: String!
 }
 
-type LightningNodeSocialInfo {
-  socials: NodeSocial
-}
-
 type LightningQueries {
   get_access_ids: AccessIds!
   id: String!
@@ -578,62 +544,6 @@ input LndInput {
   cert: String
   macaroon: String!
   socket: String!
-}
-
-type MagmaMutations {
-  cancel_order(input: CancelMagmaOrderInput!): CancelMagmaOrderResult!
-}
-
-type MagmaOrder {
-  amount: MagmaOrderAmount!
-  channelId: String
-  createdAt: String!
-  destination: MagmaOrderParty!
-  fees: MagmaOrderFees!
-  id: String!
-  paymentStatus: String
-  source: MagmaOrderParty!
-  status: String!
-  timeout: String
-}
-
-type MagmaOrderAmount {
-  sats: String
-}
-
-type MagmaOrderFeeAmount {
-  sats: Int
-}
-
-type MagmaOrderFees {
-  buyer: MagmaOrderFeeAmount
-  seller: MagmaOrderFeeAmount
-}
-
-type MagmaOrderInvoice {
-  invoice: String
-}
-
-type MagmaOrderParty {
-  alias: String
-  pubkey: String
-}
-
-type MagmaOrderQueries {
-  find_many: MagmaPendingOrders
-  get_invoice(orderId: String!): MagmaOrderInvoice
-}
-
-type MagmaPendingOrders {
-  magmaUrl: String!
-  purchases: [MagmaOrder!]!
-  sales: [MagmaOrder!]!
-}
-
-type MagmaQueries {
-  get_tap_offers(input: GetTapOffersInput!): TapTradeOfferList!
-  id: String!
-  orders: MagmaOrderQueries!
 }
 
 type MessageType {
@@ -663,9 +573,7 @@ type Mutation {
   lnUrlChannel(callback: String!, k1: String!, uri: String!): String!
   lnUrlPay(amount: Float!, callback: String!, comment: String): PaySuccess!
   lnUrlWithdraw(amount: Float!, callback: String!, description: String, k1: String!): String!
-  loginAmboss: Boolean!
   logout: Boolean!
-  magma: MagmaMutations!
   openChannel(input: OpenChannelParams!): OpenOrCloseChannel!
   pay(max_fee: Float!, max_paths: Float!, out: [String!], request: String!): Boolean!
   payOffer(
@@ -681,12 +589,9 @@ type Mutation {
   ): PayOfferResult!
   prepareCoinControlChannel(input: PrepareCoinControlChannelInput!): CoinControlChannelProposal!
   public: PublicMutation!
-  purchaseLiquidity(amount_cents: String!): Boolean!
-  pushBackup: Boolean!
   removePeer(publicKey: String): Boolean!
   removeTwofaSecret(token: String!): Boolean!
   sendToAddress(address: String!, fee: Float, sendAll: Boolean, target: Float, tokens: Float): ChainAddressSend!
-  setupTradeCapacity(input: SetupTradeCapacityInput!): SetupTradeCapacityResult!
   taproot_assets: TaprootAssetsMutations!
   team: TeamMutations!
   toggleConfig(field: ConfigFields!): Boolean!
@@ -767,19 +672,6 @@ type NodePolicy {
   updated_at: String
 }
 
-type NodeSocial {
-  info: NodeSocialInfo
-}
-
-type NodeSocialInfo {
-  email: String
-  private: Boolean
-  telegram: String
-  twitter: String
-  twitter_verified: Boolean
-  website: String
-}
-
 type NodeType {
   alias: String!
   public_key: String!
@@ -787,23 +679,6 @@ type NodeType {
 
 type OffchainMutations {
   channels: ChannelsMutations!
-}
-
-input OfferReadinessInput {
-  peer_pubkey: String!
-  tapd_asset_id: String
-  tapd_group_key: String
-}
-
-type OfferReadinessResult {
-  asset_channels: AssetChannelSummary!
-  btc_channels: ChannelSummary!
-  has_pending_order: Boolean!
-  is_peer_connected: Boolean!
-  onchain_asset_balance: String!
-  onchain_balance_sats: String!
-  pending_order_id: String
-  pending_order_status: String
 }
 
 type OnChainBalance {
@@ -827,12 +702,6 @@ input OpenChannelParams {
 type OpenOrCloseChannel {
   transactionId: String!
   transactionOutputIndex: String!
-}
-
-enum OrderCancellationReason {
-  CHANNEL_SIZE_OUT_OF_BOUNDS
-  UNABLE_TO_CONNECT_TO_NODE
-  UNABLE_TO_PAY
 }
 
 type PayInvoice {
@@ -1013,8 +882,6 @@ type Query {
   decodeBolt12(bolt12: String!): DecodedBolt12!
   estimatePaymentFees(request: String!): [PaymentFeeEstimate!]!
   getAccount: ServerAccount!
-  getAmbossLoginToken(redirect_url: String): String!
-  getAmbossUser: AmbossUser
   getBackups: String!
   getBitcoinFees: BitcoinFee!
   getBitcoinPrice: String!
@@ -1032,12 +899,10 @@ type Query {
   getInvoices(token: String): GetInvoicesType!
   getLatestVersion: String!
   getLightningAddressInfo(address: String!): PayRequest!
-  getLiquidityPerUsd: String!
   getNetworkInfo: NetworkInfo!
   getNode(publicKey: String!, withoutChannels: Boolean): Node!
   getNodeBalances: Balances!
   getNodeInfo: NodeInfo!
-  getNodeSocialInfo(pubkey: String!): LightningNodeSocialInfo!
   getPayment(id: String!): PaymentType!
   getPayments(token: String): GetPaymentsType!
   getPeers: [Peer!]!
@@ -1047,10 +912,8 @@ type Query {
   getUtxos: [Utxo!]!
   getWalletInfo: Wallet!
   lightning: LightningQueries!
-  magma: MagmaQueries!
   node: CurrentNode!
   public: PublicQueries!
-  rails: RailsQueries!
   recoverFunds(backup: String!): Boolean!
   signMessage(message: String!): String!
   taproot_assets: TaprootAssetsQueries!
@@ -1059,13 +922,6 @@ type Query {
   verifyBackup(backup: String!): Boolean!
   verifyBackups(backup: String!): Boolean!
   verifyMessage(message: String!, signature: String!): String!
-}
-
-type RailsQueries {
-  get_tap_supported_assets: TapSupportedAssetList!
-  id: String!
-  offer_readiness(input: OfferReadinessInput!): OfferReadinessResult!
-  trade_readiness: TradeReadinessResult!
 }
 
 type RecommendedNode {
@@ -1095,35 +951,6 @@ type SessionInfo {
   name: String
   slug: String
   type: String
-}
-
-input SetupTradeCapacityInput {
-  ambossAssetId: String!
-  assetAmount: String!
-  assetRate: String!
-  feeRateSatPerVbyte: Int
-  magmaOfferId: String!
-  openOutboundAssetChannel: Boolean
-  satsAmount: String
-  swapNodePubkey: String!
-  swapNodeSockets: [String!]
-  tapdAssetId: String
-  tapdGroupKey: String
-  transactionType: TapTransactionType!
-}
-
-type SetupTradeCapacityResult {
-  channelOpenPending: Boolean
-  magmaOrderAmountAsset: String
-  magmaOrderAmountSats: String
-  magmaOrderFeeSats: String
-  magmaOrderId: String
-  magmaOrderStatus: String
-  outboundChannelOutputIndex: Int
-  outboundChannelTxid: String
-  skippedMagmaOrder: Boolean
-  skippedOutboundChannel: Boolean
-  success: Boolean!
 }
 
 type SingleChannel {
@@ -1216,11 +1043,6 @@ type TapAssetList {
   assets: [TapAsset!]!
 }
 
-type TapAssetPrice {
-  id: String
-  usd: Float
-}
-
 enum TapAssetType {
   COLLECTIBLE
   NORMAL
@@ -1288,75 +1110,8 @@ type TapMintResponse {
   batch_key: String!
 }
 
-enum TapOfferSortBy {
-  AVAILABLE
-  RATE
-}
-
-enum TapOfferSortDir {
-  ASC
-  DESC
-}
-
-type TapSupportedAsset {
-  assetId: String
-  description: String
-  groupKey: String
-  id: String!
-  precision: Int!
-  prices: TapAssetPrice
-  symbol: String!
-  universeHost: String
-}
-
-type TapSupportedAssetList {
-  list: [TapSupportedAsset!]!
-  totalCount: Float!
-}
-
 type TapSyncResult {
   synced_universes: [String!]!
-}
-
-type TapTradeOffer {
-  asset: TapTradeOfferAsset!
-  available: TapTradeOfferAmount!
-  fees: TapTradeOfferFees!
-  id: String!
-  magmaOfferId: String!
-  maxOrder: TapTradeOfferAmount!
-  minOrder: TapTradeOfferAmount!
-  node: TapTradeOfferNode!
-  rate: TapTradeOfferAmount!
-}
-
-type TapTradeOfferAmount {
-  displayAmount: String!
-  fullAmount: String!
-}
-
-type TapTradeOfferAsset {
-  assetId: String
-  groupKey: String
-  id: String!
-  precision: Int!
-  symbol: String!
-}
-
-type TapTradeOfferFees {
-  baseFeeSats: Int!
-  feeRatePpm: Int!
-}
-
-type TapTradeOfferList {
-  list: [TapTradeOffer!]!
-  totalCount: Float!
-}
-
-type TapTradeOfferNode {
-  alias: String
-  pubkey: String
-  sockets: [String!]!
 }
 
 enum TapTransactionType {
@@ -1489,19 +1244,6 @@ type TradeQuoteResult {
   sats_amount: String!
 }
 
-type TradeReadinessResult {
-  alias: String
-  deposit_address: String
-  has_active_channel: Boolean!
-  has_channel: Boolean!
-  has_tapd: Boolean!
-  node_online: Boolean!
-  onchain_balance_sats: String!
-  pending_onchain_balance_sats: String!
-  public_key: String
-  recommended_node: RecommendedNode
-}
-
 type TwofaResult {
   secret: String!
   url: String!
@@ -1516,12 +1258,6 @@ input UpdateRoutingFeesParams {
   min_htlc_mtokens: String
   transaction_id: String
   transaction_vout: Float
-}
-
-type UserBackupInfo {
-  last_update: String
-  last_update_size: String
-  total_size_saved: String!
 }
 
 type UserMutations {

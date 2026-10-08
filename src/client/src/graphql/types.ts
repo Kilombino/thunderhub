@@ -91,19 +91,6 @@ export type AggregatedSideStats = {
   tokens: Scalars['Float']['output'];
 };
 
-export type AmbossSubscription = {
-  __typename?: 'AmbossSubscription';
-  end_date: Scalars['String']['output'];
-  subscribed: Scalars['Boolean']['output'];
-  upgradable: Scalars['Boolean']['output'];
-};
-
-export type AmbossUser = {
-  __typename?: 'AmbossUser';
-  backups: UserBackupInfo;
-  subscription: AmbossSubscription;
-};
-
 export type AssetChannelSummary = {
   __typename?: 'AssetChannelSummary';
   has_active_channel: Scalars['Boolean']['output'];
@@ -167,16 +154,6 @@ export type BoltzInfoType = {
   feePercent: Scalars['Float']['output'];
   max: Scalars['Float']['output'];
   min: Scalars['Float']['output'];
-};
-
-export type CancelMagmaOrderInput = {
-  cancellationReason: OrderCancellationReason;
-  orderId: Scalars['String']['input'];
-};
-
-export type CancelMagmaOrderResult = {
-  __typename?: 'CancelMagmaOrderResult';
-  success: Scalars['Boolean']['output'];
 };
 
 export type ChainAddressSend = {
@@ -554,16 +531,6 @@ export type GetPaymentsType = {
   payments: Array<PaymentType>;
 };
 
-export type GetTapOffersInput = {
-  ambossAssetId?: InputMaybe<Scalars['String']['input']>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  minAmount?: InputMaybe<Scalars['String']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  sortBy?: InputMaybe<TapOfferSortBy>;
-  sortDir?: InputMaybe<TapOfferSortDir>;
-  transactionType: TapTransactionType;
-};
-
 export type GetTradeInvoicesResult = {
   __typename?: 'GetTradeInvoicesResult';
   invoices: Array<TradeInvoice>;
@@ -629,11 +596,6 @@ export type LightningBalance = {
   pending: Scalars['String']['output'];
 };
 
-export type LightningNodeSocialInfo = {
-  __typename?: 'LightningNodeSocialInfo';
-  socials?: Maybe<NodeSocial>;
-};
-
 export type LightningQueries = {
   __typename?: 'LightningQueries';
   get_access_ids: AccessIds;
@@ -652,84 +614,6 @@ export type LndInput = {
   cert?: InputMaybe<Scalars['String']['input']>;
   macaroon: Scalars['String']['input'];
   socket: Scalars['String']['input'];
-};
-
-export type MagmaMutations = {
-  __typename?: 'MagmaMutations';
-  cancel_order: CancelMagmaOrderResult;
-};
-
-export type MagmaMutationsCancel_OrderArgs = {
-  input: CancelMagmaOrderInput;
-};
-
-export type MagmaOrder = {
-  __typename?: 'MagmaOrder';
-  amount: MagmaOrderAmount;
-  channelId?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['String']['output'];
-  destination: MagmaOrderParty;
-  fees: MagmaOrderFees;
-  id: Scalars['String']['output'];
-  paymentStatus?: Maybe<Scalars['String']['output']>;
-  source: MagmaOrderParty;
-  status: Scalars['String']['output'];
-  timeout?: Maybe<Scalars['String']['output']>;
-};
-
-export type MagmaOrderAmount = {
-  __typename?: 'MagmaOrderAmount';
-  sats?: Maybe<Scalars['String']['output']>;
-};
-
-export type MagmaOrderFeeAmount = {
-  __typename?: 'MagmaOrderFeeAmount';
-  sats?: Maybe<Scalars['Int']['output']>;
-};
-
-export type MagmaOrderFees = {
-  __typename?: 'MagmaOrderFees';
-  buyer?: Maybe<MagmaOrderFeeAmount>;
-  seller?: Maybe<MagmaOrderFeeAmount>;
-};
-
-export type MagmaOrderInvoice = {
-  __typename?: 'MagmaOrderInvoice';
-  invoice?: Maybe<Scalars['String']['output']>;
-};
-
-export type MagmaOrderParty = {
-  __typename?: 'MagmaOrderParty';
-  alias?: Maybe<Scalars['String']['output']>;
-  pubkey?: Maybe<Scalars['String']['output']>;
-};
-
-export type MagmaOrderQueries = {
-  __typename?: 'MagmaOrderQueries';
-  find_many?: Maybe<MagmaPendingOrders>;
-  get_invoice?: Maybe<MagmaOrderInvoice>;
-};
-
-export type MagmaOrderQueriesGet_InvoiceArgs = {
-  orderId: Scalars['String']['input'];
-};
-
-export type MagmaPendingOrders = {
-  __typename?: 'MagmaPendingOrders';
-  magmaUrl: Scalars['String']['output'];
-  purchases: Array<MagmaOrder>;
-  sales: Array<MagmaOrder>;
-};
-
-export type MagmaQueries = {
-  __typename?: 'MagmaQueries';
-  get_tap_offers: TapTradeOfferList;
-  id: Scalars['String']['output'];
-  orders: MagmaOrderQueries;
-};
-
-export type MagmaQueriesGet_Tap_OffersArgs = {
-  input: GetTapOffersInput;
 };
 
 export type MessageType = {
@@ -757,20 +641,15 @@ export type Mutation = {
   lnUrlChannel: Scalars['String']['output'];
   lnUrlPay: PaySuccess;
   lnUrlWithdraw: Scalars['String']['output'];
-  loginAmboss: Scalars['Boolean']['output'];
   logout: Scalars['Boolean']['output'];
-  magma: MagmaMutations;
   openChannel: OpenOrCloseChannel;
   pay: Scalars['Boolean']['output'];
   payOffer: PayOfferResult;
   prepareCoinControlChannel: CoinControlChannelProposal;
   public: PublicMutation;
-  purchaseLiquidity: Scalars['Boolean']['output'];
-  pushBackup: Scalars['Boolean']['output'];
   removePeer: Scalars['Boolean']['output'];
   removeTwofaSecret: Scalars['Boolean']['output'];
   sendToAddress: ChainAddressSend;
-  setupTradeCapacity: SetupTradeCapacityResult;
   taproot_assets: TaprootAssetsMutations;
   team: TeamMutations;
   toggleConfig: Scalars['Boolean']['output'];
@@ -902,10 +781,6 @@ export type MutationPrepareCoinControlChannelArgs = {
   input: PrepareCoinControlChannelInput;
 };
 
-export type MutationPurchaseLiquidityArgs = {
-  amount_cents: Scalars['String']['input'];
-};
-
 export type MutationRemovePeerArgs = {
   publicKey?: InputMaybe<Scalars['String']['input']>;
 };
@@ -920,10 +795,6 @@ export type MutationSendToAddressArgs = {
   sendAll?: InputMaybe<Scalars['Boolean']['input']>;
   target?: InputMaybe<Scalars['Float']['input']>;
   tokens?: InputMaybe<Scalars['Float']['input']>;
-};
-
-export type MutationSetupTradeCapacityArgs = {
-  input: SetupTradeCapacityInput;
 };
 
 export type MutationToggleConfigArgs = {
@@ -1025,21 +896,6 @@ export type NodePolicy = {
   updated_at?: Maybe<Scalars['String']['output']>;
 };
 
-export type NodeSocial = {
-  __typename?: 'NodeSocial';
-  info?: Maybe<NodeSocialInfo>;
-};
-
-export type NodeSocialInfo = {
-  __typename?: 'NodeSocialInfo';
-  email?: Maybe<Scalars['String']['output']>;
-  private?: Maybe<Scalars['Boolean']['output']>;
-  telegram?: Maybe<Scalars['String']['output']>;
-  twitter?: Maybe<Scalars['String']['output']>;
-  twitter_verified?: Maybe<Scalars['Boolean']['output']>;
-  website?: Maybe<Scalars['String']['output']>;
-};
-
 export type NodeType = {
   __typename?: 'NodeType';
   alias: Scalars['String']['output'];
@@ -1049,24 +905,6 @@ export type NodeType = {
 export type OffchainMutations = {
   __typename?: 'OffchainMutations';
   channels: ChannelsMutations;
-};
-
-export type OfferReadinessInput = {
-  peer_pubkey: Scalars['String']['input'];
-  tapd_asset_id?: InputMaybe<Scalars['String']['input']>;
-  tapd_group_key?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type OfferReadinessResult = {
-  __typename?: 'OfferReadinessResult';
-  asset_channels: AssetChannelSummary;
-  btc_channels: ChannelSummary;
-  has_pending_order: Scalars['Boolean']['output'];
-  is_peer_connected: Scalars['Boolean']['output'];
-  onchain_asset_balance: Scalars['String']['output'];
-  onchain_balance_sats: Scalars['String']['output'];
-  pending_order_id?: Maybe<Scalars['String']['output']>;
-  pending_order_status?: Maybe<Scalars['String']['output']>;
 };
 
 export type OnChainBalance = {
@@ -1093,12 +931,6 @@ export type OpenOrCloseChannel = {
   transactionId: Scalars['String']['output'];
   transactionOutputIndex: Scalars['String']['output'];
 };
-
-export enum OrderCancellationReason {
-  ChannelSizeOutOfBounds = 'CHANNEL_SIZE_OUT_OF_BOUNDS',
-  UnableToConnectToNode = 'UNABLE_TO_CONNECT_TO_NODE',
-  UnableToPay = 'UNABLE_TO_PAY',
-}
 
 export type PayInvoice = {
   __typename?: 'PayInvoice';
@@ -1304,8 +1136,6 @@ export type Query = {
   decodeBolt12: DecodedBolt12;
   estimatePaymentFees: Array<PaymentFeeEstimate>;
   getAccount: ServerAccount;
-  getAmbossLoginToken: Scalars['String']['output'];
-  getAmbossUser?: Maybe<AmbossUser>;
   getBackups: Scalars['String']['output'];
   getBitcoinFees: BitcoinFee;
   getBitcoinPrice: Scalars['String']['output'];
@@ -1323,12 +1153,10 @@ export type Query = {
   getInvoices: GetInvoicesType;
   getLatestVersion: Scalars['String']['output'];
   getLightningAddressInfo: PayRequest;
-  getLiquidityPerUsd: Scalars['String']['output'];
   getNetworkInfo: NetworkInfo;
   getNode: Node;
   getNodeBalances: Balances;
   getNodeInfo: NodeInfo;
-  getNodeSocialInfo: LightningNodeSocialInfo;
   getPayment: PaymentType;
   getPayments: GetPaymentsType;
   getPeers: Array<Peer>;
@@ -1338,10 +1166,8 @@ export type Query = {
   getUtxos: Array<Utxo>;
   getWalletInfo: Wallet;
   lightning: LightningQueries;
-  magma: MagmaQueries;
   node: CurrentNode;
   public: PublicQueries;
-  rails: RailsQueries;
   recoverFunds: Scalars['Boolean']['output'];
   signMessage: Scalars['String']['output'];
   taproot_assets: TaprootAssetsQueries;
@@ -1358,10 +1184,6 @@ export type QueryDecodeBolt12Args = {
 
 export type QueryEstimatePaymentFeesArgs = {
   request: Scalars['String']['input'];
-};
-
-export type QueryGetAmbossLoginTokenArgs = {
-  redirect_url?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryGetChannelArgs = {
@@ -1398,10 +1220,6 @@ export type QueryGetNodeArgs = {
   withoutChannels?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type QueryGetNodeSocialInfoArgs = {
-  pubkey: Scalars['String']['input'];
-};
-
 export type QueryGetPaymentArgs = {
   id: Scalars['String']['input'];
 };
@@ -1435,18 +1253,6 @@ export type QueryVerifyMessageArgs = {
   signature: Scalars['String']['input'];
 };
 
-export type RailsQueries = {
-  __typename?: 'RailsQueries';
-  get_tap_supported_assets: TapSupportedAssetList;
-  id: Scalars['String']['output'];
-  offer_readiness: OfferReadinessResult;
-  trade_readiness: TradeReadinessResult;
-};
-
-export type RailsQueriesOffer_ReadinessArgs = {
-  input: OfferReadinessInput;
-};
-
 export type RecommendedNode = {
   __typename?: 'RecommendedNode';
   pubkey: Scalars['String']['output'];
@@ -1478,36 +1284,6 @@ export type SessionInfo = {
   name?: Maybe<Scalars['String']['output']>;
   slug?: Maybe<Scalars['String']['output']>;
   type?: Maybe<Scalars['String']['output']>;
-};
-
-export type SetupTradeCapacityInput = {
-  ambossAssetId: Scalars['String']['input'];
-  assetAmount: Scalars['String']['input'];
-  assetRate: Scalars['String']['input'];
-  feeRateSatPerVbyte?: InputMaybe<Scalars['Int']['input']>;
-  magmaOfferId: Scalars['String']['input'];
-  openOutboundAssetChannel?: InputMaybe<Scalars['Boolean']['input']>;
-  satsAmount?: InputMaybe<Scalars['String']['input']>;
-  swapNodePubkey: Scalars['String']['input'];
-  swapNodeSockets?: InputMaybe<Array<Scalars['String']['input']>>;
-  tapdAssetId?: InputMaybe<Scalars['String']['input']>;
-  tapdGroupKey?: InputMaybe<Scalars['String']['input']>;
-  transactionType: TapTransactionType;
-};
-
-export type SetupTradeCapacityResult = {
-  __typename?: 'SetupTradeCapacityResult';
-  channelOpenPending?: Maybe<Scalars['Boolean']['output']>;
-  magmaOrderAmountAsset?: Maybe<Scalars['String']['output']>;
-  magmaOrderAmountSats?: Maybe<Scalars['String']['output']>;
-  magmaOrderFeeSats?: Maybe<Scalars['String']['output']>;
-  magmaOrderId?: Maybe<Scalars['String']['output']>;
-  magmaOrderStatus?: Maybe<Scalars['String']['output']>;
-  outboundChannelOutputIndex?: Maybe<Scalars['Int']['output']>;
-  outboundChannelTxid?: Maybe<Scalars['String']['output']>;
-  skippedMagmaOrder?: Maybe<Scalars['Boolean']['output']>;
-  skippedOutboundChannel?: Maybe<Scalars['Boolean']['output']>;
-  success: Scalars['Boolean']['output'];
 };
 
 export type SingleChannel = {
@@ -1609,12 +1385,6 @@ export type TapAssetList = {
   assets: Array<TapAsset>;
 };
 
-export type TapAssetPrice = {
-  __typename?: 'TapAssetPrice';
-  id?: Maybe<Scalars['String']['output']>;
-  usd?: Maybe<Scalars['Float']['output']>;
-};
-
 export enum TapAssetType {
   Collectible = 'COLLECTIBLE',
   Normal = 'NORMAL',
@@ -1689,84 +1459,9 @@ export type TapMintResponse = {
   batch_key: Scalars['String']['output'];
 };
 
-export enum TapOfferSortBy {
-  Available = 'AVAILABLE',
-  Rate = 'RATE',
-}
-
-export enum TapOfferSortDir {
-  Asc = 'ASC',
-  Desc = 'DESC',
-}
-
-export type TapSupportedAsset = {
-  __typename?: 'TapSupportedAsset';
-  assetId?: Maybe<Scalars['String']['output']>;
-  description?: Maybe<Scalars['String']['output']>;
-  groupKey?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  precision: Scalars['Int']['output'];
-  prices?: Maybe<TapAssetPrice>;
-  symbol: Scalars['String']['output'];
-  universeHost?: Maybe<Scalars['String']['output']>;
-};
-
-export type TapSupportedAssetList = {
-  __typename?: 'TapSupportedAssetList';
-  list: Array<TapSupportedAsset>;
-  totalCount: Scalars['Float']['output'];
-};
-
 export type TapSyncResult = {
   __typename?: 'TapSyncResult';
   synced_universes: Array<Scalars['String']['output']>;
-};
-
-export type TapTradeOffer = {
-  __typename?: 'TapTradeOffer';
-  asset: TapTradeOfferAsset;
-  available: TapTradeOfferAmount;
-  fees: TapTradeOfferFees;
-  id: Scalars['String']['output'];
-  magmaOfferId: Scalars['String']['output'];
-  maxOrder: TapTradeOfferAmount;
-  minOrder: TapTradeOfferAmount;
-  node: TapTradeOfferNode;
-  rate: TapTradeOfferAmount;
-};
-
-export type TapTradeOfferAmount = {
-  __typename?: 'TapTradeOfferAmount';
-  displayAmount: Scalars['String']['output'];
-  fullAmount: Scalars['String']['output'];
-};
-
-export type TapTradeOfferAsset = {
-  __typename?: 'TapTradeOfferAsset';
-  assetId?: Maybe<Scalars['String']['output']>;
-  groupKey?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  precision: Scalars['Int']['output'];
-  symbol: Scalars['String']['output'];
-};
-
-export type TapTradeOfferFees = {
-  __typename?: 'TapTradeOfferFees';
-  baseFeeSats: Scalars['Int']['output'];
-  feeRatePpm: Scalars['Int']['output'];
-};
-
-export type TapTradeOfferList = {
-  __typename?: 'TapTradeOfferList';
-  list: Array<TapTradeOffer>;
-  totalCount: Scalars['Float']['output'];
-};
-
-export type TapTradeOfferNode = {
-  __typename?: 'TapTradeOfferNode';
-  alias?: Maybe<Scalars['String']['output']>;
-  pubkey?: Maybe<Scalars['String']['output']>;
-  sockets: Array<Scalars['String']['output']>;
 };
 
 export enum TapTransactionType {
@@ -1981,20 +1676,6 @@ export type TradeQuoteResult = {
   sats_amount: Scalars['String']['output'];
 };
 
-export type TradeReadinessResult = {
-  __typename?: 'TradeReadinessResult';
-  alias?: Maybe<Scalars['String']['output']>;
-  deposit_address?: Maybe<Scalars['String']['output']>;
-  has_active_channel: Scalars['Boolean']['output'];
-  has_channel: Scalars['Boolean']['output'];
-  has_tapd: Scalars['Boolean']['output'];
-  node_online: Scalars['Boolean']['output'];
-  onchain_balance_sats: Scalars['String']['output'];
-  pending_onchain_balance_sats: Scalars['String']['output'];
-  public_key?: Maybe<Scalars['String']['output']>;
-  recommended_node?: Maybe<RecommendedNode>;
-};
-
 export type TwofaResult = {
   __typename?: 'TwofaResult';
   secret: Scalars['String']['output'];
@@ -2010,13 +1691,6 @@ export type UpdateRoutingFeesParams = {
   min_htlc_mtokens?: InputMaybe<Scalars['String']['input']>;
   transaction_id?: InputMaybe<Scalars['String']['input']>;
   transaction_vout?: InputMaybe<Scalars['Float']['input']>;
-};
-
-export type UserBackupInfo = {
-  __typename?: 'UserBackupInfo';
-  last_update?: Maybe<Scalars['String']['output']>;
-  last_update_size?: Maybe<Scalars['String']['output']>;
-  total_size_saved: Scalars['String']['output'];
 };
 
 export type UserMutations = {

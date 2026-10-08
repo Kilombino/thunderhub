@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { useSendTapAssetMutation } from '../../../../graphql/mutations/__generated__/sendTapAsset.generated';
 import { useDecodeTapAddressLazyQuery } from '../../../../graphql/queries/__generated__/decodeTapAddress.generated';
 import { useGetTapBalancesQuery } from '../../../../graphql/queries/__generated__/getTapBalances.generated';
-import { useGetTapSupportedAssetsQuery } from '../../../../graphql/queries/__generated__/getTapSupportedAssets.generated';
+import { useGetTapSupportedAssetsQuery } from '../../../../hooks/UseTapSupportedAssets';
 import { TapBalanceGroupBy } from '../../../../graphql/types';
 import { getErrorContent } from '../../../../utils/error';
 import { atomicToDisplay } from '../../../assets/trade.helpers';

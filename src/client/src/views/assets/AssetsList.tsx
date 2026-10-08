@@ -1,7 +1,6 @@
 import { FC, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Loader2, Info, Copy, Check, Star } from 'lucide-react';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Loader2, Info, Copy, Check } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
@@ -12,7 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useGetTapBalancesQuery } from '../../graphql/queries/__generated__/getTapBalances.generated';
-import { useGetTapSupportedAssetsQuery } from '../../graphql/queries/__generated__/getTapSupportedAssets.generated';
+import { useGetTapSupportedAssetsQuery } from '../../hooks/UseTapSupportedAssets';
 import { useGetTapAssetChannelBalancesQuery } from '../../graphql/queries/__generated__/getTapAssetChannelBalances.generated';
 import { TapBalanceGroupBy } from '../../graphql/types';
 import { getErrorContent } from '../../utils/error';
@@ -30,7 +29,6 @@ type UnifiedEntry = {
   totalBalance: number;
   precision: number;
   priceEntry: PriceInfo | undefined;
-  isAmbossListed: boolean;
 };
 
 const CopyableKey: FC<{ label: string; value: string }> = ({
@@ -62,10 +60,7 @@ const CopyableKey: FC<{ label: string; value: string }> = ({
   );
 };
 
-type ListingFilter = 'listed' | 'unlisted' | 'all';
-
 export const AssetsList: FC = () => {
-  const [listingFilter, setListingFilter] = useState<ListingFilter>('listed');
   const {
     data: balancesData,
     loading: balancesLoading,
@@ -87,9 +82,8 @@ export const AssetsList: FC = () => {
   const channels =
     channelsData?.taproot_assets?.get_asset_channel_balances || [];
 
-  const { priceMap, supportedKeys } = useMemo(() => {
+  const { priceMap } = useMemo(() => {
     const priceMap = new Map<string, PriceInfo>();
-    const supportedKeys = new Set<string>();
     for (const asset of supportedData?.rails?.get_tap_supported_assets?.list ||
       []) {
       const price = asset.prices?.usd;
@@ -98,10 +92,8 @@ export const AssetsList: FC = () => {
         if (asset.assetId) priceMap.set(asset.assetId, entry);
         if (asset.groupKey) priceMap.set(asset.groupKey, entry);
       }
-      if (asset.assetId) supportedKeys.add(asset.assetId);
-      if (asset.groupKey) supportedKeys.add(asset.groupKey);
     }
-    return { priceMap, supportedKeys };
+    return { priceMap };
   }, [supportedData]);
 
   const unified = useMemo(() => {
@@ -179,25 +171,17 @@ export const AssetsList: FC = () => {
         totalBalance,
         precision,
         priceEntry,
-        isAmbossListed: supportedKeys.has(key),
       });
     }
 
     merged.sort((a, b) => {
-      if (a.isAmbossListed !== b.isAmbossListed)
-        return a.isAmbossListed ? -1 : 1;
       return b.totalBalance - a.totalBalance;
     });
 
     return merged;
-  }, [balances, channels, priceMap, supportedKeys]);
+  }, [balances, channels, priceMap]);
 
-  const filtered = useMemo(() => {
-    if (listingFilter === 'all') return unified;
-    if (listingFilter === 'listed')
-      return unified.filter(e => e.isAmbossListed);
-    return unified.filter(e => !e.isAmbossListed);
-  }, [unified, listingFilter]);
+  const filtered = unified;
 
   if (balancesLoading || channelsLoading) {
     return (
@@ -228,21 +212,6 @@ export const AssetsList: FC = () => {
   return (
     <Card>
       <CardContent>
-        <div className="mb-4">
-          <ToggleGroup
-            type="single"
-            variant="outline"
-            size="sm"
-            value={listingFilter}
-            onValueChange={v => {
-              if (v) setListingFilter(v as ListingFilter);
-            }}
-          >
-            <ToggleGroupItem value="listed">Amboss Listed</ToggleGroupItem>
-            <ToggleGroupItem value="unlisted">Unlisted</ToggleGroupItem>
-            <ToggleGroupItem value="all">All</ToggleGroupItem>
-          </ToggleGroup>
-        </div>
         <Table>
           <TableHeader>
             <TableRow>
@@ -270,12 +239,6 @@ export const AssetsList: FC = () => {
                           ? entry.names.join(', ')
                           : 'Unknown'}
                       </span>
-                      {listingFilter === 'all' && entry.isAmbossListed && (
-                        <Star
-                          size={14}
-                          className="shrink-0 fill-yellow-400 text-yellow-400"
-                        />
-                      )}
                     </div>
                   </TableCell>
                   <TableCell>

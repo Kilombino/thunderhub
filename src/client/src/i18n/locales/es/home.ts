@@ -75,12 +75,6 @@ export const home: PartialMessages['home'] = {
     another: 'Decodificar otra',
     placeholder: 'Factura Lightning',
   },
-  amboss: {
-    loggedIn: 'Sesión iniciada',
-    loginError: 'Error al iniciar sesión',
-    goTo: 'Ir a',
-    login: 'Iniciar sesión',
-  },
   lnurl: {
     inputRequired: 'Introduce un LNURL',
     decodeError: 'Problema al decodificar el LNURL',

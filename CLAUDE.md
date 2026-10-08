@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents working with this repository.
 
 ## What is ThunderHub
 
-ThunderHub is a Lightning Network node manager. It provides a web UI and GraphQL API for managing LND nodes — channels, payments, invoices, forwards, peers, chain transactions, and Boltz submarine swaps. It integrates with Amboss for node analytics and health monitoring.
+ThunderHub is a Lightning Network node manager. It provides a web UI and GraphQL API for managing LND nodes — channels, payments, invoices, forwards, peers, chain transactions, and Boltz submarine swaps. This fork (XBT) runs on the BLAKE2b chain and has no Amboss integration: links go to the BLAKE2b Lightning explorer at lightning.paperclippool.xyz.
 
 ## Commands
 
@@ -68,11 +68,11 @@ Each has its own `tsconfig.json`. The root tsconfig only includes `src/server`. 
 
 **Module layout under `modules/`:**
 
-- **`api/`** — GraphQL resolvers organized by domain. Each subdomain (channels, invoices, wallet, boltz, amboss, etc.) has `*.module.ts`, `*.resolver.ts`, `*.types.ts`, and optionally `*.helpers.ts`.
+- **`api/`** — GraphQL resolvers organized by domain. Each subdomain (channels, invoices, wallet, boltz, etc.) has `*.module.ts`, `*.resolver.ts`, `*.types.ts`, and optionally `*.helpers.ts`.
 - **`node/`** — LND abstraction layer. `NodeService` is the facade resolvers call; it resolves the account by user ID, then delegates to `LndService`. `LndService` wraps the `lightning` npm package directly.
 - **`accounts/`** — In-memory account store. `AccountsService` implements `OnModuleInit`: at startup, reads SSO config and account config files, creates authenticated LND gRPC connections (`authenticatedLndGrpc`), and stores `EnrichedAccount` objects (account data + `lnd` handle) in a map keyed by account hash.
 - **`security/`** — Three global guards registered as `APP_GUARD`: `GqlAuthGuard` (JWT via passport), `RolesGuard`, `GqlThrottlerGuard`. Key decorators: `@Public()` (skip auth), `@Roles(...)`, `@CurrentUser()` (extracts `UserId` from GQL context).
-- **`dataloader/`** — Creates per-request `DataLoader` instances for batching Amboss API lookups (`nodesLoader`, `edgesLoader`). Injected into GraphQL context.
+- **`dataloader/`** — Creates per-request `DataLoader` instances for batching channel lookups against the user's own LND (`edgesLoader`) and channel notes. Injected into GraphQL context.
 - **`fetch/`** — HTTP client with optional SOCKS proxy (Tor) support. `graphqlFetchWithProxy()` for external GraphQL APIs.
 - **`sub/`** — LND event subscriptions (invoices, payments, forwards, channels, backups) using `async.auto()` with retry logic. Emits events to `SseService` for real-time client updates.
 - **`sse/`** — Server-sent events endpoint for pushing LND events to the client.

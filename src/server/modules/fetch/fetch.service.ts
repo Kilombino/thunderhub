@@ -40,14 +40,11 @@ export class FetchService {
     data: T;
     error: undefined | GraphQLError;
   }> {
-    const needsHeaders = url.includes('amboss.');
-
     return this.fetchWithProxy(url, {
       method: 'post',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        ...(needsHeaders ? this.configService.get('headers') : {}),
         ...(headers || {}),
       },
       body: JSON.stringify({ query: print(query), variables }),

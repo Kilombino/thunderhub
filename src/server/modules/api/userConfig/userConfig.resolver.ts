@@ -25,97 +25,32 @@ export class UserConfigStateResolver {
 
   @ResolveField()
   backup_state() {
-    const { backupsEnabled } = this.userConfigService.getConfig();
-
-    const disabled = this.configService.get('subscriptions.disableBackups');
-
-    if (disabled) {
-      if (backupsEnabled) {
-        this.logger.warn(
-          'Auto backups is enabled in the config file but disabled in the env file.'
-        );
-      }
-
-      return false;
-    }
-
-    return backupsEnabled;
+    // XBT fork: auto backups were pushed to Amboss, which is gone.
+    return false;
   }
 
   @ResolveField()
   healthcheck_ping_state() {
-    const { healthCheckPingEnabled } = this.userConfigService.getConfig();
-
-    const disabled = this.configService.get('amboss.disableHealthCheckPings');
-
-    if (disabled) {
-      if (healthCheckPingEnabled) {
-        this.logger.warn(
-          'Auto backups is enabled in the config file but disabled in the env file.'
-        );
-      }
-
-      return false;
-    }
-
-    return healthCheckPingEnabled;
+    // XBT fork: these fed Amboss (health pings, balance pushes), which is gone.
+    return false;
   }
 
   @ResolveField()
   onchain_push_enabled() {
-    const { onchainPushEnabled } = this.userConfigService.getConfig();
-
-    const disabled = this.configService.get('amboss.disableBalancePushes');
-
-    if (disabled) {
-      if (onchainPushEnabled) {
-        this.logger.warn(
-          'Balance pushes are enabled in the config file but disabled in the env file.'
-        );
-      }
-
-      return false;
-    }
-
-    return onchainPushEnabled;
+    // XBT fork: these fed Amboss (health pings, balance pushes), which is gone.
+    return false;
   }
 
   @ResolveField()
   channels_push_enabled() {
-    const { channelPushEnabled } = this.userConfigService.getConfig();
-
-    const disabled = this.configService.get('amboss.disableBalancePushes');
-
-    if (disabled) {
-      if (channelPushEnabled) {
-        this.logger.warn(
-          'Balance pushes are enabled in the config file but disabled in the env file.'
-        );
-      }
-
-      return false;
-    }
-
-    return channelPushEnabled;
+    // XBT fork: these fed Amboss (health pings, balance pushes), which is gone.
+    return false;
   }
 
   @ResolveField()
   private_channels_push_enabled() {
-    const { privateChannelPushEnabled } = this.userConfigService.getConfig();
-
-    const disabled = this.configService.get('amboss.disableBalancePushes');
-
-    if (disabled) {
-      if (privateChannelPushEnabled) {
-        this.logger.warn(
-          'Balance pushes are enabled in the config file but disabled in the env file.'
-        );
-      }
-
-      return false;
-    }
-
-    return privateChannelPushEnabled;
+    // XBT fork: these fed Amboss (health pings, balance pushes), which is gone.
+    return false;
   }
 }
 
@@ -135,54 +70,7 @@ export class UserConfigResolver {
   async toggleConfig(
     @Args('field', { type: () => ConfigFields }) field: ConfigFields
   ) {
-    switch (field) {
-      case ConfigFields.BACKUPS: {
-        const disabled = this.configService.get('subscriptions.disableBackups');
-
-        if (disabled) {
-          throw new Error('Auto backups are disabled in the server.');
-        }
-
-        this.userConfigService.toggleAutoBackups();
-        break;
-      }
-      case ConfigFields.HEALTHCHECKS: {
-        const disabled = this.configService.get(
-          'amboss.disableHealthCheckPings'
-        );
-
-        if (disabled) {
-          throw new Error('Healthcheck pings are disabled in the server.');
-        }
-
-        this.userConfigService.toggleHealthCheckPing();
-        break;
-      }
-      case ConfigFields.ONCHAIN_PUSH:
-      case ConfigFields.CHANNELS_PUSH:
-      case ConfigFields.PRIVATE_CHANNELS_PUSH: {
-        const disabled = this.configService.get('amboss.disableBalancePushes');
-
-        if (disabled) {
-          throw new Error('Balance pushes are disabled in the server.');
-        }
-
-        switch (field) {
-          case ConfigFields.ONCHAIN_PUSH:
-            this.userConfigService.toggleOnChainPush();
-            break;
-          case ConfigFields.CHANNELS_PUSH:
-            this.userConfigService.toggleChannelPush();
-            break;
-          case ConfigFields.PRIVATE_CHANNELS_PUSH:
-            this.userConfigService.togglePrivateChannelPush();
-            break;
-        }
-
-        break;
-      }
-    }
-
-    return true;
+    // XBT fork: every toggle here fed Amboss (backups, health pings, balance pushes).
+    throw new Error(`${field} is not available on this chain.`);
   }
 }

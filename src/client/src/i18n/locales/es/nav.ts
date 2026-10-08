@@ -19,7 +19,6 @@ export const nav: PartialMessages['nav'] = {
     chain: 'On-chain',
     tools: 'Herramientas',
     services: 'Servicios',
-    magma: 'Magma',
     assets: 'Activos',
     trading: 'Trading',
     setup: 'Configurar',
@@ -27,7 +26,6 @@ export const nav: PartialMessages['nav'] = {
     settings: 'Ajustes',
   },
   sections: {
-    amboss: 'Amboss',
     taprootAssets: 'Taproot Assets',
     tools: 'Herramientas',
   },

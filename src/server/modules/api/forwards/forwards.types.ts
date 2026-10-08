@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { GetForwardsResult } from 'lightning';
-import { EdgeInfo } from '../amboss/amboss.types';
+import { EdgeInfo } from '../../dataloader/dataloader.service';
 
 @ObjectType()
 export class BaseNodeInfo {

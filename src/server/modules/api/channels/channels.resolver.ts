@@ -20,8 +20,6 @@ import {
 import { GraphQLError } from 'graphql';
 import { auto } from 'async';
 import { FetchService } from '../../fetch/fetch.service';
-import { GetRecommendedNode } from '../amboss/amboss.gql';
-import { AmbossService } from '../amboss/amboss.service';
 import { TapdNodeService } from '../../node/tapd/tapd-node.service';
 import {
   ChannelMetadata,
@@ -59,7 +57,6 @@ export class ChannelsResolver {
   constructor(
     private nodeService: NodeService,
     private fetchService: FetchService,
-    private ambossService: AmbossService,
     private tapdNodeService: TapdNodeService,
     @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {}
@@ -230,52 +227,16 @@ export class ChannelsResolver {
         }
       },
 
+      // XBT fork: no recommended peer (the upstream one came from Amboss, on the other chain).
       recommendedPeer: [
         'checkArgs',
         async (): Promise<OpenChannelAuto['recommendedPeer']> => {
-          if (!is_recommended) return;
-
-          const { data, error } =
-            await this.fetchService.graphqlFetchWithProxy<{
-              rails: {
-                get_recommended_node: {
-                  id: string;
-                  pubkey: string;
-                  sockets: string[];
-                };
-              };
-            }>(
-              await this.ambossService.resolveSpaceUrl(user),
-              GetRecommendedNode
+          if (is_recommended) {
+            throw new GraphQLError(
+              'There is no recommended peer on this chain.'
             );
-
-          if (!data?.rails.get_recommended_node.sockets.length || error) {
-            if (error) this.logger.error(error);
-            throw new Error('Error getting recommended node info');
           }
-
-          const { pubkey, sockets } = data.rails.get_recommended_node;
-
-          let connectErr: Error;
-
-          for (const socket of sockets) {
-            const [, err] = await toWithError(
-              this.nodeService.addPeer(user.id, pubkey, socket, false)
-            );
-            if (err) {
-              connectErr = err;
-              continue;
-            }
-
-            this.logger.info(
-              'Connected to recommended peer for channel opening',
-              { node: data.rails.get_recommended_node }
-            );
-
-            return { pubkey };
-          }
-
-          throw connectErr;
+          return undefined;
         },
       ],
 

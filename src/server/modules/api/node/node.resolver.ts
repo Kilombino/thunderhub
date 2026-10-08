@@ -1,11 +1,4 @@
-import {
-  Args,
-  Context,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { NodeService } from '../../node/node.service';
 import { CurrentUser } from '../../security/security.decorators';
 import { UserId } from '../../security/security.types';
@@ -22,7 +15,6 @@ import { Inject } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { toWithError } from 'src/server/utils/async';
-import { ContextType } from 'src/server/app.module';
 import { ConfigService } from '@nestjs/config';
 import { FetchService } from '../../fetch/fetch.service';
 import { AccountsService } from '../../accounts/accounts.service';
@@ -195,18 +187,11 @@ export class NodeFieldResolver {
   async node(
     @Parent()
     { publicKey }: { publicKey: string },
-    @CurrentUser() { id }: UserId,
-    @Context() { loaders }: ContextType
+    @CurrentUser() { id }: UserId
   ) {
     if (!publicKey) {
       this.logger.error('No public key to get node');
       return null;
-    }
-
-    const node = await loaders.nodesLoader.load(publicKey);
-
-    if (node) {
-      return { alias: node.alias, public_key: node.pub_key };
     }
 
     const [info, nodeError] = await toWithError(

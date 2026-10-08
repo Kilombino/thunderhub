@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { DataloaderService } from './dataloader.service';
-import { AmbossModule } from '../api/amboss/amboss.module';
+import { NodeModule } from '../node/node.module';
 import { ChannelMetadataService } from '../api/channels/channel-metadata.service';
 
 @Module({
-  imports: [AmbossModule],
+  imports: [NodeModule],
   providers: [DataloaderService, ChannelMetadataService],
   exports: [DataloaderService],
 })

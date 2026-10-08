@@ -28,7 +28,7 @@ import {
   defaultValues,
 } from './forwards.types';
 import { ContextType } from 'src/server/app.module';
-import { BaseNodeInfoType } from '../amboss/amboss.types';
+
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { Inject } from '@nestjs/common';
@@ -42,7 +42,7 @@ import {
 @Resolver(BaseNodeInfo)
 export class BaseNodeInfoResolver {
   @ResolveField()
-  public_key(@Parent() { pub_key }: BaseNodeInfoType) {
+  public_key(@Parent() { pub_key }: { alias: string; pub_key: string }) {
     return pub_key;
   }
 }
@@ -81,9 +81,10 @@ export class AggregatedChannelSideForwardsResolver {
   @ResolveField()
   async channel_info(
     @Parent() { channel, currentPubkey }: AggregatedByChannelSide,
-    @Context() { loaders }: ContextType
+    @Context() { loaders }: ContextType,
+    @CurrentUser() user: UserId
   ): Promise<EdgeInfoWithPubkey> {
-    const edge = await loaders.edgesLoader.load(channel);
+    const edge = await loaders.edgesLoader.load({ user, id: channel });
     return edge ? { ...edge, currentPubkey } : null;
   }
 }
@@ -106,9 +107,10 @@ export class AggregatedChannelForwardsResolver {
   @ResolveField()
   async channel_info(
     @Parent() { channel, currentPubkey }: AggregatedByChannelSide,
-    @Context() { loaders }: ContextType
+    @Context() { loaders }: ContextType,
+    @CurrentUser() user: UserId
   ): Promise<EdgeInfoWithPubkey> {
-    const edge = await loaders.edgesLoader.load(channel);
+    const edge = await loaders.edgesLoader.load({ user, id: channel });
     return edge ? { ...edge, currentPubkey } : null;
   }
 }
@@ -123,17 +125,19 @@ export class AggregatedRouteForwardsResolver {
   @ResolveField()
   async incoming_channel_info(
     @Parent() { incoming_channel, currentPubkey }: AggregatedByRoute,
-    @Context() { loaders }: ContextType
+    @Context() { loaders }: ContextType,
+    @CurrentUser() user: UserId
   ): Promise<EdgeInfoWithPubkey> {
-    const edge = await loaders.edgesLoader.load(incoming_channel);
+    const edge = await loaders.edgesLoader.load({ user, id: incoming_channel });
     return edge ? { ...edge, currentPubkey } : null;
   }
   @ResolveField()
   async outgoing_channel_info(
     @Parent() { outgoing_channel, currentPubkey }: ForwardsWithPubkey,
-    @Context() { loaders }: ContextType
+    @Context() { loaders }: ContextType,
+    @CurrentUser() user: UserId
   ): Promise<EdgeInfoWithPubkey> {
-    const edge = await loaders.edgesLoader.load(outgoing_channel);
+    const edge = await loaders.edgesLoader.load({ user, id: outgoing_channel });
     return edge ? { ...edge, currentPubkey } : null;
   }
 }

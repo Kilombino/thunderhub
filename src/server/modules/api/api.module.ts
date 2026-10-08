@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { NodeModule } from './node/node.module';
 import { AccountModule } from './account/account.module';
-import { AmbossModule } from './amboss/amboss.module';
 import { AuthModule } from './auth/auth.module';
 import { BitcoinModule } from './bitcoin/bitcoin.module';
 import { MainModule } from './main/main.module';
@@ -22,7 +21,6 @@ import { InvoicesModule } from './invoices/invoices.module';
 import { BoltzModule } from './boltz/boltz.module';
 import { UserConfigModule } from './userConfig/userConfig.module';
 import { TapdApiModule } from './tapd/tapd.module';
-import { MagmaModule } from './magma/magma.module';
 import { TradeModule } from './trade/trade.module';
 import { PublicModule } from './public/public.module';
 import { CoinControlModule } from './coinControl/coinControl.module';
@@ -34,7 +32,6 @@ import { OffersModule } from './offers/offers.module';
     MainModule,
     AuthModule,
     AccountModule,
-    AmbossModule,
     BitcoinModule,
     NodeModule,
     GithubModule,
@@ -53,7 +50,6 @@ import { OffersModule } from './offers/offers.module';
     InvoicesModule,
     BoltzModule,
     TapdApiModule,
-    MagmaModule,
     TradeModule,
     PublicModule,
     CoinControlModule,

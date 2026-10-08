@@ -10,7 +10,7 @@ import type { GetRouteToDestinationOptions } from '../../node/lightning.types';
 import { CurrentUser } from '../../security/security.decorators';
 import { UserId } from '../../security/security.types';
 import { toWithError } from '../../../utils/async';
-import { TapTransactionType } from '../magma/magma.types';
+import { TapTransactionType } from './trade.types';
 import {
   TradeQuoteInput,
   TradeQuoteResult,

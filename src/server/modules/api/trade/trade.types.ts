@@ -1,5 +1,17 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
-import { TapTransactionType } from '../magma/magma.types';
+import {
+  Field,
+  InputType,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
+
+export enum TapTransactionType {
+  PURCHASE = 'PURCHASE',
+  SALE = 'SALE',
+}
+
+registerEnumType(TapTransactionType, { name: 'TapTransactionType' });
 
 @InputType()
 export class TradeQuoteInput {

@@ -17,7 +17,6 @@ export const nav = {
     chain: 'Chain',
     tools: 'Tools',
     services: 'Services',
-    magma: 'Magma',
     assets: 'Assets',
     trading: 'Trading',
     setup: 'Setup',
@@ -25,7 +24,6 @@ export const nav = {
     settings: 'Settings',
   },
   sections: {
-    amboss: 'Amboss',
     taprootAssets: 'Taproot Assets',
     tools: 'Tools',
   },

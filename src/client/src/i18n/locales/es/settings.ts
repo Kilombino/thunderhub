@@ -24,13 +24,6 @@ export const settings: PartialMessages['settings'] = {
     forwardAttempts: 'Intentos de reenvío',
     autoClose: 'Cierre automático',
   },
-  amboss: {
-    autoBackups: 'Copias de seguridad automáticas',
-    healthcheckPings: 'Pings de comprobación de estado',
-    onchainPush: 'Envío de datos on-chain',
-    channelsPush: 'Envío de datos de canales',
-    privateChannelsPush: 'Envío de datos de canales privados',
-  },
   security: {
     title: 'Seguridad',
     enable2fa: 'Activar 2FA',

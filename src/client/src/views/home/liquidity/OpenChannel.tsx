@@ -4,7 +4,6 @@ import {
   ChevronDown,
   ChevronRight,
   Loader2,
-  Zap,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useOpenChannelMutation } from '../../../graphql/mutations/__generated__/openChannel.generated';
@@ -156,64 +155,41 @@ const AutomaticOpenChannel = ({
       {modeToggle}
       <Separator />
       {/* Peer */}
-      {useRecommended ? (
-        <div className="flex items-start gap-3 rounded border border-primary/20 bg-primary/5 p-3">
-          <Zap size={16} className="mt-0.5 shrink-0 text-primary" />
-          <div className="flex flex-col gap-0.5 text-xs">
-            <span className="font-medium text-primary">
-              {t('openChannel.railsTitle')}
-            </span>
-            <span className="text-muted-foreground">
-              {t('openChannel.railsDescription')}{' '}
-              <a
-                className="text-primary hover:underline"
-                href="https://amboss.tech/rails/stats"
-                target="_blank"
-              >
-                {t('openChannel.learnMore')}
-              </a>
-            </span>
-          </div>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium text-muted-foreground">
+            {t('openChannel.node')}
+          </label>
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            size="sm"
+            value={isNewPeer ? 'new' : 'existing'}
+            onValueChange={value => {
+              if (value) {
+                setIsNewPeer(value === 'new');
+                setPublicKey('');
+              }
+            }}
+          >
+            <ToggleGroupItem value="new">
+              {t('openChannel.newPeer')}
+            </ToggleGroupItem>
+            <ToggleGroupItem value="existing">
+              {t('openChannel.existingPeer')}
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
-      ) : (
-        <>
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-muted-foreground">
-                {t('openChannel.node')}
-              </label>
-              <ToggleGroup
-                type="single"
-                variant="outline"
-                size="sm"
-                value={isNewPeer ? 'new' : 'existing'}
-                onValueChange={value => {
-                  if (value) {
-                    setIsNewPeer(value === 'new');
-                    setPublicKey('');
-                  }
-                }}
-              >
-                <ToggleGroupItem value="new">
-                  {t('openChannel.newPeer')}
-                </ToggleGroupItem>
-                <ToggleGroupItem value="existing">
-                  {t('openChannel.existingPeer')}
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </div>
-            {isNewPeer ? (
-              <Input
-                value={publicKey}
-                placeholder={t('openChannel.peerPlaceholder')}
-                onChange={e => setPublicKey(e.target.value)}
-              />
-            ) : (
-              <PeerSelect callback={peer => setPublicKey(peer[0].public_key)} />
-            )}
-          </div>
-        </>
-      )}
+        {isNewPeer ? (
+          <Input
+            value={publicKey}
+            placeholder={t('openChannel.peerPlaceholder')}
+            onChange={e => setPublicKey(e.target.value)}
+          />
+        ) : (
+          <PeerSelect callback={peer => setPublicKey(peer[0].public_key)} />
+        )}
+      </div>
 
       <Separator />
 

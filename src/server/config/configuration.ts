@@ -22,12 +22,6 @@ type Throttler = {
 type Urls = {
   mempool: string;
   blockstream: string;
-  amboss: {
-    space: string;
-    auth: string;
-    magma: string;
-    trade: string;
-  };
   ticker: string;
   fees: string;
   blockHeight: string;
@@ -54,11 +48,6 @@ type SubscriptionsConfig = {
   disableForwards: boolean;
   disableChannels: boolean;
   disableBackups: boolean;
-};
-
-type AmbossConfig = {
-  disableHealthCheckPings: boolean;
-  disableBalancePushes: boolean;
 };
 
 export type ClientConfig = {
@@ -111,7 +100,6 @@ type ConfigType = {
   disable2FA: boolean;
   headers: Headers;
   subscriptions: SubscriptionsConfig;
-  amboss: AmbossConfig;
   clientConfig: ClientConfig;
   database?: DatabaseConfig;
 };
@@ -186,16 +174,6 @@ export default (): ConfigType => {
   const urls: Urls = {
     mempool,
     blockstream: 'https://blockstream.info',
-    amboss: {
-      // Auth, magma, and space URLs are all derived from the node's network
-      // at request time (mainnet → *.amboss.tech/space, mutinynet →
-      // *-dev.amboss.tech/space). Env vars below override the derivation and
-      // are primarily useful for pointing at local dev backends.
-      space: process.env.SPACE_API_URL || '',
-      auth: process.env.AMBOSS_AUTH_URL || '',
-      magma: process.env.MAGMA_API_URL || '',
-      trade: process.env.TRADE_API_URL || '',
-    },
     fees: `${mempool}/api/v1/fees/recommended`,
     blockHeight: `${mempool}/api/blocks/tip/height`,
     ticker: 'https://blockchain.info/ticker',
@@ -239,11 +217,6 @@ export default (): ConfigType => {
     disableBackups: process.env.DISABLE_BACKUP_SUB === 'true',
   };
 
-  const amboss = {
-    disableHealthCheckPings: process.env.DISABLE_HEALTHCHECK_PINGS === 'true',
-    disableBalancePushes: process.env.DISABLE_BALANCE_PUSHES === 'true',
-  };
-
   const basePath = process.env.BASE_PATH || '';
 
   const clientConfig: ClientConfig = {
@@ -281,7 +254,6 @@ export default (): ConfigType => {
     jwtSecret,
     yamlEnvs,
     subscriptions,
-    amboss,
     clientConfig,
     database: getDatabaseConfig(),
   };

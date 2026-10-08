@@ -11,7 +11,7 @@ jest.mock('../../security/security.types', () => ({}));
 
 import { TradeResolver } from './trade.resolver';
 import { BtcChannel, TaChannel } from './trade.types';
-import { TapTransactionType } from '../magma/magma.types';
+import { TapTransactionType } from './trade.types';
 
 type RouteHop = {
   public_key: string;
