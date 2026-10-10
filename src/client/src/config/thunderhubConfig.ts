@@ -18,7 +18,7 @@ interface ThunderhubConfig {
 export const config: ThunderhubConfig = {
   apiUrl: '/graphql',
   basePath: '',
-  mempoolUrl: 'https://mempool.space',
+  mempoolUrl: 'https://mempool.kilombino.com',
   defaultTheme: 'dark',
   defaultCurrency: 'sat',
   fetchPrices: true,

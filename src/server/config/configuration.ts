@@ -169,11 +169,11 @@ export default (): ConfigType => {
     `Getting ${isProduction ? 'production' : 'development'} env variables.`
   );
 
-  const mempool = process.env.MEMPOOL_URL || 'https://mempool.space';
+  const mempool = process.env.MEMPOOL_URL || 'https://mempool.kilombino.com';
 
   const urls: Urls = {
     mempool,
-    blockstream: 'https://blockstream.info',
+    blockstream: 'https://mempool.kilombino.com',
     fees: `${mempool}/api/v1/fees/recommended`,
     blockHeight: `${mempool}/api/blocks/tip/height`,
     // XBT fork: the price of BTC on the BLAKE2b chain (BTCB2), from Neoxa, the exchange where
