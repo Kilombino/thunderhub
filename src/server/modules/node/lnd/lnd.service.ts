@@ -280,7 +280,19 @@ export class LndService implements LightningProvider {
   }
 
   async pay(lnd: AuthenticatedLnd, options: PayOptions) {
-    return to(pay({ lnd, ...options } as any));
+    // A pasted invoice often brings a space, a line break or a "lightning:" prefix. The
+    // lightning library checks the request synchronously inside a callback, so a bad one threw
+    // out of the promise and took the whole server down (and the session with it). Clean it,
+    // and check it through LND first so a bad one is an ordinary error.
+    let request = options.request;
+    if (typeof request === 'string') {
+      request = request
+        .replace(/\s+/g, '')
+        .replace(/^lightning:/i, '')
+        .toLowerCase();
+      await to(decodePaymentRequest({ lnd, request }));
+    }
+    return to(pay({ lnd, ...options, ...(request ? { request } : {}) } as any));
   }
 
   async createInvoice(lnd: AuthenticatedLnd, options: CreateInvoiceOptions) {
