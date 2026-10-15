@@ -20,6 +20,11 @@ export const wallet = {
     copy: 'Copy',
     addressType: 'Address Type:',
     createAddress: 'Create Address',
+    incoming: 'An on-chain payment is coming in: {amount} (unconfirmed)',
+    confirmed: 'On-chain payment confirmed: {amount}',
+    incomingTitle: 'Incoming on-chain payment',
+    confirmedTitle: 'On-chain payment confirmed',
+    toThisAddress: 'to this address',
   },
   sendOnChain: {
     paymentSent: 'Payment Sent!',

@@ -7,6 +7,8 @@ import { formatSats } from '../utils/helpers';
 import { useChannelInfo } from './UseChannelInfo';
 import { useNodeDetails } from './UseNodeDetails';
 import { useSse, useSseEvent } from './useSse';
+import toast from 'react-hot-toast';
+import { t } from '@/i18n';
 
 const refetchTimeMs = 1000 * 1;
 
@@ -25,8 +27,10 @@ const ChannelPeerAlias: FC<{ id: string }> = ({ id }) => {
 };
 
 export const useListener = (disabled?: boolean) => {
-  const { channels, forwardAttempts, forwards, invoices, payments } =
+  const { channels, forwardAttempts, forwards, invoices, payments, chain } =
     useNotificationState();
+  // LND tells a transaction when it reaches the node and again when it confirms: each once.
+  const chainSeen = useRef<Set<string>>(new Set());
 
   const { addEvent } = useEventLog();
 
@@ -295,6 +299,41 @@ export const useListener = (disabled?: boolean) => {
     [handleRefetchQueries, channels, addEvent]
   );
 
+  // XBT fork: an on-chain payment coming in, told as it arrives (unconfirmed) and when it confirms.
+  const handleChain = useCallback(
+    (message: any) => {
+      const { id, is_outgoing, is_confirmed, tokens, output_addresses } =
+        message || {};
+      if (!id || is_outgoing) return;
+      const key = `${id}:${is_confirmed ? 1 : 0}`;
+      if (chainSeen.current.has(key)) return;
+      chainSeen.current.add(key);
+      handleRefetchQueries(['GetChainTransactions', 'GetUtxos']);
+      if (!chain) return;
+      const amount = formatSats(tokens);
+      addEvent({
+        title: is_confirmed
+          ? t('wallet.receiveOnChain.confirmedTitle')
+          : t('wallet.receiveOnChain.incomingTitle'),
+        summary: [{ label: 'Amount', value: amount }],
+        details: [
+          { label: 'Tx', value: getTransactionLink(id) },
+          ...(output_addresses?.length
+            ? [{ label: 'Address', value: output_addresses.join(', ') }]
+            : []),
+        ],
+      });
+      toast.success(
+        is_confirmed
+          ? t('wallet.receiveOnChain.confirmed', { amount })
+          : t('wallet.receiveOnChain.incoming', { amount }),
+        { duration: 10_000 }
+      );
+    },
+    [handleRefetchQueries, chain, addEvent]
+  );
+
+  useSseEvent('chain_transaction', handleChain);
   useSseEvent('invoice_updated', handleInvoice);
   useSseEvent('payment', handlePayment);
   useSseEvent('forward', handleForward);

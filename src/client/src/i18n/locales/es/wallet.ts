@@ -22,6 +22,11 @@ export const wallet: PartialMessages['wallet'] = {
     copy: 'Copiar',
     addressType: 'Tipo de dirección:',
     createAddress: 'Crear dirección',
+    incoming: 'Te está llegando un pago on-chain: {amount} (sin confirmar)',
+    confirmed: 'Pago on-chain confirmado: {amount}',
+    incomingTitle: 'Pago on-chain entrante',
+    confirmedTitle: 'Pago on-chain confirmado',
+    toThisAddress: 'a esta dirección',
   },
   sendOnChain: {
     paymentSent: '¡Pago enviado!',

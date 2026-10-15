@@ -15,6 +15,7 @@ type State = {
   channels: boolean;
   forwards: boolean;
   forwardAttempts: boolean;
+  chain: boolean;
   autoClose: boolean;
 };
 
@@ -25,6 +26,7 @@ type ActionType = {
   channels?: boolean;
   forwards?: boolean;
   forwardAttempts?: boolean;
+  chain?: boolean;
   autoClose?: boolean;
 };
 
@@ -39,6 +41,7 @@ const initialState: State = {
   channels: true,
   forwards: false,
   forwardAttempts: false,
+  chain: true,
   autoClose: true,
 };
 

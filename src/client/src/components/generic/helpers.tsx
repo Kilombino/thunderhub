@@ -109,9 +109,12 @@ export const getWithCopy = (text: string | null | undefined) => {
   );
 };
 
-// XBT fork: the BLAKE2b Lightning network's explorer (Amboss only knows the other chain).
-const NETWORK_EXPLORER = 'https://lightning.paperclippool.xyz/network';
-const nodeUrl = (publicKey: string) => `${NETWORK_EXPLORER}#node=${publicKey}`;
+// XBT fork: Nodex, the BLAKE2b Lightning network's explorer (Amboss only knows the other chain).
+export const NETWORK_EXPLORER = 'https://nodex.kilombino.com';
+export const nodeUrl = (publicKey: string) =>
+  `${NETWORK_EXPLORER}/node/${publicKey}`;
+const channelUrl = (id: string) =>
+  `${NETWORK_EXPLORER}/channel/${encodeURIComponent(id)}`;
 
 export const getNodeLink = (
   publicKey: string | undefined | null,
@@ -141,20 +144,26 @@ export const getNodeLink = (
 };
 
 /**
- * A channel id, linked to the explorer page of the node on its other end when that is
- * known (the explorer has node pages, not channel pages).
+ * A channel id, linked to its page on the explorer. A private channel is not in the
+ * public graph, so it links to the node on its other end instead (when that is known).
  */
 export const getChannelLink = (
   id: string,
-  partnerPublicKey?: string | null
+  partnerPublicKey?: string | null,
+  isPrivate?: boolean
 ) => {
+  const href = isPrivate
+    ? partnerPublicKey
+      ? nodeUrl(partnerPublicKey)
+      : null
+    : channelUrl(id);
   return (
     <span className="flex items-center">
-      {config.disableLinks || !partnerPublicKey ? (
+      {config.disableLinks || !href ? (
         id
       ) : (
         <a
-          href={nodeUrl(partnerPublicKey)}
+          href={href}
           target="_blank"
           className="no-underline text-primary hover:underline"
         >

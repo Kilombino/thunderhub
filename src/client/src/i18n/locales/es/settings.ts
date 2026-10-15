@@ -22,6 +22,7 @@ export const settings: PartialMessages['settings'] = {
     channels: 'Canales',
     forwards: 'Reenvíos',
     forwardAttempts: 'Intentos de reenvío',
+    chain: 'Pagos on-chain',
     autoClose: 'Cierre automático',
   },
   security: {

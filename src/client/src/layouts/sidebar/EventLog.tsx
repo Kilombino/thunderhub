@@ -124,7 +124,7 @@ const EventEntry: FC<{ entry: EventLogEntry; index: number }> = ({
 };
 
 const NotificationToggles: FC = () => {
-  const { invoices, payments, channels, forwards, forwardAttempts } =
+  const { invoices, payments, channels, forwards, forwardAttempts, chain } =
     useNotificationState();
   const dispatch = useNotificationDispatch();
 
@@ -138,6 +138,7 @@ const NotificationToggles: FC = () => {
       property: 'forwardAttempts',
       value: forwardAttempts,
     },
+    { label: 'On-chain', property: 'chain', value: chain },
   ];
 
   return (
@@ -182,10 +183,10 @@ export const EventLog: FC = () => {
     prevCount.current = entries.length;
   }, [entries.length]);
 
-  const { invoices, payments, channels, forwards, forwardAttempts } =
+  const { invoices, payments, channels, forwards, forwardAttempts, chain } =
     useNotificationState();
   const anyEnabled =
-    invoices || payments || channels || forwards || forwardAttempts;
+    invoices || payments || channels || forwards || forwardAttempts || chain;
 
   const pushFakeEvent = () => {
     const event = fakeEvents[Math.floor(Math.random() * fakeEvents.length)];

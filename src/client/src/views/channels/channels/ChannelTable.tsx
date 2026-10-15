@@ -569,7 +569,8 @@ export const ChannelTable = ({
               <div className="whitespace-nowrap">
                 {getChannelLink(
                   row.original.id,
-                  row.original.partner_public_key
+                  row.original.partner_public_key,
+                  !!row.original.channelPrivate
                 )}
               </div>
             ),

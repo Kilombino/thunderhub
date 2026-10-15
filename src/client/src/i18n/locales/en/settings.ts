@@ -20,6 +20,7 @@ export const settings = {
     channels: 'Channels',
     forwards: 'Forwards',
     forwardAttempts: 'Forward Attempts',
+    chain: 'On-chain payments',
     autoClose: 'Auto Close',
   },
   security: {

@@ -4,6 +4,7 @@ import {
   subscribeToChannels,
   subscribeToInvoices,
   subscribeToPastPayments,
+  subscribeToTransactions,
 } from 'lightning';
 import { auto, each, map, forever } from 'async';
 import { Logger } from 'winston';
@@ -362,6 +363,57 @@ export class SubService implements OnApplicationBootstrap {
                         'ErrorInChannelSubscribe',
                         { node: node.name, err },
                       ]);
+                    });
+                  },
+                  callback
+                );
+              },
+            ],
+
+            // XBT fork: on-chain transactions, so a payment to a receive address is told the
+            // moment it reaches the node (unconfirmed) and again when it confirms.
+            chain: [
+              'checkAvailable',
+              async ({ checkAvailable }, callback) => {
+                const disabled = this.configService.get(
+                  'subscriptions.disableChain'
+                );
+                if (disabled) {
+                  this.logger.info(
+                    'Chain transaction subscriptions are disabled'
+                  );
+                  return;
+                }
+
+                return each(
+                  checkAvailable,
+                  (node: any, cbk: any) => {
+                    const sub = subscribeToTransactions({
+                      lnd: node.connection,
+                    });
+
+                    this.subscriptions.push(sub);
+
+                    sub.on('chain_transaction', data => {
+                      this.logger.info('chain_transaction', {
+                        node: node.name,
+                      });
+                      // The raw transaction is not needed by the page.
+                      const tx = { ...(data || {}) };
+                      delete tx.transaction;
+                      this.sseService.emit(node.id, 'chain_transaction', tx);
+
+                      return;
+                    });
+
+                    sub.on('error', async err => {
+                      sub.removeAllListeners();
+
+                      this.logger.error(`ErrorInChainSubscribe: ${node.name}`, {
+                        err,
+                      });
+
+                      cbk(['ErrorInChainSubscribe', { node: node.name, err }]);
                     });
                   },
                   callback

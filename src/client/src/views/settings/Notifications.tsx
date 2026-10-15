@@ -7,8 +7,15 @@ import {
 import { t } from '@/i18n';
 
 export const NotificationSettings = () => {
-  const { channels, forwardAttempts, forwards, invoices, payments, autoClose } =
-    useNotificationState();
+  const {
+    channels,
+    forwardAttempts,
+    forwards,
+    invoices,
+    payments,
+    chain,
+    autoClose,
+  } = useNotificationState();
 
   const dispatch = useNotificationDispatch();
 
@@ -40,6 +47,11 @@ export const NotificationSettings = () => {
       label: t('settings.notifications.forwardAttempts'),
       property: 'forwardAttempts',
       value: forwardAttempts,
+    },
+    {
+      label: t('settings.notifications.chain'),
+      property: 'chain',
+      value: chain,
     },
     {
       label: t('settings.notifications.autoClose'),
