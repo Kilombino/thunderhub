@@ -217,6 +217,7 @@ const AUTHENTICATED_ROUTES = (
     <Route path="channels" element={<ChannelsPage />} />
     <Route path="channels/pending" element={<ChannelsPage />} />
     <Route path="channels/closed" element={<ChannelsPage />} />
+    <Route path="channels/splice" element={<ChannelsPage />} />
     <Route path="peers" element={<PeersPage />} />
     <Route path="transactions" element={<TransactionsPage />} />
     <Route path="forwards" element={<ForwardsPage />} />
@@ -283,6 +284,7 @@ const LEGACY_PATHS = [
   'channels',
   'channels/pending',
   'channels/closed',
+  'channels/splice',
   'peers',
   'transactions',
   'forwards',

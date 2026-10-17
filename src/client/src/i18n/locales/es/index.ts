@@ -9,6 +9,7 @@ import { openChannel } from './openChannel';
 import { coinControl } from './coinControl';
 import { chain } from './chain';
 import { settings } from './settings';
+import { splice } from './splice';
 
 export const es: PartialMessages = {
   common,
@@ -21,4 +22,5 @@ export const es: PartialMessages = {
   coinControl,
   chain,
   settings,
+  splice,
 };

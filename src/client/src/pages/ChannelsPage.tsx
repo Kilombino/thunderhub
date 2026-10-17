@@ -5,6 +5,7 @@ import { useGetNodeInfoQuery } from '../graphql/queries/__generated__/getNodeInf
 import { useGetPendingChannelsQuery } from '../graphql/queries/__generated__/getPendingChannels.generated';
 import { PendingChannels } from '../views/channels/pendingChannels/PendingChannels';
 import { ClosedChannels } from '../views/channels/closedChannels/ClosedChannels';
+import { SpliceView } from '../views/channels/splice/SpliceView';
 import { ChannelTable } from '../views/channels/channels/ChannelTable';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -21,23 +22,26 @@ import { DetailsChange } from '../components/details/detailsChange';
 import { useNodeSlug, useNodePath } from '../hooks/useNodeSlug';
 import { TranslationKey, useTranslation } from '@/i18n';
 
-type ChannelTab = 'open' | 'pending' | 'closed';
+type ChannelTab = 'open' | 'pending' | 'closed' | 'splice';
 
 const tabs: { value: ChannelTab; label: string }[] = [
   { value: 'open', label: 'channels.page.tabs.open' },
   { value: 'pending', label: 'channels.page.tabs.pending' },
   { value: 'closed', label: 'channels.page.tabs.closed' },
+  { value: 'splice', label: 'splice.tab' },
 ];
 
 const tabRoutes: Record<ChannelTab, string> = {
   open: '/channels',
   pending: '/channels/pending',
   closed: '/channels/closed',
+  splice: '/channels/splice',
 };
 
 const routeToTab = (path: string): ChannelTab => {
   if (path === '/channels/pending') return 'pending';
   if (path === '/channels/closed') return 'closed';
+  if (path === '/channels/splice') return 'splice';
   return 'open';
 };
 
@@ -67,10 +71,11 @@ const ChannelView = () => {
     }
   }, [data]);
 
-  const counts: Record<ChannelTab, number> = {
+  const counts: Record<ChannelTab, number | null> = {
     open: amounts.active,
     pending: pendingData?.getPendingChannels?.length ?? 0,
     closed: amounts.closed,
+    splice: null,
   };
 
   return (
@@ -90,7 +95,8 @@ const ChannelView = () => {
           >
             {tabs.map(tab => (
               <ToggleGroupItem key={tab.value} value={tab.value}>
-                {t(tab.label as TranslationKey)} ({counts[tab.value]})
+                {t(tab.label as TranslationKey)}
+                {counts[tab.value] !== null && ` (${counts[tab.value]})`}
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
@@ -119,6 +125,7 @@ const ChannelView = () => {
           {activeTab === 'open' && <ChannelTable />}
           {activeTab === 'pending' && <PendingChannels />}
           {activeTab === 'closed' && <ClosedChannels />}
+          {activeTab === 'splice' && <SpliceView />}
         </CardContent>
       </Card>
 

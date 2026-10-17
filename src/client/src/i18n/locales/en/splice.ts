@@ -1,0 +1,207 @@
+export const splice = {
+  tab: 'Resize',
+  title: 'Resize channels (splicing)',
+  intro:
+    'Splicing changes the size of an open channel without closing it. Increase moves sats from your on-chain wallet into the channel; reduce moves sats from your side of the channel to an on-chain address. Reducing is the way to take sats out of a channel without closing it.',
+  action: 'Resize',
+  actionTooltip: 'Resize this channel (splice in / out)',
+  refresh: 'Refresh',
+  loadError: 'Could not read the splicing status: {error}',
+  channelNotFound: 'This channel is not in the node channel list any more.',
+  node: {
+    title: 'Splicing on this node',
+    enabled: 'Enabled',
+    disabled: 'Disabled',
+    enabledText:
+      'This node has splicing on (feature bit "splice"). Whether a channel can be resized also depends on the peer: it must support splicing and be online.',
+    disabledText:
+      'Splicing is off on this node. ThunderHub cannot change the LND configuration itself: to turn it on, add this line to lnd.conf, in the [protocol] section, and restart LND.',
+    copy: 'Copy',
+    copied: 'Copied',
+    restartWarning:
+      'Restarting LND takes the node offline for a moment: every channel goes inactive and payments and forwards stop until LND is up and the peers reconnect.',
+    summary:
+      '{ready} channels ready, {unsupported} whose peer does not support splicing, {offline} with the peer offline, {other} that cannot right now.',
+  },
+  columns: {
+    peer: 'Peer',
+    capacity: 'Capacity',
+    local: 'My balance',
+    status: 'Splicing',
+    progress: 'Splice',
+  },
+  empty: 'There are no open channels.',
+  status: {
+    ok: 'Can be resized',
+    disabled: 'Splicing is off on this node',
+    peer_offline: 'The peer is offline',
+    peer_unsupported: 'The peer does not support splicing',
+    no_unified_sigs:
+      'The channel was not opened with unified signatures (unified_sigs)',
+    taproot: 'Taproot channels cannot be spliced yet',
+    zero_conf: 'Zero-conf channels cannot be spliced',
+    pending: 'A splice is already in progress',
+    closing: 'The channel is closing',
+    funding_spent_unknown:
+      'The funding output was spent by an unknown transaction',
+    peer_not_locked:
+      'The peer has not confirmed (splice_locked) the previous splice yet',
+    peer_misbehaved: 'The peer misbehaved in an earlier splice',
+    peer_not_announcing:
+      'Can be resized (the peer did not announce the last splice, which does not block a new one)',
+    unknown: 'Not now ({code})',
+  },
+  pending: {
+    title: 'Splice in progress',
+    state: 'State',
+    confirmations: 'Confirmations',
+    confirmationsValue: '{confirmations} of {depth}',
+    newCapacity: 'New capacity',
+    localDelta: 'Change to my balance',
+    fee: 'Fee',
+    feeValue: '{fee} sats ({rate} sat/vB)',
+    txid: 'Transaction',
+    relay: 'Relay',
+    lockedLabel: 'splice_locked sent',
+    locked: 'me: {we}, peer: {peer}',
+    yes: 'yes',
+    no: 'no',
+    dead: 'This splice can no longer confirm (an input was spent elsewhere). The channel keeps working on its previous funding output.',
+    startedBy: 'Started by',
+  },
+  states: {
+    preparing: 'Preparing',
+    negotiating: 'Negotiating with the peer',
+    signed: 'Signed',
+    broadcast: 'Broadcast',
+    confirmed: 'Confirmed, waiting for the lock depth',
+    locked: 'Locked',
+    aborted: 'Aborted',
+    dead: 'Dead',
+  },
+  relay: {
+    in_mempool: 'In the mempool',
+    rejected: 'Rejected: {reason}',
+    unknown: 'Unknown',
+  },
+  initiator: {
+    local: 'me',
+    remote: 'the peer',
+    both: 'both',
+    unknown: 'unknown',
+  },
+  last: {
+    title: 'Last splice',
+    outcome: 'Result',
+    when: 'When',
+    peerSaid: 'The peer said: "{reason}"',
+  },
+  form: {
+    direction: 'Operation',
+    increase: 'Increase',
+    reduce: 'Reduce',
+    increaseHelp:
+      'Moves sats from the on-chain wallet of the node into the channel. The fee is paid from the wallet.',
+    reduceHelp:
+      'Moves sats from your side of the channel to an on-chain address, without closing it. The fee comes out of the channel.',
+    amount: 'Amount',
+    amountPlaceholder: 'Sats',
+    max: 'Max',
+    address: 'Destination address',
+    addressPlaceholder: 'Empty: a new address of the node wallet',
+    closeAddress:
+      'This channel has a close address set (upfront shutdown): sats taken out can only go to {address}. Leave the address empty.',
+    fee: 'On-chain fee',
+    feeTarget: 'Confirmation target',
+    feeRate: 'sat/vB',
+    targetPlaceholder: 'Blocks (default 6)',
+    ratePlaceholder: 'Whole sat/vB',
+    forceLowFee: 'Force a fee below the node minimum (never below relay)',
+    estimate: 'Calculate',
+    estimating: 'Calculating...',
+    review: 'Review and confirm',
+    back: 'Back',
+    confirm: 'Confirm splice',
+    confirming: 'Starting the splice...',
+    close: 'Close',
+    invalidAmount: 'Enter a whole number of sats or choose max',
+    invalidRate: 'The fee rate must be a whole number of sat/vB',
+  },
+  estimate: {
+    title: 'Estimate',
+    fee: 'Fee',
+    feeValue: '{fee} sats ({rate} sat/vB, {vbytes} vB)',
+    amount: 'Amount',
+    capacity: 'Capacity',
+    local: 'My balance',
+    lockDepth: 'Confirmations to lock',
+    limits: 'Min / max',
+    minRate: 'Minimum fee rate',
+    minRateValue: '{rate} sat/vB ({source})',
+    sourceEstimate: 'fee estimate',
+    sourceRelay: 'relay minimum',
+    anchorReserve: 'Kept in the wallet for anchors',
+    destination: 'Destination',
+    ownWallet: 'This node wallet',
+    external: 'External address',
+    feeNoteOut: 'The fee is taken from the channel.',
+    feeNoteIn: 'The fee is paid from the on-chain wallet.',
+    forcedLowFee:
+      'The fee rate is below the node minimum: it will only go ahead because you forced it.',
+  },
+  confirm: {
+    title: 'Confirm the splice',
+    increase: 'Add {amount} sats from the wallet to the channel with {peer}.',
+    increaseMax:
+      'Add everything the wallet can spend to the channel with {peer}.',
+    reduce: 'Take {amount} sats out of the channel with {peer} to {address}.',
+    reduceMax:
+      'Take out everything your balance allows from the channel with {peer} to {address}.',
+    ownWallet: 'a new address of the node wallet',
+    warning:
+      'This moves real funds on chain. The channel keeps working during the splice; the new size is in force once the transaction gets {depth} confirmations.',
+  },
+  result: {
+    started: 'Splice started',
+    agreed:
+      'The peer agreed and the transaction is signed. The splice goes on by itself: it locks after the confirmations.',
+    stillRunning:
+      'No answer from the peer yet (last state: {state}). The splice may still be going on in the node: check this page again in a few minutes.',
+    aborted: 'The splice was aborted',
+    reason: 'Reason',
+    txid: 'Transaction',
+    newChannelPoint: 'New channel point',
+  },
+  reasons: {
+    insufficient_funds: 'The on-chain wallet does not have enough funds.',
+    immature_inputs:
+      'The wallet only has coins that are not spendable yet (immature coinbase or unconfirmed).',
+    below_min: 'The amount is below the minimum (dust, or reserves).',
+    above_max_out:
+      'You cannot take out that much: it is more than your balance allows after the fee and reserves.',
+    fee_below_floor:
+      'The fee rate is below the node minimum. Raise it or tick "force".',
+    reserve_on_change:
+      'The change would eat into the wallet reserve kept for anchor channels.',
+    close_address_set:
+      'This channel has a close address set: sats can only go out to it. Leave the address empty.',
+    node_cap: 'The node limit for splices has been reached.',
+    too_many_splices: 'Too many splices of this channel in a short time.',
+    too_many_aborts:
+      'Too many aborted splices of this channel lately; try later.',
+    not_quiescent: 'The channel could not be paused to negotiate the splice.',
+    above_max_size: 'The channel would exceed the maximum channel size.',
+    above_balance: 'The amount is above the available balance.',
+    chain_not_synced: 'The node is not synced to the chain.',
+    timeout: 'The negotiation with the peer timed out.',
+    rbf_unsupported: 'The peer does not support replacing the transaction.',
+    invalid_commitment: 'The peer sent an invalid commitment.',
+    invalid_signatures: 'The peer sent invalid signatures.',
+    locktime: 'Problem with the transaction locktime.',
+    internal_error: 'Internal error of the node.',
+    peer_contribution_unsupported:
+      'The peer tried to add funds of its own, which is not supported.',
+    peer_disconnected: 'The peer disconnected during the splice.',
+    unknown: 'Not possible: {code}',
+  },
+};

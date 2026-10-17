@@ -25,6 +25,7 @@ import { TradeModule } from './trade/trade.module';
 import { PublicModule } from './public/public.module';
 import { CoinControlModule } from './coinControl/coinControl.module';
 import { OffersModule } from './offers/offers.module';
+import { SpliceModule } from './splice/splice.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { OffersModule } from './offers/offers.module';
     PublicModule,
     CoinControlModule,
     OffersModule,
+    SpliceModule,
   ],
 })
 export class ApiModule {}

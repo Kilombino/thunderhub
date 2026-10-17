@@ -520,6 +520,24 @@ type InvoiceType {
   type: String!
 }
 
+type LastSpliceInfo {
+  """local, remote, both or unknown"""
+  initiator: String!
+  local_delta: Float!
+
+  """locked, aborted or dead"""
+  outcome: String!
+
+  """A refusal code, or the peer text when reason_from_peer"""
+  reason: String
+  reason_from_peer: Boolean!
+  remote_delta: Float!
+
+  """ISO 8601 time it locked or ended"""
+  time: String
+  txid: String
+}
+
 type LightningBalance {
   active: String!
   commit: String!
@@ -592,6 +610,7 @@ type Mutation {
   removePeer(publicKey: String): Boolean!
   removeTwofaSecret(token: String!): Boolean!
   sendToAddress(address: String!, fee: Float, sendAll: Boolean, target: Float, tokens: Float): ChainAddressSend!
+  spliceChannel(input: SpliceInput!): SpliceResult!
   taproot_assets: TaprootAssetsMutations!
   team: TeamMutations!
   toggleConfig(field: ConfigFields!): Boolean!
@@ -836,6 +855,45 @@ type PendingResume {
   total_tokens: Float!
 }
 
+type PendingSpliceInfo {
+  broadcast_height: Int!
+  confirmations: Int!
+
+  """An input was double spent: it can never confirm"""
+  dead: Boolean!
+  fee: Float!
+
+  """local, remote, both or unknown"""
+  initiator: String!
+
+  """Change to this node balance in the channel, sats"""
+  local_delta: Float!
+
+  """Confirmations at which the splice locks"""
+  lock_depth: Int!
+  new_capacity: Float!
+  new_channel_point: String
+
+  """The part of the fee this node pays"""
+  our_fee: Float!
+  peer_locked: Boolean!
+  relay_reason: String
+
+  """in_mempool, rejected or unknown"""
+  relay_status: String
+
+  """Change to the peer balance in the channel, sats"""
+  remote_delta: Float!
+  sat_per_vbyte: Float!
+
+  """
+  preparing, negotiating, signed, broadcast or confirmed (waiting for the lock depth)
+  """
+  state: String!
+  txid: String
+  we_locked: Boolean!
+}
+
 type Policy {
   base_fee_mtokens: String
   cltv_delta: Float
@@ -881,6 +939,7 @@ type PublicQueries {
 type Query {
   decodeBolt12(bolt12: String!): DecodedBolt12!
   estimatePaymentFees(request: String!): [PaymentFeeEstimate!]!
+  estimateSplice(input: SpliceInput!): SpliceEstimate!
   getAccount: ServerAccount!
   getBackups: String!
   getBitcoinFees: BitcoinFee!
@@ -907,6 +966,7 @@ type Query {
   getPayments(token: String): GetPaymentsType!
   getPeers: [Peer!]!
   getPendingChannels: [PendingChannel!]!
+  getSpliceStatus: SpliceStatus!
   getTradeQuote(input: TradeQuoteInput!): TradeQuoteResult!
   getTwofaSecret: TwofaResult!
   getUtxos: [Utxo!]!
@@ -962,6 +1022,115 @@ type SingleChannel {
   transaction_id: String!
   transaction_vout: Float!
   updated_at: String
+}
+
+type SpliceChannelInfo {
+  """Whether a splice can start now"""
+  can_splice: Boolean!
+  capacity: Float!
+
+  """Current funding outpoint, which a splice moves"""
+  channel_point: String!
+
+  """Upfront shutdown address: splice outs can only go there"""
+  close_address: String
+
+  """Current short channel id (block x tx x output)"""
+  id: String!
+  is_active: Boolean!
+  is_private: Boolean!
+  last_splice: LastSpliceInfo
+  local_balance: Float!
+  original_channel_point: String!
+  original_id: String!
+  partner_public_key: String!
+  peer_alias: String
+  pending_splice: PendingSpliceInfo
+  remote_balance: Float!
+
+  """LND splice_status: ok or why a splice cannot start"""
+  splice_status: String!
+  unified_sigs: Boolean!
+}
+
+type SpliceEstimate {
+  """Amount used: the one asked for or the maximum"""
+  amount: Float!
+  anchor_reserve: Float!
+  destination_is_ours: Boolean!
+
+  """Splice transaction fee, all paid by this node"""
+  fee: Float!
+
+  """estimate or relay_minimum"""
+  fee_estimate_source: String!
+  lock_depth: Int!
+  max_in: Float!
+  max_out: Float!
+  min: Float!
+
+  """Lowest fee rate accepted without forcing it"""
+  min_sat_per_vbyte: Float!
+  new_capacity: Float!
+  new_local: Float!
+
+  """Why the splice is not possible"""
+  refusal_code: String
+  sat_per_vbyte: Float!
+  vbytes: Float!
+}
+
+input SpliceInput {
+  """For out: destination, empty for a new node wallet address"""
+  address: String
+
+  """Whole sats, ignored with use_max"""
+  amount: Float
+
+  """Current or original channel point, txid:index"""
+  channel_point: String!
+
+  """in (wallet to channel) or out (channel to address)"""
+  direction: String!
+
+  """Accept a fee rate below the node floor (never below relay)"""
+  force_low_fee: Boolean
+
+  """Whole sat/vB; empty or 0 to use target_conf"""
+  sat_per_vbyte: Float
+
+  """Default 6"""
+  target_conf: Int
+  use_max: Boolean
+}
+
+type SpliceResult {
+  confirmations: Int!
+  new_channel_point: String
+
+  """For aborted: code or peer text"""
+  reason: String
+  reason_from_peer: Boolean!
+
+  """
+  preparing, negotiating, signed, broadcast, confirmed, locked or aborted
+  """
+  state: String!
+
+  """
+  No signed, broadcast or aborted update arrived in time; the splice may still go on
+  """
+  timed_out: Boolean!
+  txid: String
+}
+
+type SpliceStatus {
+  channels: [SpliceChannelInfo!]!
+
+  """
+  Whether splicing is on in this node (protocol.splice, feature bit 62/63)
+  """
+  node_enabled: Boolean!
 }
 
 type SuperMacaroon {

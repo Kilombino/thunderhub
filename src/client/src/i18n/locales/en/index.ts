@@ -8,6 +8,7 @@ import { openChannel } from './openChannel';
 import { coinControl } from './coinControl';
 import { chain } from './chain';
 import { settings } from './settings';
+import { splice } from './splice';
 
 export const en = {
   common,
@@ -20,6 +21,7 @@ export const en = {
   coinControl,
   chain,
   settings,
+  splice,
 };
 
 export type Messages = typeof en;

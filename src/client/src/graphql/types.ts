@@ -588,6 +588,22 @@ export type InvoiceType = {
   type: Scalars['String']['output'];
 };
 
+export type LastSpliceInfo = {
+  __typename?: 'LastSpliceInfo';
+  /** local, remote, both or unknown */
+  initiator: Scalars['String']['output'];
+  local_delta: Scalars['Float']['output'];
+  /** locked, aborted or dead */
+  outcome: Scalars['String']['output'];
+  /** A refusal code, or the peer text when reason_from_peer */
+  reason?: Maybe<Scalars['String']['output']>;
+  reason_from_peer: Scalars['Boolean']['output'];
+  remote_delta: Scalars['Float']['output'];
+  /** ISO 8601 time it locked or ended */
+  time?: Maybe<Scalars['String']['output']>;
+  txid?: Maybe<Scalars['String']['output']>;
+};
+
 export type LightningBalance = {
   __typename?: 'LightningBalance';
   active: Scalars['String']['output'];
@@ -650,6 +666,7 @@ export type Mutation = {
   removePeer: Scalars['Boolean']['output'];
   removeTwofaSecret: Scalars['Boolean']['output'];
   sendToAddress: ChainAddressSend;
+  spliceChannel: SpliceResult;
   taproot_assets: TaprootAssetsMutations;
   team: TeamMutations;
   toggleConfig: Scalars['Boolean']['output'];
@@ -795,6 +812,10 @@ export type MutationSendToAddressArgs = {
   sendAll?: InputMaybe<Scalars['Boolean']['input']>;
   target?: InputMaybe<Scalars['Float']['input']>;
   tokens?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type MutationSpliceChannelArgs = {
+  input: SpliceInput;
 };
 
 export type MutationToggleConfigArgs = {
@@ -1070,6 +1091,36 @@ export type PendingResume = {
   total_tokens: Scalars['Float']['output'];
 };
 
+export type PendingSpliceInfo = {
+  __typename?: 'PendingSpliceInfo';
+  broadcast_height: Scalars['Int']['output'];
+  confirmations: Scalars['Int']['output'];
+  /** An input was double spent: it can never confirm */
+  dead: Scalars['Boolean']['output'];
+  fee: Scalars['Float']['output'];
+  /** local, remote, both or unknown */
+  initiator: Scalars['String']['output'];
+  /** Change to this node balance in the channel, sats */
+  local_delta: Scalars['Float']['output'];
+  /** Confirmations at which the splice locks */
+  lock_depth: Scalars['Int']['output'];
+  new_capacity: Scalars['Float']['output'];
+  new_channel_point?: Maybe<Scalars['String']['output']>;
+  /** The part of the fee this node pays */
+  our_fee: Scalars['Float']['output'];
+  peer_locked: Scalars['Boolean']['output'];
+  relay_reason?: Maybe<Scalars['String']['output']>;
+  /** in_mempool, rejected or unknown */
+  relay_status?: Maybe<Scalars['String']['output']>;
+  /** Change to the peer balance in the channel, sats */
+  remote_delta: Scalars['Float']['output'];
+  sat_per_vbyte: Scalars['Float']['output'];
+  /** preparing, negotiating, signed, broadcast or confirmed (waiting for the lock depth) */
+  state: Scalars['String']['output'];
+  txid?: Maybe<Scalars['String']['output']>;
+  we_locked: Scalars['Boolean']['output'];
+};
+
 export type Policy = {
   __typename?: 'Policy';
   base_fee_mtokens?: Maybe<Scalars['String']['output']>;
@@ -1135,6 +1186,7 @@ export type Query = {
   __typename?: 'Query';
   decodeBolt12: DecodedBolt12;
   estimatePaymentFees: Array<PaymentFeeEstimate>;
+  estimateSplice: SpliceEstimate;
   getAccount: ServerAccount;
   getBackups: Scalars['String']['output'];
   getBitcoinFees: BitcoinFee;
@@ -1161,6 +1213,7 @@ export type Query = {
   getPayments: GetPaymentsType;
   getPeers: Array<Peer>;
   getPendingChannels: Array<PendingChannel>;
+  getSpliceStatus: SpliceStatus;
   getTradeQuote: TradeQuoteResult;
   getTwofaSecret: TwofaResult;
   getUtxos: Array<Utxo>;
@@ -1184,6 +1237,10 @@ export type QueryDecodeBolt12Args = {
 
 export type QueryEstimatePaymentFeesArgs = {
   request: Scalars['String']['input'];
+};
+
+export type QueryEstimateSpliceArgs = {
+  input: SpliceInput;
 };
 
 export type QueryGetChannelArgs = {
@@ -1296,6 +1353,95 @@ export type SingleChannel = {
   transaction_id: Scalars['String']['output'];
   transaction_vout: Scalars['Float']['output'];
   updated_at?: Maybe<Scalars['String']['output']>;
+};
+
+export type SpliceChannelInfo = {
+  __typename?: 'SpliceChannelInfo';
+  /** Whether a splice can start now */
+  can_splice: Scalars['Boolean']['output'];
+  capacity: Scalars['Float']['output'];
+  /** Current funding outpoint, which a splice moves */
+  channel_point: Scalars['String']['output'];
+  /** Upfront shutdown address: splice outs can only go there */
+  close_address?: Maybe<Scalars['String']['output']>;
+  /** Current short channel id (block x tx x output) */
+  id: Scalars['String']['output'];
+  is_active: Scalars['Boolean']['output'];
+  is_private: Scalars['Boolean']['output'];
+  last_splice?: Maybe<LastSpliceInfo>;
+  local_balance: Scalars['Float']['output'];
+  original_channel_point: Scalars['String']['output'];
+  original_id: Scalars['String']['output'];
+  partner_public_key: Scalars['String']['output'];
+  peer_alias?: Maybe<Scalars['String']['output']>;
+  pending_splice?: Maybe<PendingSpliceInfo>;
+  remote_balance: Scalars['Float']['output'];
+  /** LND splice_status: ok or why a splice cannot start */
+  splice_status: Scalars['String']['output'];
+  unified_sigs: Scalars['Boolean']['output'];
+};
+
+export type SpliceEstimate = {
+  __typename?: 'SpliceEstimate';
+  /** Amount used: the one asked for or the maximum */
+  amount: Scalars['Float']['output'];
+  anchor_reserve: Scalars['Float']['output'];
+  destination_is_ours: Scalars['Boolean']['output'];
+  /** Splice transaction fee, all paid by this node */
+  fee: Scalars['Float']['output'];
+  /** estimate or relay_minimum */
+  fee_estimate_source: Scalars['String']['output'];
+  lock_depth: Scalars['Int']['output'];
+  max_in: Scalars['Float']['output'];
+  max_out: Scalars['Float']['output'];
+  min: Scalars['Float']['output'];
+  /** Lowest fee rate accepted without forcing it */
+  min_sat_per_vbyte: Scalars['Float']['output'];
+  new_capacity: Scalars['Float']['output'];
+  new_local: Scalars['Float']['output'];
+  /** Why the splice is not possible */
+  refusal_code?: Maybe<Scalars['String']['output']>;
+  sat_per_vbyte: Scalars['Float']['output'];
+  vbytes: Scalars['Float']['output'];
+};
+
+export type SpliceInput = {
+  /** For out: destination, empty for a new node wallet address */
+  address?: InputMaybe<Scalars['String']['input']>;
+  /** Whole sats, ignored with use_max */
+  amount?: InputMaybe<Scalars['Float']['input']>;
+  /** Current or original channel point, txid:index */
+  channel_point: Scalars['String']['input'];
+  /** in (wallet to channel) or out (channel to address) */
+  direction: Scalars['String']['input'];
+  /** Accept a fee rate below the node floor (never below relay) */
+  force_low_fee?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Whole sat/vB; empty or 0 to use target_conf */
+  sat_per_vbyte?: InputMaybe<Scalars['Float']['input']>;
+  /** Default 6 */
+  target_conf?: InputMaybe<Scalars['Int']['input']>;
+  use_max?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type SpliceResult = {
+  __typename?: 'SpliceResult';
+  confirmations: Scalars['Int']['output'];
+  new_channel_point?: Maybe<Scalars['String']['output']>;
+  /** For aborted: code or peer text */
+  reason?: Maybe<Scalars['String']['output']>;
+  reason_from_peer: Scalars['Boolean']['output'];
+  /** preparing, negotiating, signed, broadcast, confirmed, locked or aborted */
+  state: Scalars['String']['output'];
+  /** No signed, broadcast or aborted update arrived in time; the splice may still go on */
+  timed_out: Scalars['Boolean']['output'];
+  txid?: Maybe<Scalars['String']['output']>;
+};
+
+export type SpliceStatus = {
+  __typename?: 'SpliceStatus';
+  channels: Array<SpliceChannelInfo>;
+  /** Whether splicing is on in this node (protocol.splice, feature bit 62/63) */
+  node_enabled: Scalars['Boolean']['output'];
 };
 
 export type SuperMacaroon = {

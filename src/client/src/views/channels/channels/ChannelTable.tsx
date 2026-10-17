@@ -5,6 +5,7 @@ import {
   Check,
   Circle,
   Edit,
+  Scaling,
   Trash2,
   X,
 } from 'lucide-react';
@@ -52,6 +53,7 @@ import { useAccount } from '../../../hooks/UseAccount';
 import { config } from '@/config/thunderhubConfig';
 import { t } from '@/i18n';
 import { ChannelDetails } from './ChannelDetails';
+import { SpliceChannelByPoint } from '../splice/SpliceView';
 import { defaultHiddenColumns } from './helpers';
 import { VisibilityState } from '@tanstack/react-table';
 import { Asset, REMOTE_COLOR } from '../types';
@@ -216,6 +218,7 @@ export const ChannelTable = ({
     name: string;
     channel: string;
     action: string;
+    channelPoint?: string;
   } | null>();
 
   const { data, loading, error } = useGetChannelsQuery({
@@ -348,6 +351,27 @@ export const ChannelTable = ({
           >
             <Edit size={14} />
           </button>
+        ),
+        spliceAction: (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="inline-flex items-center justify-center border-none bg-transparent p-0 text-inherit cursor-pointer hover:text-orange-400"
+                onClick={() =>
+                  setChannel({
+                    channel: c.id,
+                    action: 'splice',
+                    channelPoint: `${c.transaction_id}:${c.transaction_vout}`,
+                    name:
+                      c.partner_node_info.node?.alias || t('channels.unknown'),
+                  })
+                }
+              >
+                <Scaling size={14} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>{t('splice.actionTooltip')}</TooltipContent>
+          </Tooltip>
         ),
         closeAction: (
           <button
@@ -534,6 +558,12 @@ export const ChannelTable = ({
           {
             header: <Edit size={14} />,
             accessorKey: 'editAction',
+            enableSorting: false,
+            cell: ({ cell }: any) => cell.renderValue(),
+          },
+          {
+            header: <Scaling size={14} />,
+            accessorKey: 'spliceAction',
             enableSorting: false,
             cell: ({ cell }: any) => cell.renderValue(),
           },
@@ -875,6 +905,8 @@ export const ChannelTable = ({
     return defaultColumns;
   }, [hiddenColumns]);
 
+  const closeSplice = useCallback(() => setChannel(null), []);
+
   if (loading) {
     return <LoadingCard noCard={true} />;
   }
@@ -918,9 +950,18 @@ export const ChannelTable = ({
         defaultHiddenColumns={hiddenColumnState}
         filterPlaceholder={t('channels.table.filterPlaceholder')}
       />
-      <Modal isOpen={!!channel} closeCallback={() => setChannel(null)}>
+      <Modal
+        isOpen={!!channel && channel.action !== 'splice'}
+        closeCallback={() => setChannel(null)}
+      >
         {renderModalContent()}
       </Modal>
+      {channel?.action === 'splice' && channel.channelPoint && (
+        <SpliceChannelByPoint
+          channelPoint={channel.channelPoint}
+          onClose={closeSplice}
+        />
+      )}
     </>
   );
 };
