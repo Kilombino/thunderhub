@@ -40,6 +40,50 @@ export class DecodedBolt12 {
   offer: Bolt12Offer | null;
 }
 
+/**
+ * Proof of a BOLT 12 payment. The invoice is signed by the node being paid
+ * and commits to the offer and to the payment hash; the preimage hashes to
+ * that payment hash and is only released when the payment arrives. Together
+ * they show this node paid that invoice for that offer.
+ */
+@ObjectType()
+export class Bolt12Receipt {
+  @Field()
+  payment_hash: string;
+  @Field()
+  payment_preimage: string;
+  @Field({ description: 'SHA-256 of the preimage is the invoice payment hash' })
+  preimage_matches: boolean;
+  @Field({ description: 'The offer paid (lno1...)' })
+  offer: string;
+  @Field({ nullable: true })
+  offer_id: string | null;
+  @Field({ nullable: true })
+  description: string | null;
+  @Field({ nullable: true })
+  issuer: string | null;
+  @Field({ description: 'The invoice the payee signed (lni1...)' })
+  invoice: string;
+  @Field({ description: 'Whether the invoice signature checks out' })
+  invoice_signature_valid: boolean;
+  @Field({ nullable: true, description: 'The node that signed the invoice' })
+  invoice_node_id: string | null;
+  @Field({ nullable: true, description: 'This node payer key in the request' })
+  payer_id: string | null;
+  @Field({ nullable: true })
+  payer_note: string | null;
+  @Field()
+  amount_msat: string;
+  @Field()
+  fee_msat: string;
+  @Field()
+  paid_at: string;
+  @Field(() => [String])
+  chains: string[];
+  @Field({ description: 'Kept in the database, to see again later' })
+  saved: boolean;
+}
+
 @ObjectType()
 export class PayOfferResult {
   @Field({ description: 'The paid BOLT 12 invoice (lni1...)' })
@@ -52,4 +96,6 @@ export class PayOfferResult {
   amount_msat: string;
   @Field()
   fee_msat: string;
+  @Field(() => Bolt12Receipt, { nullable: true })
+  receipt: Bolt12Receipt | null;
 }

@@ -19,6 +19,26 @@ export type PayOfferMutation = {
     payment_hash: string;
     amount_msat: string;
     fee_msat: string;
+    receipt?: {
+      __typename?: 'Bolt12Receipt';
+      payment_hash: string;
+      payment_preimage: string;
+      preimage_matches: boolean;
+      offer: string;
+      offer_id?: string | null;
+      description?: string | null;
+      issuer?: string | null;
+      invoice: string;
+      invoice_signature_valid: boolean;
+      invoice_node_id?: string | null;
+      payer_id?: string | null;
+      payer_note?: string | null;
+      amount_msat: string;
+      fee_msat: string;
+      paid_at: string;
+      chains: Array<string>;
+      saved: boolean;
+    } | null;
   };
 };
 
@@ -42,6 +62,25 @@ export const PayOfferDocument = gql`
       payment_hash
       amount_msat
       fee_msat
+      receipt {
+        payment_hash
+        payment_preimage
+        preimage_matches
+        offer
+        offer_id
+        description
+        issuer
+        invoice
+        invoice_signature_valid
+        invoice_node_id
+        payer_id
+        payer_note
+        amount_msat
+        fee_msat
+        paid_at
+        chains
+        saved
+      }
     }
   }
 `;

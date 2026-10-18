@@ -2,8 +2,10 @@ import {
   isBolt12Offer,
   isBolt12Payment,
   mapDecodedBolt12,
+  mapDecodedInvoice,
   mapPayOfferResult,
   normalizeBolt12,
+  preimageMatches,
   satsToMsat,
 } from './offers.helpers';
 
@@ -107,6 +109,7 @@ describe('offers helpers', () => {
         payment_preimage: '357c',
         amount_msat: '1000000',
         fee_msat: '3205',
+        receipt: null,
       });
     });
   });
@@ -134,5 +137,43 @@ describe('offers helpers', () => {
       expect(isBolt12Payment({ attempts: [{ route: plain }] })).toBe(false);
       expect(isBolt12Payment({ attempts: [] })).toBe(false);
     });
+  });
+});
+
+describe('receipt checks', () => {
+  const preimage = '00'.repeat(32);
+  // SHA-256 of 32 zero bytes.
+  const hash =
+    '66687aadf862bd776c8fc18b8e9f8e20089714856ee233b3902a591d0d5f2925';
+
+  it('accepts the preimage of the payment hash only', () => {
+    expect(preimageMatches(preimage, hash)).toBe(true);
+    expect(preimageMatches(preimage, hash.toUpperCase())).toBe(true);
+    expect(preimageMatches('01'.repeat(32), hash)).toBe(false);
+    expect(preimageMatches('', hash)).toBe(false);
+    expect(preimageMatches(preimage, 'zz')).toBe(false);
+  });
+
+  it('maps an invoice and refuses anything else', () => {
+    const inv = mapDecodedInvoice({
+      type: 'invoice',
+      valid: true,
+      chains: [Buffer.from('ab', 'hex')],
+      invoice: {
+        payment_hash: Buffer.from(hash, 'hex'),
+        node_id: Buffer.from('02'.repeat(33), 'hex'),
+        payer_id: Buffer.from('03'.repeat(33), 'hex'),
+        signature_valid: true,
+      },
+    });
+    expect(inv).toEqual({
+      payment_hash: hash,
+      node_id: '02'.repeat(33),
+      payer_id: '03'.repeat(33),
+      signature_valid: true,
+      valid: true,
+      chains: ['ab'],
+    });
+    expect(mapDecodedInvoice({ type: 'offer', offer: {} } as any)).toBeNull();
   });
 });

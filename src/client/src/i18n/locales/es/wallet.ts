@@ -122,6 +122,31 @@ export const wallet: PartialMessages['wallet'] = {
     noOutChannels:
       'En los pagos BOLT 12 no se pueden elegir los canales de salida.',
   },
+  bolt12Receipt: {
+    title: 'Justificante de pago BOLT 12',
+    paidAt: 'Pagado',
+    amount: 'Importe',
+    fee: 'Comisión',
+    description: 'Descripción',
+    issuer: 'Emisor',
+    payerNote: 'Nota',
+    offer: 'Oferta pagada (lno1)',
+    invoice: 'Factura firmada por quien cobra (lni1)',
+    signedBy: 'Firmada por el nodo',
+    signature: 'Firma de la factura',
+    signatureOk:
+      'La factura está firmada por el nodo que cobra y corresponde a esta oferta',
+    preimageOk:
+      'La preimagen hace hash al hash de pago de la factura: solo quien cobra podía darla',
+    notSaved: 'No se ha podido guardar en la base de datos: descárgalo ahora.',
+    howToCheck:
+      'Cómo comprobarlo: "lncli offer decode <lni1…>" muestra la firma de la factura, el nodo que la firmó y su hash de pago; el SHA-256 de la preimagen tiene que dar ese mismo hash.',
+    copy: 'Copiar',
+    copied: 'Justificante copiado',
+    done: 'Hecho',
+    show: 'Justificante',
+    none: 'No hay justificante guardado para este pago (se pagó antes de esta versión o fuera de ThunderHub).',
+  },
   keysend: {
     lookingUp: 'Buscando nodo...',
     notFound: 'Nodo no encontrado. Comprueba que la clave pública es correcta.',

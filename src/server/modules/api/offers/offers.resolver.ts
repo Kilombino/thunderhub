@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CurrentUser } from '../../security/security.decorators';
 import { UserId } from '../../security/security.types';
 import { OffersService } from './offers.service';
-import { DecodedBolt12, PayOfferResult } from './offers.types';
+import { Bolt12Receipt, DecodedBolt12, PayOfferResult } from './offers.types';
 
 @Resolver()
 export class OffersResolver {
@@ -14,6 +14,26 @@ export class OffersResolver {
     @Args('bolt12') bolt12: string
   ): Promise<DecodedBolt12> {
     return this.offersService.decode(id, bolt12);
+  }
+
+  @Query(() => Bolt12Receipt, {
+    nullable: true,
+    description: 'The kept proof of a BOLT 12 payment made from ThunderHub',
+  })
+  async getBolt12Receipt(
+    @CurrentUser() { id }: UserId,
+    @Args('payment_hash') payment_hash: string
+  ): Promise<Bolt12Receipt | null> {
+    return this.offersService.receipt(id, payment_hash);
+  }
+
+  @Query(() => [String], {
+    description: 'Payment hashes of the BOLT 12 payments with a receipt',
+  })
+  async getBolt12ReceiptHashes(
+    @CurrentUser() { id }: UserId
+  ): Promise<string[]> {
+    return this.offersService.receiptHashes(id);
   }
 
   @Mutation(() => PayOfferResult)

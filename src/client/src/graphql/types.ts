@@ -149,6 +149,34 @@ export type Bolt12Offer = {
   quantity_max: Scalars['Float']['output'];
 };
 
+export type Bolt12Receipt = {
+  __typename?: 'Bolt12Receipt';
+  amount_msat: Scalars['String']['output'];
+  chains: Array<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  fee_msat: Scalars['String']['output'];
+  /** The invoice the payee signed (lni1...) */
+  invoice: Scalars['String']['output'];
+  /** The node that signed the invoice */
+  invoice_node_id?: Maybe<Scalars['String']['output']>;
+  /** Whether the invoice signature checks out */
+  invoice_signature_valid: Scalars['Boolean']['output'];
+  issuer?: Maybe<Scalars['String']['output']>;
+  /** The offer paid (lno1...) */
+  offer: Scalars['String']['output'];
+  offer_id?: Maybe<Scalars['String']['output']>;
+  paid_at: Scalars['String']['output'];
+  /** This node payer key in the request */
+  payer_id?: Maybe<Scalars['String']['output']>;
+  payer_note?: Maybe<Scalars['String']['output']>;
+  payment_hash: Scalars['String']['output'];
+  payment_preimage: Scalars['String']['output'];
+  /** SHA-256 of the preimage is the invoice payment hash */
+  preimage_matches: Scalars['Boolean']['output'];
+  /** Kept in the database, to see again later */
+  saved: Scalars['Boolean']['output'];
+};
+
 export type BoltzInfoType = {
   __typename?: 'BoltzInfoType';
   feePercent: Scalars['Float']['output'];
@@ -976,6 +1004,7 @@ export type PayOfferResult = {
   fee_msat: Scalars['String']['output'];
   payment_hash: Scalars['String']['output'];
   payment_preimage: Scalars['String']['output'];
+  receipt?: Maybe<Bolt12Receipt>;
 };
 
 export type PayRequest = {
@@ -1191,6 +1220,10 @@ export type Query = {
   getBackups: Scalars['String']['output'];
   getBitcoinFees: BitcoinFee;
   getBitcoinPrice: Scalars['String']['output'];
+  /** The kept proof of a BOLT 12 payment made from ThunderHub */
+  getBolt12Receipt?: Maybe<Bolt12Receipt>;
+  /** Payment hashes of the BOLT 12 payments with a receipt */
+  getBolt12ReceiptHashes: Array<Scalars['String']['output']>;
   getBoltzInfo: BoltzInfoType;
   getChainTransactions: Array<ChainTransaction>;
   getChannel: SingleChannel;
@@ -1241,6 +1274,10 @@ export type QueryEstimatePaymentFeesArgs = {
 
 export type QueryEstimateSpliceArgs = {
   input: SpliceInput;
+};
+
+export type QueryGetBolt12ReceiptArgs = {
+  payment_hash: Scalars['String']['input'];
 };
 
 export type QueryGetChannelArgs = {

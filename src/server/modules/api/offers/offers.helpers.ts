@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import { DecodedBolt12, PayOfferResult } from './offers.types';
 
 const MSAT_PER_SAT = 1000;
@@ -101,7 +102,57 @@ export const mapPayOfferResult = (
   payment_preimage: toHex(res.payment_preimage),
   amount_msat: res.amount_msat || '0',
   fee_msat: res.fee_msat || '0',
+  receipt: null,
 });
+
+/** The fields of a decoded BOLT 12 invoice (lni1...) a receipt shows. */
+export type DecodedInvoice = {
+  payment_hash: string;
+  node_id: string;
+  payer_id: string;
+  signature_valid: boolean;
+  valid: boolean;
+  chains: string[];
+};
+
+export const mapDecodedInvoice = (res: {
+  type?: string;
+  valid?: boolean;
+  chains?: unknown[];
+  invoice?: {
+    payment_hash?: unknown;
+    node_id?: unknown;
+    payer_id?: unknown;
+    signature_valid?: boolean;
+  } | null;
+}): DecodedInvoice | null => {
+  if (res.type !== 'invoice' || !res.invoice) return null;
+  return {
+    payment_hash: toHex(res.invoice.payment_hash),
+    node_id: toHex(res.invoice.node_id),
+    payer_id: toHex(res.invoice.payer_id),
+    signature_valid: !!res.invoice.signature_valid,
+    valid: !!res.valid,
+    chains: (res.chains || []).map(toHex),
+  };
+};
+
+/** Whether SHA-256 of the preimage (hex) is the payment hash (hex). */
+export const preimageMatches = (
+  preimage: string,
+  paymentHash: string
+): boolean => {
+  if (
+    !/^[0-9a-f]{64}$/i.test(preimage) ||
+    !/^[0-9a-f]{64}$/i.test(paymentHash)
+  ) {
+    return false;
+  }
+  const digest = createHash('sha256')
+    .update(Buffer.from(preimage, 'hex'))
+    .digest('hex');
+  return digest === paymentHash.toLowerCase();
+};
 
 type RouteHops = { hops?: { channel?: string }[] };
 

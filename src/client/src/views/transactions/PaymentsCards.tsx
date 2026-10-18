@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { decode } from 'light-bolt11-decoder';
 import { ComputedMarker } from './ComputedMarker';
 import { DetailTable, DetailRow } from './DetailTable';
+import { Bolt12ReceiptLoader } from './Bolt12ReceiptLoader';
 import {
   getTradeMemoDisplay,
   getTradeMemoText,
@@ -214,6 +215,7 @@ export const PaymentsCard = ({
             {request && <DetailRow label="Request">{request}</DetailRow>}
             {is_bolt12 && <DetailRow label="Type">BOLT 12 offer</DetailRow>}
           </DetailTable>
+          {is_bolt12 && <Bolt12ReceiptLoader paymentHash={id} />}
         </div>
       )}
     </div>

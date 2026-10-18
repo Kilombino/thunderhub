@@ -119,6 +119,31 @@ export const wallet = {
     paid: 'Offer paid: {amount} sats (fee {fee} sats)',
     noOutChannels: 'Outgoing channels cannot be chosen for BOLT 12 payments.',
   },
+  bolt12Receipt: {
+    title: 'BOLT 12 payment receipt',
+    paidAt: 'Paid',
+    amount: 'Amount',
+    fee: 'Fee',
+    description: 'Description',
+    issuer: 'Issuer',
+    payerNote: 'Note',
+    offer: 'Offer paid (lno1)',
+    invoice: 'Invoice signed by the payee (lni1)',
+    signedBy: 'Signed by node',
+    signature: 'Invoice signature',
+    signatureOk:
+      'The invoice is signed by the node being paid and is for this offer',
+    preimageOk:
+      "The preimage hashes to the invoice's payment hash: only the payee could release it",
+    notSaved: 'Could not keep it in the database: download it now.',
+    howToCheck:
+      'How to check it: "lncli offer decode <lni1…>" shows the invoice signature, the node that signed it and its payment hash; SHA-256 of the preimage must give that same hash.',
+    copy: 'Copy',
+    copied: 'Receipt copied',
+    done: 'Done',
+    show: 'Receipt',
+    none: 'No receipt kept for this payment (paid before this version, or outside ThunderHub).',
+  },
   keysend: {
     lookingUp: 'Looking up node...',
     notFound: 'Node not found. Verify the public key is correct.',

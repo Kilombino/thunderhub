@@ -10,6 +10,8 @@ import { getErrorContent } from '@/utils/error';
 import { useDecodeBolt12Query } from '@/graphql/queries/__generated__/decodeBolt12.generated';
 import { usePayOfferMutation } from '@/graphql/mutations/__generated__/payOffer.generated';
 import { getLocale, t } from '@/i18n';
+import { Bolt12Receipt as Bolt12ReceiptFieldsFragment } from '@/graphql/types';
+import { Bolt12ReceiptView } from './Bolt12Receipt';
 
 const MSAT_PER_SAT = 1000;
 
@@ -52,6 +54,9 @@ export const PayOffer: FC<PayOfferProps> = ({
   const [fee, setFee] = useState<number>(defaultFee);
   const [paths, setPaths] = useState<number>(defaultPaths);
   const [confirming, setConfirming] = useState(false);
+  const [receipt, setReceipt] = useState<Bolt12ReceiptFieldsFragment | null>(
+    null
+  );
 
   const { data, loading: decoding } = useDecodeBolt12Query({
     variables: { bolt12: offer },
@@ -72,13 +77,32 @@ export const PayOffer: FC<PayOfferProps> = ({
         })
       );
       setConfirming(false);
-      if (payCallback) payCallback();
+      // With the proof of payment, it stays on screen until it is closed.
+      if (paid.receipt) setReceipt(paid.receipt);
+      else if (payCallback) payCallback();
     },
     onError: error => {
       setConfirming(false);
       toast.error(getErrorContent(error));
     },
   });
+
+  if (receipt) {
+    return (
+      <div className="flex flex-col gap-3">
+        <Bolt12ReceiptView receipt={receipt} />
+        <Button
+          className="w-full"
+          onClick={() => {
+            setReceipt(null);
+            if (payCallback) payCallback();
+          }}
+        >
+          {t('wallet.bolt12Receipt.done')}
+        </Button>
+      </div>
+    );
+  }
 
   if (decoding) {
     return (

@@ -116,6 +116,40 @@ type Bolt12Offer {
   quantity_max: Float!
 }
 
+type Bolt12Receipt {
+  amount_msat: String!
+  chains: [String!]!
+  description: String
+  fee_msat: String!
+
+  """The invoice the payee signed (lni1...)"""
+  invoice: String!
+
+  """The node that signed the invoice"""
+  invoice_node_id: String
+
+  """Whether the invoice signature checks out"""
+  invoice_signature_valid: Boolean!
+  issuer: String
+
+  """The offer paid (lno1...)"""
+  offer: String!
+  offer_id: String
+  paid_at: String!
+
+  """This node payer key in the request"""
+  payer_id: String
+  payer_note: String
+  payment_hash: String!
+  payment_preimage: String!
+
+  """SHA-256 of the preimage is the invoice payment hash"""
+  preimage_matches: Boolean!
+
+  """Kept in the database, to see again later"""
+  saved: Boolean!
+}
+
 type BoltzInfoType {
   feePercent: Float!
   max: Float!
@@ -745,6 +779,7 @@ type PayOfferResult {
   fee_msat: String!
   payment_hash: String!
   payment_preimage: String!
+  receipt: Bolt12Receipt
 }
 
 type PayRequest {
@@ -944,6 +979,12 @@ type Query {
   getBackups: String!
   getBitcoinFees: BitcoinFee!
   getBitcoinPrice: String!
+
+  """The kept proof of a BOLT 12 payment made from ThunderHub"""
+  getBolt12Receipt(payment_hash: String!): Bolt12Receipt
+
+  """Payment hashes of the BOLT 12 payments with a receipt"""
+  getBolt12ReceiptHashes: [String!]!
   getBoltzInfo: BoltzInfoType!
   getChainTransactions: [ChainTransaction!]!
   getChannel(id: String!): SingleChannel!
