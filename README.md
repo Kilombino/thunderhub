@@ -2,10 +2,10 @@
 
 **Documentation has moved!** Find the documentation [here](http://docs.thunderhub.io/).
 
-## XBT fork notes
+## Notes for the BLAKE2b chain
 
-This branch (`xbt`) adapts ThunderHub to an LND node on the XBT (Bitcoin
-BLAKE2b) chain.
+This branch (`xbt`) adapts ThunderHub to an LND node on the Bitcoin
+(BLAKE2b) chain.
 
 - **Channel notes out of the box.** The Docker image enables SQLite by default
   (`DB_TYPE=sqlite`, `DB_SQLITE_PATH=/data/thunderhub.db`). Migrations run on
@@ -24,7 +24,7 @@ BLAKE2b) chain.
   pick the exact UTXOs, set a fee rate down to 0.1 sat/vB and review the
   transaction before it is signed. Uses LND's PSBT funding flow
   (`OpenChannel` with a PSBT shim, WalletKit `FundPsbt` with `sat_per_kw`,
-  `FinalizePsbt`, `FundingStateStep`). Most XBT pools only mine >= 1 sat/vB
+  `FinalizePsbt`, `FundingStateStep`). Most BLAKE2b pools only mine >= 1 sat/vB
   and a peer forgets an unconfirmed channel after ~2016 blocks.
 - **CPFP.** Chain > Transactions offers "Acelerar (CPFP)" for unconfirmed
   transactions with a wallet output (WalletKit `BumpFee` with a bounded
