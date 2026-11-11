@@ -71,7 +71,8 @@ export const wallet = {
     pay: 'Pay',
     cancel: 'Cancel',
     confirmPay: 'Confirm Pay',
-    requestPlaceholder: 'lnbc... or lno1... (BOLT 12 offer)',
+    requestPlaceholder:
+      'lnbc..., lno1... (BOLT 12 offer) or user@domain (Lightning Address)',
     outgoing: {
       label: 'Outgoing channel',
       automatic: 'Automatic (LND picks the route)',
@@ -89,6 +90,12 @@ export const wallet = {
       estimateNote:
         'Asked to LND as a route query (QueryRoutes): nothing is paid. The real fee can differ if that route fails and LND tries another. Click a row to pay from that channel.',
     },
+  },
+  payAddress: {
+    address: 'Lightning Address',
+    looking: 'Looking up the address...',
+    notFound: 'Could not look up that Lightning Address.',
+    note: 'The service is asked for an invoice of exactly the amount you choose; if it does not match, nothing is paid. Some services take up to a couple of minutes to return the invoice.',
   },
   payOffer: {
     offer: 'BOLT 12 offer',

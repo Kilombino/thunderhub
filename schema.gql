@@ -623,7 +623,7 @@ type Mutation {
   keysend(destination: String, message: String, tokens: Float!): PayInvoice!
   lnUrlAuth(url: String!): AuthResponse!
   lnUrlChannel(callback: String!, k1: String!, uri: String!): String!
-  lnUrlPay(amount: Float!, callback: String!, comment: String): PaySuccess!
+  lnUrlPay(amount: Float!, callback: String!, comment: String, maxFee: Float): PaySuccess!
   lnUrlWithdraw(amount: Float!, callback: String!, description: String, k1: String!): String!
   logout: Boolean!
   openChannel(input: OpenChannelParams!): OpenOrCloseChannel!

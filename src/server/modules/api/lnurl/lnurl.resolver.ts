@@ -58,16 +58,24 @@ export class LnUrlResolver {
 
   @Query(() => PayRequest)
   async getLightningAddressInfo(@Args('address') address: string) {
-    const split = address.split('@');
+    const clean = address
+      .trim()
+      .replace(/^lightning:/i, '')
+      .toLowerCase();
+    const split = clean.split('@');
 
-    if (split.length !== 2) {
+    if (
+      split.length !== 2 ||
+      !/^[a-z0-9._+-]+$/.test(split[0]) ||
+      !/^[a-z0-9.-]+\.[a-z0-9-]{2,}(:\d+)?$/.test(split[1])
+    ) {
       this.logger.debug('Invalid lightning address provided', { address });
       throw new Error('Invalid lightning address');
     }
 
     try {
       const response = await this.fetchService.fetchWithProxy(
-        `https://${split[1]}/.well-known/lnurlp/${split[0]}`
+        `https://${split[1]}/.well-known/lnurlp/${encodeURIComponent(split[0])}`
       );
       const result = await response.json();
 
@@ -75,6 +83,8 @@ export class LnUrlResolver {
       if (!result.callback) valid = false;
       if (!result.maxSendable) valid = false;
       if (!result.minSendable) valid = false;
+      if (result.tag && result.tag !== 'payRequest') valid = false;
+      if (result.callback) validateCallbackUrl(result.callback);
 
       if (!valid) {
         this.logger.debug('Invalid lightning address provided', { result });
@@ -131,7 +141,8 @@ export class LnUrlResolver {
     @CurrentUser() { id }: UserId,
     @Args('callback') callback: string,
     @Args('amount') amount: number,
-    @Args('comment', { nullable: true }) comment: string
+    @Args('comment', { nullable: true }) comment: string,
+    @Args('maxFee', { nullable: true }) maxFee?: number
   ) {
     validateCallbackUrl(callback);
 
@@ -148,7 +159,9 @@ export class LnUrlResolver {
 
     const finalUrl = `${callback}${initialIdentifier}amount=${
       amount * 1000
-    }&nonce=${random8byteNonce}&comment=${comment}`;
+    }&nonce=${random8byteNonce}${
+      comment ? `&comment=${encodeURIComponent(comment)}` : ''
+    }`;
 
     let lnServiceResponse: LnUrlPayResponseType = {
       status: 'ERROR',
@@ -187,15 +200,17 @@ export class LnUrlResolver {
       lnServiceResponse.pr
     );
 
-    if (decoded.tokens > amount) {
+    // LUD-06: the invoice must be for exactly the amount we asked for.
+    if (decoded.tokens !== amount) {
       this.logger.error(
-        `Invoice amount ${decoded.tokens} is higher than amount defined ${amount}`
+        `Invoice amount ${decoded.tokens} does not match the amount asked ${amount}`
       );
       throw new Error('LnServiceInvoiceAmountToHigh');
     }
 
     const info = await this.nodeService.pay(id, {
       request: lnServiceResponse.pr,
+      ...(maxFee && maxFee > 0 ? { max_fee: Math.floor(maxFee) } : {}),
     });
 
     if (!info.is_confirmed) {

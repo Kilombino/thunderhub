@@ -11,6 +11,7 @@ import { decode } from 'light-bolt11-decoder';
 import { t } from '@/i18n';
 import { isBolt12Offer, PayOffer } from './PayOffer';
 import { OutgoingChannel } from './OutgoingChannel';
+import { isLightningAddress, PayAddress } from './PayAddress';
 
 interface PayProps {
   predefinedRequest?: string;
@@ -99,9 +100,10 @@ export const Pay: FC<PayProps> = ({
   });
 
   const isOffer = !predefinedRequest && isBolt12Offer(request);
+  const isAddress = !predefinedRequest && isLightningAddress(request);
 
   const handlePay = () => {
-    if (loading || !request || isOffer) return;
+    if (loading || !request || isOffer || isAddress) return;
     pay({
       variables: {
         max_fee: fee,
@@ -129,8 +131,17 @@ export const Pay: FC<PayProps> = ({
         </div>
       )}
 
-      {/* BOLT 12 offers have their own flow */}
-      {isOffer ? (
+      {/* Lightning Addresses (LNURL-pay) and BOLT 12 offers have their own flow */}
+      {isAddress ? (
+        <PayAddress
+          key={request.trim().toLowerCase()}
+          address={request}
+          defaultFee={defaultFee}
+          payCallback={() => {
+            if (payCallback) payCallback();
+          }}
+        />
+      ) : isOffer ? (
         <PayOffer
           key={request.trim()}
           offer={request.trim()}

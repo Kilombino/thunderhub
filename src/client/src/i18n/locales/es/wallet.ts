@@ -73,7 +73,8 @@ export const wallet: PartialMessages['wallet'] = {
     pay: 'Pagar',
     cancel: 'Cancelar',
     confirmPay: 'Confirmar pago',
-    requestPlaceholder: 'lnbc... o lno1... (oferta BOLT 12)',
+    requestPlaceholder:
+      'lnbc..., lno1... (oferta BOLT 12) o usuario@dominio (Lightning Address)',
     outgoing: {
       label: 'Canal de salida',
       automatic: 'Automático (LND elige la ruta)',
@@ -91,6 +92,12 @@ export const wallet: PartialMessages['wallet'] = {
       estimateNote:
         'Consulta de rutas a LND (QueryRoutes): no se paga nada. La comisión real puede variar si esa ruta falla y LND prueba otra. Pulsa una fila para pagar por ese canal.',
     },
+  },
+  payAddress: {
+    address: 'Lightning Address',
+    looking: 'Consultando la dirección...',
+    notFound: 'No se pudo consultar esa Lightning Address.',
+    note: 'Se pide al servicio una factura por el importe exacto que elijas; si no coincide, no se paga. Algunos servicios tardan hasta un par de minutos en dar la factura.',
   },
   payOffer: {
     offer: 'Oferta BOLT 12',

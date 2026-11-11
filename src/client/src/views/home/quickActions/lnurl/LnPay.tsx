@@ -15,12 +15,16 @@ type LnPayProps = {
   request: PayRequest;
   defaultAmount?: number;
   hideTitle?: boolean;
+  maxFee?: number;
+  onPaid?: () => void;
 };
 
 export const LnPay: FC<LnPayProps> = ({
   request,
   defaultAmount,
   hideTitle,
+  maxFee,
+  onPaid,
 }) => {
   const { minSendable, maxSendable, callback, commentAllowed } = request;
 
@@ -35,6 +39,7 @@ export const LnPay: FC<LnPayProps> = ({
   const [confirming, setConfirming] = useState(false);
 
   const [payLnUrl, { data, loading }] = usePayLnUrlMutation({
+    onCompleted: () => onPaid?.(),
     onError: error => toast.error(getErrorContent(error)),
   });
 
@@ -188,7 +193,9 @@ export const LnPay: FC<LnPayProps> = ({
               } else if (max && amount > max) {
                 toast.error(t('home.lnurl.aboveMax'));
               } else {
-                payLnUrl({ variables: { callback, amount, comment } });
+                payLnUrl({
+                  variables: { callback, amount, comment, maxFee },
+                });
               }
             }}
           >

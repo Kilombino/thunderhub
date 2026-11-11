@@ -50,6 +50,7 @@ export type PayLnUrlMutationVariables = Types.Exact<{
   callback: Types.Scalars['String']['input'];
   amount: Types.Scalars['Float']['input'];
   comment?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  maxFee?: Types.InputMaybe<Types.Scalars['Float']['input']>;
 }>;
 
 export type PayLnUrlMutation = {
@@ -210,8 +211,18 @@ export type AuthLnUrlMutationOptions = Apollo.BaseMutationOptions<
   AuthLnUrlMutationVariables
 >;
 export const PayLnUrlDocument = gql`
-  mutation PayLnUrl($callback: String!, $amount: Float!, $comment: String) {
-    lnUrlPay(callback: $callback, amount: $amount, comment: $comment) {
+  mutation PayLnUrl(
+    $callback: String!
+    $amount: Float!
+    $comment: String
+    $maxFee: Float
+  ) {
+    lnUrlPay(
+      callback: $callback
+      amount: $amount
+      comment: $comment
+      maxFee: $maxFee
+    ) {
       tag
       description
       url
@@ -242,6 +253,7 @@ export type PayLnUrlMutationFn = Apollo.MutationFunction<
  *      callback: // value for 'callback'
  *      amount: // value for 'amount'
  *      comment: // value for 'comment'
+ *      maxFee: // value for 'maxFee'
  *   },
  * });
  */

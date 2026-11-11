@@ -793,6 +793,7 @@ export type MutationLnUrlPayArgs = {
   amount: Scalars['Float']['input'];
   callback: Scalars['String']['input'];
   comment?: InputMaybe<Scalars['String']['input']>;
+  maxFee?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type MutationLnUrlWithdrawArgs = {
